@@ -43,7 +43,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -66,6 +66,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\Boost_x64_gd.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -73,6 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <TargetExt>libFEMWithCUDA.dll</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,11 +87,11 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;LIBFEMWITHCUDA_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_WARNINGS;_DEBUG;LIBFEMWITHCUDA_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,12 +146,72 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\AttriRecord.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseBoundary.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseElement.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseMaterial.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseNode.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseNumMethod.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseReader.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseSection.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\BaseSlnRecord.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\ClassFactory.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\classtype.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\ContextOutputMode.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\CuFemCmpnt.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\domain.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\ElementProp.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\EngngMod.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\HBXFEMEngng.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\MetaStep.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\PWDataReader.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\Set.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\solverEnum.h" />
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\util.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefMacro.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="libFEMWithCUDA.cpp" />
+    <ClCompile Include="dllmain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\AttriRecord.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\BaseNumMethod.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\BaseReader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\BaseSection.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\BaseSlnRecord.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\ClassFactory.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\domain.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\EngngMod.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\MetaStep.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\PWDataReader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\util.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp" />
+    <ClCompile Include="libFEMWithCUDA.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
