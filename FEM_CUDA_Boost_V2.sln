@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FEM_CUDA_Boost_V2", "FEM_CUDA_Boost_V2\FEM_CUDA_Boost_V2.vcxproj", "{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libFEMWithCUDA", "libFEMWithCUDA\libFEMWithCUDA.vcxproj", "{5BAE6F46-B05E-4185-AD05-168C7CB54274}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,19 @@ Global
 		{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}.Release|x64.Build.0 = Release|x64
 		{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}.Release|x86.ActiveCfg = Release|Win32
 		{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}.Release|x86.Build.0 = Release|Win32
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Debug|x64.ActiveCfg = Debug|x64
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Debug|x64.Build.0 = Debug|x64
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Debug|x86.ActiveCfg = Debug|Win32
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Debug|x86.Build.0 = Debug|Win32
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Release|x64.ActiveCfg = Release|x64
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Release|x64.Build.0 = Release|x64
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Release|x86.ActiveCfg = Release|Win32
+		{5BAE6F46-B05E-4185-AD05-168C7CB54274}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9C9A4211-2085-4E64-A008-781273FC9B0E}
 	EndGlobalSection
 EndGlobal
