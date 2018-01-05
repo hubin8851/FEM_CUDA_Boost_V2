@@ -93,6 +93,15 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXDefStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CMatrix.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,9 +112,6 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="E:\SDK\hbxdef\CUFEM\util.cpp">
-      <Filter>头文件</Filter>
     </ClCompile>
     <ClCompile Include="E:\SDK\hbxdef\CUFEM\AttriRecord.cpp">
       <Filter>源文件</Filter>
@@ -140,5 +146,16 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\CUFEM\util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.inl">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

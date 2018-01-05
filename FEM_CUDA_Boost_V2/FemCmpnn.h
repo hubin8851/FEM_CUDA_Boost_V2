@@ -1,10 +1,10 @@
 #pragma once
 
 //当前文档的智能指针皆为boost下的，为统一接口
-#include <BoostPreDef.h>
-#include <HBXPreDef.h>
-#include <HbxDefMacro.h>
-#include <HBXDefStruct.h>
+#include <hbxdef\BoostPreDef.h>
+#include <hbxdef\HBXPreDef.h>
+#include <hbxdef\HbxDefMacro.h>
+#include <hbxdef\HBXDefStruct.h>
 
 #include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
 
