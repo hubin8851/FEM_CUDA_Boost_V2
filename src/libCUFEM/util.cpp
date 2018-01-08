@@ -1,0 +1,47 @@
+#include "util.h"
+#include <libCUFEM\BaseReader.h>
+#include <libCUFEM\ContextOutputMode.h>
+#include <libCUFEM\EngngMod.h>
+#include <libCUFEM\ClassFactory.h>
+#include <libCUFEM\BaseSlnRecord.h>
+
+
+namespace HBXFEMDef
+{
+	class Engng;
+	class BaseReader;
+
+	CUFEM_EXPORT Engng * HBXFEMDef::InstanceProblem( BaseReader* _dr, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
+	{
+		Engng* problem;
+
+		std::string SourceFileName = _dr->GetSourceName();
+		BaseSlnRecord* ModeRec = _dr->GetSlnRecord();
+
+		problem = classFactory.CreateEngng( ModeRec->keyword.c_str(), 1, _Master);
+		if (!problem)
+		{
+			std::cerr << "创建引擎类失败...,或未定义解算类型" << std::endl;
+			return nullptr;
+		}
+
+
+		//在此拷贝输入文件。因为传入的输入文件会跟随e-mode组件的读取而发生变化，而需要在整个e-mode实例中全程记录
+
+		problem->SetProblemMode(_mode);
+		problem->SetParrallelMode(parallelFlag);
+
+		if (contextFlag)
+		{
+			problem->SetContextOutputMode(HBXFEMDef::ContextOutputMode_t::ALWAYS);
+		}
+
+		problem->InstanceInit(_dr, "");
+		problem->postInit();
+
+		return problem;
+	}
+
+}
+
+

@@ -24,6 +24,12 @@
     <ClInclude Include="E:\SDK\hbxdef\CUFEM\NumericalMehod\BaseConjugate.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\CUFEM\NumericalMehod\BiCGStab.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\BiCGStab.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +42,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="E:\SDK\hbxdef\CUFEM\NumericalMehod\BaseConjugate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\BiCGStab.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
