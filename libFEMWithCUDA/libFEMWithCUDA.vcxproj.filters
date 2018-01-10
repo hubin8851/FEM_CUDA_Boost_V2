@@ -60,6 +60,15 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\BaseComponent.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\BaseElement.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\FSM\BaseElementOwnedStates.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\PWDataReader.h">
@@ -119,9 +128,6 @@
     <ClInclude Include="..\src\libCUFEM\Set.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libCUFEM\classtype.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libCUFEM\HBXFEMEngng.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -135,6 +141,18 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\BaseComponent.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FSM\StateMachine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FSM\State.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\FSM\BaseElementOwnedStates.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

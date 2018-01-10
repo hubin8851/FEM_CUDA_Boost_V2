@@ -19,7 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\FSM\BaseElementOwnedStates.cpp" />
     <ClCompile Include="..\src\libCUFEM\AttriRecord.cpp" />
+    <ClCompile Include="..\src\libCUFEM\BaseComponent.cpp" />
+    <ClCompile Include="..\src\libCUFEM\BaseElement.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseNumMethod.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseReader.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseSection.cpp" />
@@ -36,8 +39,12 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\FSM\BaseElementOwnedStates.h" />
+    <ClInclude Include="..\src\FSM\State.h" />
+    <ClInclude Include="..\src\FSM\StateMachine.h" />
     <ClInclude Include="..\src\libCUFEM\AttriRecord.h" />
     <ClInclude Include="..\src\libCUFEM\BaseBoundary.h" />
+    <ClInclude Include="..\src\libCUFEM\BaseComponent.h" />
     <ClInclude Include="..\src\libCUFEM\BaseElement.h" />
     <ClInclude Include="..\src\libCUFEM\BaseMaterial.h" />
     <ClInclude Include="..\src\libCUFEM\BaseNode.h" />
@@ -46,7 +53,6 @@
     <ClInclude Include="..\src\libCUFEM\BaseSection.h" />
     <ClInclude Include="..\src\libCUFEM\BaseSlnRecord.h" />
     <ClInclude Include="..\src\libCUFEM\ClassFactory.h" />
-    <ClInclude Include="..\src\libCUFEM\classtype.h" />
     <ClInclude Include="..\src\libCUFEM\ContextOutputMode.h" />
     <ClInclude Include="..\src\libCUFEM\CuFemCmpnt.h" />
     <ClInclude Include="..\src\libCUFEM\domain.h" />
@@ -111,8 +117,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_debug_x64.props" />
-    <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
+    <Import Project="..\CUFEM.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />

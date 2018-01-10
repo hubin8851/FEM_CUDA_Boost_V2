@@ -1,8 +1,8 @@
 #pragma once	//2018-01£¬hbx, redef
 
-#include <CUFEM/NumericalMehod/BaseConjugate.h>
-#include <..\..\HBXDEF\HbxDefMacro.h>
-#include <..\..\HBXDEF\CudaPreDef.h>
+#include <NumericalMehod/BaseConjugate.h>
+#include <HBXPreDef.h>
+#include <CudaPreDef.h>
 namespace HBXFEMDef
 {
 	class Domain;

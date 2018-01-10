@@ -1,6 +1,6 @@
 #include "BaseConjugate.h"
-#include <HBXDEF\HbxGloFunc.h>
-#include <HBXDEF\CudaPreDef.h>
+#include <HbxGloFunc.h>
+#include <CudaPreDef.h>
 #include <helper_cuda.h>
 
 namespace HBXFEMDef
@@ -363,7 +363,7 @@ namespace HBXFEMDef
 				switch (ch)
 				{
 				case 'y':case 'Y':
-					genRhs(g_MatRowNum, false);
+					genRhs(m_RowNum, false);
 					return HBXDef::DataAloc_t::DATAINMEM;
 				case  'n':case 'N':
 					goto end;

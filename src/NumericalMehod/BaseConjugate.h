@@ -1,12 +1,9 @@
 #pragma once
-#include <..\..\HBXDEF\HbxDefMacro.h>
-#include <..\..\HBXDEF\CudaPreDef.h>
-#include <HBXDEF\CuDefMacro.h>
-#include <HBXDEF\HBXPreDef.h>
-#include <HBXDEF\BoostPreDef.h>
-#include <..\..\ExportDef.h>
-#include <CUFEM\BaseNumMethod.h>
-#include <HBXDEF\HbxGloFunc.h>
+#include <HBXPreDef.h>
+#include <CuDefMacro.h>
+
+#include <libCUFEM\BaseNumMethod.h>
+#include <HbxGloFunc.h>
 
 namespace HBXFEMDef
 {
@@ -76,7 +73,7 @@ namespace HBXFEMDef
 		virtual ~BaseConjugate();
 
 		virtual void	ResetMem();									//重置内存
-		virtual void	ResetGraphMem(HBXDef::CudaMalloc_t _cuMac);		//在GPU上重置显存
+		virtual void	ResetGraphMem(HBXDef::CudaMalloc_t _cuMac = HBXDef::CudaMalloc_t::NORMAL);		//在GPU上重置显存
 
 		//设备和主机端的内存拷贝
 		virtual	HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);

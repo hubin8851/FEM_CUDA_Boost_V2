@@ -14,10 +14,15 @@ namespace HBXFEMDef
 	class BaseBoundary;
 	class Engng;
 	class StructEngng;
-
+	class BaseNumMethod;
+	class BaseComponent;
 
 
 	typedef void* (*AnyCreator)(int, Domain);
+
+	//新增的容器，用以实现消息机制，源自WestWorldWithMessage，
+	//http://blog.csdn.net/shanyongxu/article/details/48024271
+	typedef std::map<unsigned int, BaseComponent*> EntityMap;
 
 
 #define REGIST_ENGNG(class) static bool __dummy_ ## class = GetClassFactory().RegistEngng( _EX_ ## class ## _Name, EngngCreator<class> );
@@ -38,7 +43,10 @@ namespace HBXFEMDef
 		std::map<std::string, BaseBoundary*(*)(int, Domain*)>	LoadList;
 		//引擎种类列表
 		std::map<std::string, Engng*(*)(int, Engng*)>	EngngList;
+		//算法种类列表
+		std::map<std::string, BaseNumMethod*(*)(Domain*, Engng*)>	NumericalMethodList;
 
+		EntityMap	m_EntityMap;
 	protected:
 	public:
 		ClassFactory();
@@ -49,6 +57,9 @@ namespace HBXFEMDef
 		BaseElem* CreateElem(const char* _name, int _n, Domain* _dm);
 		//注册一个新的单元，传入名称和构造函数对象
 		bool RegistElem(const char* _name, BaseElem*(*creator)(void));
+
+		//移除一个已有单元
+		bool RemoveElem(const char* _name, BaseElem*(*creator)(void));
 
 		//创建一个新材料
 		BaseMaterial* CreateMaterial(const char* _name, int _n, Domain* _dm);
@@ -70,7 +81,18 @@ namespace HBXFEMDef
 		//注册一个新引擎，传入名称和构造函数对象
 		bool RegistEngng(const char* _name, Engng*(*creator)(int, Engng*));
 
+		//创建一个新算法
+		BaseNumMethod* CreateNumMethod(const char* _name, Domain* _dm, Engng* _master);
+		//注册一个新引擎，传入名称和构造函数对象
+		bool RegistNumMethod(const char* _name, BaseNumMethod*(*creator)(Domain*, Engng*));
+
 #pragma endregion 工厂函数
+
+		void RegistEntity(BaseComponent* pEntity);
+
+		BaseComponent* GetEntityFromID(unsigned int _id) const;
+
+		void RemoveEntity(BaseComponent* pEntity);
 	};
 
 	extern ClassFactory& classFactory;

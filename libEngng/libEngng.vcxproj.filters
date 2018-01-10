@@ -21,10 +21,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\CUFEM\LinearStaticEngng.h">
+    <ClInclude Include="..\src\libEngng\LinearStaticEngng.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\CUFEM\StructEngng.h">
+    <ClInclude Include="..\src\libEngng\StructEngng.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +38,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="E:\SDK\hbxdef\CUFEM\LinearStaticEngng.cpp">
+    <ClCompile Include="..\src\libEngng\StructEngng.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="E:\SDK\hbxdef\CUFEM\StructEngng.cpp">
+    <ClCompile Include="..\src\libEngng\LinearStaticEngng.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

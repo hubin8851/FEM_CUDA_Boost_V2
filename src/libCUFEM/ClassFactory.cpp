@@ -1,7 +1,9 @@
 #include "ClassFactory.h"
+#include <HbxDefMacro.h>
 #include <boost\algorithm\string.hpp>
 #include <boost\bind.hpp>
 #include <libCUFEM\CuFemCmpnt.h>
+#include <libCUFEM\BaseComponent.h>
 #include <list>
 #include <cctype>
 
@@ -30,10 +32,17 @@ namespace HBXFEMDef
 #define CF_CREATE(MyMap, ...) \
 		auto creator = MyMap.find(conv2lower(_name));\
 		return creator != MyMap.end() ? creator->second(__VA_ARGS__) : nullptr;
-		
+
 #define CF_STORE(MyMap) \
 		MyMap[ conv2lower(_name) ] = creator;\
 		return true;
+
+#ifndef CF_REMOVE(MyMap)
+#define CF_REMOVE(MyMap) \
+		auto mapsize = MyMap.size(); \
+		auto remover = MyMap.erase(_name);\
+		return remover == mapsize ? true: false;
+#endif
 
 	//创建某物的宏，在列表中搜索并通过三元操作返回值或空指针,针对oofem中各类的构造函数
 #ifndef CF_CREATE(MyMap, ...)
@@ -48,10 +57,17 @@ namespace HBXFEMDef
 		return true;
 #endif
 
-
+#ifndef CF_REMOVE(MyMap)
+#define CF_REMOVE(MyMap) \
+		auto mapsize = MyMap.size(); \
+		auto remover = MyMap.erase(_name);\
+		return remover == mapsize ? true: false;
+#endif
+	
 
 	ClassFactory::ClassFactory()
 	{
+		
 	}
 
 
@@ -63,13 +79,16 @@ namespace HBXFEMDef
 	{
 		//截面、材料、单元基类的构造函数未定
 		CF_CREATE(ElemList)
-		return nullptr;
 	}
 
 	bool ClassFactory::RegistElem(const char* _name, BaseElem *(*creator)(void))
 	{
 		CF_STORE(ElemList);
-		return false;
+	}
+
+	bool ClassFactory::RemoveElem(const char * _name, BaseElem *(*creator)(void))
+	{
+		CF_REMOVE(ElemList);
 	}
 
 	BaseMaterial * ClassFactory::CreateMaterial(const char* _name, int _n, Domain * _dm)
@@ -110,6 +129,31 @@ namespace HBXFEMDef
 	bool ClassFactory::RegistEngng(const char* _name, Engng*(*creator)(int, Engng*))
 	{
 		CF_STORE(EngngList);
+	}
+
+	BaseNumMethod * ClassFactory::CreateNumMethod(const char * _name, Domain * _dm, Engng * _master)
+	{
+		CF_CREATE(NumericalMethodList, _dm, _master);
+	}
+
+	bool ClassFactory::RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *))
+	{
+		CF_STORE(NumericalMethodList);
+	}
+
+	void ClassFactory::RegistEntity(BaseComponent * pEntity)
+	{
+		m_EntityMap.insert(std::make_pair( pEntity->GetID(), pEntity ));
+	}
+
+	BaseComponent * ClassFactory::GetEntityFromID(unsigned int _id) const
+	{
+		EntityMap::const_iterator _iter = m_EntityMap.find(_id);
+
+		HBXDef::Assert(_iter != m_EntityMap.end());
+
+		return _iter->second;
+	
 	}
 
 }
