@@ -28,6 +28,7 @@
     <ClCompile Include="..\src\libCUFEM\BaseSection.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseSlnRecord.cpp" />
     <ClCompile Include="..\src\libCUFEM\ClassFactory.cpp" />
+    <ClCompile Include="..\src\libCUFEM\Dispatch.cpp" />
     <ClCompile Include="..\src\libCUFEM\domain.cpp" />
     <ClCompile Include="..\src\libCUFEM\EngngMod.cpp" />
     <ClCompile Include="..\src\libCUFEM\MetaStep.cpp" />
@@ -55,6 +56,7 @@
     <ClInclude Include="..\src\libCUFEM\ClassFactory.h" />
     <ClInclude Include="..\src\libCUFEM\ContextOutputMode.h" />
     <ClInclude Include="..\src\libCUFEM\CuFemCmpnt.h" />
+    <ClInclude Include="..\src\libCUFEM\Dispatch.h" />
     <ClInclude Include="..\src\libCUFEM\domain.h" />
     <ClInclude Include="..\src\libCUFEM\ElementProp.h" />
     <ClInclude Include="..\src\libCUFEM\EngngMod.h" />
@@ -64,7 +66,9 @@
     <ClInclude Include="..\src\libCUFEM\Set.h" />
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MessageType.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\Package.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

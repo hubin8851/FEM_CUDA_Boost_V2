@@ -43,7 +43,7 @@ namespace HBXFEMDef
 		}
 
 
-		bool HandleMessage(const Telegram& msg) const
+		bool HandleMessage(const Package& msg) const
 		{
 			//如果当前状态可用，则发送消息
 			if (m_pCurrState && m_pCurrState->OnMessage(m_pOwner, msg))

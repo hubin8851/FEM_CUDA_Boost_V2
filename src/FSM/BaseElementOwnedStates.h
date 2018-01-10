@@ -7,7 +7,7 @@
 namespace HBXFEMDef
 {
 	class BaseElem;
-	class Telegram;
+	class Package;
 
 
 	class ReadyToCal: public State<BaseElem>
@@ -26,17 +26,17 @@ namespace HBXFEMDef
 
 		virtual void Exit(BaseElem* _ele) {};
 
-		virtual bool OnMessage(BaseElem* _ele, const Telegram& msg) { return false; };
+		virtual bool OnMessage(BaseElem* _ele, const Package& msg) { return false; };
 	};
 
 
 	//当前计算类有且至能存在一个。在对多个同种类element进行计算时，使用流
-	class StiffMatCal :public State<BaseElem>
+	class FreshAttrCal :public State<BaseElem>
 	{
 	private:
-		StiffMatCal() {}
-		StiffMatCal(const StiffMatCal&);
-		StiffMatCal& operator=(const StiffMatCal&);
+		FreshAttrCal() {}
+		FreshAttrCal(const FreshAttrCal&);
+		FreshAttrCal& operator=(const FreshAttrCal&);
 	protected:
 	public:
 
@@ -47,7 +47,7 @@ namespace HBXFEMDef
 
 		virtual void Exit(BaseElem* _ele) {};
 
-		virtual bool OnMessage(BaseElem* _ele, const Telegram& msg) { return false; };
+		virtual bool OnMessage(BaseElem* _ele, const Package& msg) { return false; };
 	};
 
 }

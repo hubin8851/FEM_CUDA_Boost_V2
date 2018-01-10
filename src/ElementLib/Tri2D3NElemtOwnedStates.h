@@ -1,12 +1,12 @@
 #pragma once
 
 #include "FSM\State.h"
-
+#include <Package.h>
 
 namespace HBXFEMDef
 {
 	class Tri2D3NElemt;
-	class Telegram;
+	class Package;
 
 
 	class Tri2D3NReadyToCal : public State<Tri2D3NElemt>
@@ -25,6 +25,28 @@ namespace HBXFEMDef
 
 		virtual void Exit(Tri2D3NElemt* _ele);
 
-		virtual bool OnMessage(Tri2D3NElemt* _ele, const Telegram& msg);
+		virtual bool OnMessage(Tri2D3NElemt* _ele, const Package& msg);
 	};
+
+
+	class Tri2D3NFreshCal : public State<Tri2D3NElemt>
+	{
+	private:
+		Tri2D3NFreshCal() {}
+		Tri2D3NFreshCal(const Tri2D3NFreshCal&);
+		Tri2D3NFreshCal& operator=(const Tri2D3NFreshCal&);
+	protected:
+	public:
+		static Tri2D3NFreshCal* Instance();
+
+		virtual void Enter(Tri2D3NElemt* _ele);
+
+		virtual void Execute(Tri2D3NElemt* _ele);
+
+		virtual void Exit(Tri2D3NElemt* _ele);
+
+		virtual bool OnMessage(Tri2D3NElemt* _ele, const Package& msg);
+	};
+
+
 }

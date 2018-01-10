@@ -22,11 +22,20 @@ namespace HBXFEMDef
 
 	void Tri2D3NElemt::Update()
 	{
+		m_pStateMachine->Update();
 	}
 
-	bool Tri2D3NElemt::HandleMessage(const Telegram & msg)
+	bool Tri2D3NElemt::HandleMessage(const Package & msg)
 	{
 		return false;
+	}
+
+	void Tri2D3NElemt::StiffMatCal()
+	{
+	}
+
+	void Tri2D3NElemt::MassMatCal()
+	{
 	}
 
 

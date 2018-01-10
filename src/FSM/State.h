@@ -1,10 +1,11 @@
 #pragma once
-
+#include <Package.h>
 
 
 namespace HBXFEMDef
 {
-	class Telegram;
+
+	class Package;
 
 	template< class Entity_type>
 	class State
@@ -25,7 +26,7 @@ namespace HBXFEMDef
 
 		//this executes if the agent receives a message from the 
 		//message dispatcher
-		virtual bool OnMessage(Entity_type*, const Telegram&) = 0;
+		virtual bool OnMessage(Entity_type*, const Package&) = 0;
 
 
 	};

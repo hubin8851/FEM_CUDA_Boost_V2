@@ -42,11 +42,19 @@ namespace HBXFEMDef
 		//此函数用以刷新当前单元的状态
 		virtual void Update();
 
-		virtual bool HandleMessage(const Telegram& msg);
+		virtual bool HandleMessage(const Package& msg);
 
 		StateMachine<Tri2D3NElemt>* GetFSM() const { return m_pStateMachine; };
 
 		//自身函数
+
+		//刚度矩阵计算
+		void StiffMatCal();
+
+		//质量矩阵计算
+		void MassMatCal();
+
+
 	};
 
 

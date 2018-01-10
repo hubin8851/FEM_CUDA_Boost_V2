@@ -143,17 +143,22 @@ namespace HBXFEMDef
 
 	void ClassFactory::RegistEntity(BaseComponent * pEntity)
 	{
-		m_EntityMap.insert(std::make_pair( pEntity->GetID(), pEntity ));
+		m_EntityMap.insert(std::make_pair(m_EntityMap.size(), pEntity ));
 	}
 
 	BaseComponent * ClassFactory::GetEntityFromID(unsigned int _id) const
 	{
 		EntityMap::const_iterator _iter = m_EntityMap.find(_id);
 
-		HBXDef::Assert(_iter != m_EntityMap.end());
-
+		Assert( (_iter != m_EntityMap.end()) && "<EntityManager::GetEntityFromID>: invalid ID" );
+		_iter->second->ResetID(_iter->first + _iter->second->GetID());
 		return _iter->second;
 	
+	}
+
+	void ClassFactory::RemoveEntity(BaseComponent * pEntity)
+	{
+		m_EntityMap.erase( m_EntityMap.find(pEntity->GetID()) );
 	}
 
 }

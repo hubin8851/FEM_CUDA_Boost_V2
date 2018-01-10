@@ -5,7 +5,7 @@ namespace HBXFEMDef
 {
 
 	BaseElem::BaseElem(int _id, Domain * _dm):BaseComponent(_id),
-		_iNode(nullptr), _iMat(0)
+		_iNode(nullptr), _iMat(0), m_bFresh(true)
 	{
 		m_pStateMachine = new StateMachine<BaseElem>(this);
 
@@ -28,14 +28,18 @@ namespace HBXFEMDef
 		}
 		_iMat = 0;
 	}
+
 	void BaseElem::Update()
 	{
 		m_pStateMachine->Update();
 	}
-	bool BaseElem::HandleMessage(const Telegram & msg)
+
+	bool BaseElem::HandleMessage(const Package & msg)
 	{
 		return m_pStateMachine->HandleMessage(msg);
 	}
+
+
 }
 
 

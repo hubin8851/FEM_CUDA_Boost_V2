@@ -69,6 +69,9 @@
     <ClCompile Include="..\src\FSM\BaseElementOwnedStates.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\Dispatch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\PWDataReader.h">
@@ -153,6 +156,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\FSM\BaseElementOwnedStates.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MessageType.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\Package.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\Dispatch.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -8,7 +8,7 @@
 //5.用来接受消息的回调
 namespace HBXFEMDef
 {
-	class Telegram;
+	class Package;
 
 
 	class BaseComponent
@@ -38,7 +38,7 @@ namespace HBXFEMDef
 		virtual void  Update() = 0;
 
 		//数据交互的接口。使用messageDispatcher类发送
-		virtual bool HandleMessage(const Telegram& msg) = 0;
+		virtual bool HandleMessage(const Package& msg) = 0;
 
 		//
 //		void(*OnEnter)(BaseComponent* _cpn);
