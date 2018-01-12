@@ -1,15 +1,14 @@
 #include "util.h"
-#include <libCUFEM\BaseReader.h>
 #include <libCUFEM\ContextOutputMode.h>
 #include <libCUFEM\EngngMod.h>
 #include <libCUFEM\ClassFactory.h>
-#include <libCUFEM\BaseSlnRecord.h>
-
+#include <libCUFEM\BaseReader.h>
 
 namespace HBXFEMDef
 {
 	class Engng;
 	class BaseReader;
+	class BaseSlnRecord;
 
 	CUFEM_EXPORT Engng * HBXFEMDef::InstanceProblem( BaseReader* _dr, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
 	{
@@ -18,7 +17,7 @@ namespace HBXFEMDef
 		std::string SourceFileName = _dr->GetSourceName();
 		BaseSlnRecord* ModeRec = _dr->GetSlnRecord();
 
-		problem = classFactory.CreateEngng( ModeRec->keyword.c_str(), 1, _Master);
+		problem = classFactory.CreateEngng( ModeRec->keyword.c_str(), _Master, 1);
 		if (!problem)
 		{
 			std::cerr << "创建引擎类失败...,或未定义解算类型" << std::endl;

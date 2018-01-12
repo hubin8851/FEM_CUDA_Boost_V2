@@ -66,6 +66,7 @@
     <ClInclude Include="..\src\libCUFEM\Set.h" />
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MessageType.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\Package.h" />

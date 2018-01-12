@@ -12,14 +12,14 @@ namespace HBXFEMDef
 	private:
 	public:
 		BaseSection();
-		BaseSection(int _n, Domain* _dm) {};
+		BaseSection(Domain* _dm, int _id) {};
 		~BaseSection();
 
 
 
 	};
 
-	template<typename _T> BaseSection* SecCreator() { return new T() };
-	template<typename _T> BaseSection* SecCreator(int _n, Domain *_dm) { return new T(_n, _dm) };
+	template<typename T> BaseSection* SecCreator() { return (new T()); };
+	template<typename T> BaseSection* SecCreator(Domain* _dm, int _id) { return (new T(_dm, _id)); };
 
 }

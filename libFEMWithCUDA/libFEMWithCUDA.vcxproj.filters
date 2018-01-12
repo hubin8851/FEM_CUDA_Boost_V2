@@ -167,5 +167,8 @@
     <ClInclude Include="..\src\libCUFEM\Dispatch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,8 +1,7 @@
 #pragma once
 
-
+#include <map>
 #include <HBXPreDef.h>
-#include <ExportDef.h>
 #include "libCUFEM\BaseNode.h"
 #include "libCUFEM\BaseElement.h"
 #include "libCUFEM\BaseSection.h"

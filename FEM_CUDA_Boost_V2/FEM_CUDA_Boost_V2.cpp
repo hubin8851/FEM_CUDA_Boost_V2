@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "FEM_CUDA_Boost_V2.h"
+#include <HBXPreDef.h>
+#include <libCUFEM\PWDataReader.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,6 +21,16 @@ int main()
 {
     int nRetCode = 0;
 
+	if (1)
+	{
+		using namespace HBXFEMDef;
+		BaseReader* xxx = InstancePWReader();
+		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
+		xxx->SetInputData();
+	}
+
+
+#pragma region MFCœ‡πÿ
     HMODULE hModule = ::GetModuleHandle(nullptr);
 
     if (hModule != nullptr)
@@ -41,6 +53,6 @@ int main()
         wprintf(L"¥ÌŒÛ: GetModuleHandle  ß∞‹\n");
         nRetCode = 1;
     }
-
+#pragma endregion
     return nRetCode;
 }

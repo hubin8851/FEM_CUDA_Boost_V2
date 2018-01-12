@@ -7,6 +7,7 @@
 #include <list>
 #include <cctype>
 
+
 namespace HBXFEMDef
 {
 	using namespace std;
@@ -75,91 +76,73 @@ namespace HBXFEMDef
 	{
 	}
 
-	BaseElem * ClassFactory::CreateElem(const char * _name, int _n, Domain * _dm)
+	BaseElem * ClassFactory::CreateElem(const char* _name, Engng* _eg, Domain* _dm, int _id)
 	{
 		//截面、材料、单元基类的构造函数未定
-		CF_CREATE(ElemList)
+		CF_CREATE(ElemList, _eg, _dm, _id)
 	}
 
-	bool ClassFactory::RegistElem(const char* _name, BaseElem *(*creator)(void))
+	bool ClassFactory::RegistElem(const char* _name, BaseElem *(*creator)(Engng*, Domain*, int))
 	{
 		CF_STORE(ElemList);
 	}
 
-	bool ClassFactory::RemoveElem(const char * _name, BaseElem *(*creator)(void))
+	bool ClassFactory::RemoveElem(const char * _name)
 	{
 		CF_REMOVE(ElemList);
 	}
 
-	BaseMaterial * ClassFactory::CreateMaterial(const char* _name, int _n, Domain * _dm)
+	BaseMaterial * ClassFactory::CreateMaterial(const char* _name, Domain* _dm, int _id)
 	{
-		CF_CREATE(MaterialList, _n, _dm);
+		CF_CREATE(MaterialList, _dm, _id);
 	}
 
-	bool ClassFactory::RegistMaterial(const char* _name, BaseMaterial *(*creator)(int, Domain*))
+	bool ClassFactory::RegistMaterial(const char* _name, BaseMaterial *(*creator)(Domain*, int))
 	{
 		CF_STORE(MaterialList)
 	}
 
-	BaseSection * ClassFactory::CreateSection(const char* _name, int _n, Domain * _dm)
+	BaseSection * ClassFactory::CreateSection(const char* _name, Domain* _dm, int _id)
 	{
-		CF_CREATE(SecList, _n, _dm);
+		CF_CREATE(SecList, _dm, _id);
 	}
 
-	bool ClassFactory::RegistSection(const char* _name, BaseSection *(*creator)(int, Domain*))
+	bool ClassFactory::RegistSection(const char* _name, BaseSection *(*creator)(Domain*, int))
 	{
 		CF_STORE(SecList)
 	}
 
-	BaseBoundary * ClassFactory::CreateLoad(const char* _name, int _n, Domain * _dm)
+	BaseBoundary * ClassFactory::CreateLoad(const char* _name, Domain* _dm, int _id)
 	{
-		CF_CREATE(LoadList, _n, _dm)
+		CF_CREATE(LoadList, _dm, _id)
 	}
 
-	bool ClassFactory::RegistLoad(const char* _name, BaseBoundary *(*creator)(int, Domain*))
+	bool ClassFactory::RegistLoad(const char* _name, BaseBoundary *(*creator)(Domain*, int))
 	{
 		CF_STORE(LoadList)
 	}
 
-	Engng * ClassFactory::CreateEngng(const char* _name, int _n, Engng * _master)
+	Engng * ClassFactory::CreateEngng(const char* _name, Engng * _master, int _id)
 	{
-		CF_CREATE(EngngList, _n, _master);
+		CF_CREATE(EngngList, _master, _id);
 	}
 
-	bool ClassFactory::RegistEngng(const char* _name, Engng*(*creator)(int, Engng*))
+	bool ClassFactory::RegistEngng(const char* _name, Engng*(*creator)(Engng*, int))
 	{
 		CF_STORE(EngngList);
 	}
 
-	BaseNumMethod * ClassFactory::CreateNumMethod(const char * _name, Domain * _dm, Engng * _master)
+	BaseNumMethod * ClassFactory::CreateNumMethod(const char * _name, Domain * _dm, Engng * _master, int _id)
 	{
-		CF_CREATE(NumericalMethodList, _dm, _master);
+		CF_CREATE(NumericalMethodList, _dm, _master, _id);
 	}
 
-	bool ClassFactory::RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *))
+	bool ClassFactory::RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *, int))
 	{
 		CF_STORE(NumericalMethodList);
 	}
 
-	void ClassFactory::RegistEntity(BaseComponent * pEntity)
-	{
-		m_EntityMap.insert(std::make_pair(m_EntityMap.size(), pEntity ));
-	}
 
-	BaseComponent * ClassFactory::GetEntityFromID(unsigned int _id) const
-	{
-		EntityMap::const_iterator _iter = m_EntityMap.find(_id);
-
-		Assert( (_iter != m_EntityMap.end()) && "<EntityManager::GetEntityFromID>: invalid ID" );
-		_iter->second->ResetID(_iter->first + _iter->second->GetID());
-		return _iter->second;
-	
-	}
-
-	void ClassFactory::RemoveEntity(BaseComponent * pEntity)
-	{
-		m_EntityMap.erase( m_EntityMap.find(pEntity->GetID()) );
-	}
 
 }
 

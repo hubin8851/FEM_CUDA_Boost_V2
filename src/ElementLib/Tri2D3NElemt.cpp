@@ -5,7 +5,7 @@ namespace HBXFEMDef
 {
 
 
-	Tri2D3NElemt::Tri2D3NElemt(int _id, Domain * _dm) :BaseElem(_id, _dm)
+	Tri2D3NElemt::Tri2D3NElemt(Engng* _engng, Domain* _dm,int _id ) :BaseElem(_engng, _dm, _id )
 	{
 		m_pStateMachine = new StateMachine<Tri2D3NElemt>(this);
 
@@ -18,12 +18,13 @@ namespace HBXFEMDef
 
 	Tri2D3NElemt::~Tri2D3NElemt()
 	{
+
 	}
 
 	void Tri2D3NElemt::Update()
 	{
 		m_pStateMachine->Update();
-	}
+ 	}
 
 	bool Tri2D3NElemt::HandleMessage(const Package & msg)
 	{
@@ -36,6 +37,7 @@ namespace HBXFEMDef
 
 	void Tri2D3NElemt::MassMatCal()
 	{
+
 	}
 
 

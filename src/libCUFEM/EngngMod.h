@@ -2,14 +2,16 @@
 
 #include <HBXPreDef.h>
 #include <MyTimer.h>
+#include <libCUFEM\domain.h>
 #include <libCUFEM\BaseSlnRecord.h>
 #include <libCUFEM\BaseReader.h>
 #include <libCUFEM\MetaStep.h>
 #include <libCUFEM\solverEnum.h>
-#include <libCUFEM\domain.h>
 #include <libCUFEM\ContextOutputMode.h>
+#include <libCUFEM\Dispatch.h>
 
-
+#include <boost\bimap.hpp>
+#include <boost\bimap\multiset_of.hpp>
 
 namespace HBXFEMDef
 {
@@ -23,6 +25,7 @@ namespace HBXFEMDef
 	class BaseNumMethod;//数值计算方法基类
 	class EngngModelContext;//Engng的上下文用于两个Engng之间的数据交互
 	class Domain;
+	class MessageDispatcher;
 	class HBXDef::MyTimer;	//暂定，自身创建的用于引擎的类，包括了总时间，计算时间，数据传输时间，内存拷贝时间等。如果有CUDA支持，可以使用cuda的高精度计时器。
 
 	class BOOST_SYMBOL_EXPORT EngngModelContext
@@ -33,7 +36,16 @@ namespace HBXFEMDef
 		~EngngModelContext() {}
 	};
 
+	//新增的容器，用以实现消息机制，源自WestWorldWithMessage，
+	//http://blog.csdn.net/shanyongxu/article/details/48024271
+	typedef std::map<int, BaseComponent*> EntityMap;
 
+	using namespace boost::bimaps;
+	struct SameComponent {};
+	typedef bimap <
+		int,
+		multiset_of< tags::tagged<BaseComponent*, SameComponent> >
+	> ComponentMap;	//该映射是域与组件之间的映射
 
 	//解算步通过metastep类组织。metastep可以认为有着同样属性设置的解算步。
 	//对每个元步，引擎模块通过元步引擎属性刷新属性，以便切换不同的时间增量或不同的控制方程。
@@ -49,7 +61,7 @@ namespace HBXFEMDef
 		int iMyID;
 		//该类下域的数量
 		size_t ndomains;
-		//域的列表
+		//域的列表，域内只放相关数据
 		std::vector< std::unique_ptr<Domain> > domainList;
 		//解算所用的时间步
 		size_t NumOfStep;
@@ -70,6 +82,9 @@ namespace HBXFEMDef
 
 		//计时器
 		HBXDef::MyTimer _timer;
+
+		//模块内交互的消息管理器
+		MessageDispatcher* MyDispatcher;
 
 		//输出的流，目前是FILE，但是可以通过boost的log改变。20171026
 		FILE* MyOutStream;
@@ -100,6 +115,10 @@ namespace HBXFEMDef
 		//非线性模型的计算模式（全程或刷新模式）
 //		nlinearFormul_t nlinearFormulation;
 
+		//创建的所有组件的实体存放map。
+		EntityMap	m_EntityMap;
+		//组件映射表。各种派生类由其基类类型索引
+		ComponentMap	m_ComponentMap;
 	public:
 		//默认构造函数
 //		Engng();
@@ -107,7 +126,7 @@ namespace HBXFEMDef
 		//构造函数
 		//@i:驱动i...
 		//@master:master的Engng
-		Engng( int _n, Engng* _master = nullptr );
+		Engng( Engng * _master, int _id = classType::ENGNG);
 
 		//拷贝构造函数
 		//@_rhsEngng:拷贝原型
@@ -148,6 +167,9 @@ namespace HBXFEMDef
 
 		//返回当前所有域的数量
 		size_t GetNumOfDomain() { return ndomains; };
+
+		//获取消息管理器的指针
+		MessageDispatcher* GetDispatcher() { return MyDispatcher; };
 
 		FILE* GetOutStream();
 		//重置当前上下文,主要两个作用，奇异回溯计算历史（对非线性），第二重置当前模型上下文以便超线程计算
@@ -197,6 +219,13 @@ namespace HBXFEMDef
 
 		//结束计算
 		virtual void TerminateCal();
+
+		void RegistEntity( int _process ,BaseComponent* pEntity );
+		EntityMap* GetEntity();
+		BaseComponent* GetEntity(const char* _name) const;
+		BaseComponent* GetEntityFromID( int _id) const;
+		void RemoveEntity(BaseComponent* pEntity);
+
 #pragma endregion 计算相关函数
 
 		//确定是否使用并行算法，布尔值
@@ -232,12 +261,12 @@ namespace HBXFEMDef
 		virtual const char* GetClassName() const { return "Engng"; };
 
 		//获取当前类ID
-		virtual HBXDef::classType GetClassId() const { return HBXDef::classType::ENGNG; };
+		virtual classType GetClassId() const { return classType::ENGNG; };
 
 	};
 
 	
 	//template<typename _T> Engng* EngngCreator() { return new T(); }
 	//用以在classfactory中注册
-	template<typename T> Engng* EngngCreator(int _n, Engng* _master) { return ( new T( _n, _master ) ); }
+	template<typename T> Engng* EngngCreator(Engng * _master, int _id) { return ( new T( _master, _id) ); }
 }

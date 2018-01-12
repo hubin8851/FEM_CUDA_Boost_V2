@@ -7,7 +7,7 @@ namespace HBXFEMDef
 // 
 //   }
 
-	Engng::Engng(int _n, Engng * _master) :iMyID(_n)
+	Engng::Engng(Engng * _master, int _id) :iMyID(_id), MyDispatcher(new MessageDispatcher(_master))
 	{
 		NumOfEq = 0;
 		NumOfStep = 0;
@@ -72,6 +72,39 @@ namespace HBXFEMDef
 	{
 	}
 
+	void Engng::RegistEntity(int _process, BaseComponent* pEntity)
+	{
+		m_EntityMap.insert(std::make_pair(_process, pEntity));
+	}
+
+	EntityMap* Engng::GetEntity()
+	{
+		return &this->m_EntityMap;
+	}
+
+	// 	BaseComponent * ClassFactory::GetEntity(unsigned int _id) const
+	// 	{
+	// 		auto tmpid = std::make_pair(m_EntityMap.size(), "");
+	// 		EntityMap::const_iterator _iter = m_EntityMap.find(tmpid);
+	// 		
+	// 		return nullptr;
+	// 	}
+
+	BaseComponent * Engng::GetEntityFromID(int _id) const
+	{
+		EntityMap::const_iterator _iter = m_EntityMap.find(_id);
+
+		Assert( (_iter != m_EntityMap.end()) && "<EntityManager::GetEntityFromID>: invalid ID");
+//		_iter->second->ResetID(_iter->first + _iter->second->GetID());
+		return _iter->second;
+
+	}
+
+	void Engng::RemoveEntity(BaseComponent * pEntity)
+	{
+		m_EntityMap.erase(m_EntityMap.find(pEntity->GetID()));
+	}
+
 	void Engng::InstanceInit( BaseReader* _dr, const char *_outputFileName )
 	{
 		if (_postProcessor == this->GetProblemMode())
@@ -113,10 +146,10 @@ namespace HBXFEMDef
 			_metaStepList.emplace_back(i, this);
 		}
 		//¶ÁÈ¡ÓòÐÅÏ¢
-		BaseSlnRecord _tmpRecord = _dr->GetSlnInpair()->first;
+		BaseSlnRecord* _tmpRecord = _dr->GetSlnRecord();
 		for (size_t i = 0; i<this->nMetaStep; i++)
 		{			
-			_metaStepList[i].InitFrom(&_tmpRecord.m_vAtrriRecord[i]);
+			_metaStepList[i].InitFrom(&_tmpRecord->m_vAtrriRecord[i]);
 		}
 		return USER_STATUS_SUCCESS;
 	}
@@ -137,6 +170,7 @@ namespace HBXFEMDef
 	void Engng::postInit()
 	{
 		// to be continue;
+
 
 	}
 

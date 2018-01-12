@@ -132,7 +132,7 @@ namespace HBXFEMDef
 								vstrLine.push_back(*beg);
 								vPrecLine.push_back(lexical_cast<UserCalPrec>(*beg));
 							}
-							_tmpElem = std::make_unique<BaseElem>(vPrecLine.data(), vPrecLine.size());
+							_tmpElem = std::make_unique<BaseElem>(vPrecLine.data(), vPrecLine.size(), classType::ELEMT);
 							_tmpZone->_vElmt.push_back( std::move(*_tmpElem) );
 							getline(inFile, stringLine);
 						}

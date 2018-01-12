@@ -3,7 +3,7 @@
 
 namespace HBXFEMDef
 {
-	void BaseComponent::ResetID(unsigned int _id)
+	void BaseComponent::ResetID( int _id)
 	{
 		Assert((m_MyID >= _id));
 		m_MyID = _id;

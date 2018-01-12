@@ -10,14 +10,14 @@ namespace HBXFEMDef
 	private:
 	protected:
 	public:
-		BaseMaterial(int _n, Domain* _dm) {};
+		BaseMaterial(Domain* _dm, int _id) {};
 
 	};
 
 
 
-	template<typename _T> BaseMaterial* MaterialCreator() { return new T() };
-	template<typename _T> BaseMaterial* MaterialCreator(int _n, Domain *_dm) { return new T(_n, _dm) };
+	template<typename T> BaseMaterial* MaterialCreator() { return new T(); };
+	template<typename T> BaseMaterial* MaterialCreator(Domain *_dm, int _id) { return new T(_dm, _id); };
 
 
 }

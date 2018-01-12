@@ -3,7 +3,8 @@
 
 #include <HBXPreDef.h>
 #include "libCUFEM\BaseNode.h"
-#include "libCUFEM\BaseElement.h"
+#include <libCUFEM\BaseElement.h.>
+#include <libCUFEM\EngngMod.h>
 #include <FSM\StateMachine.h>
 
 namespace HBXFEMDef
@@ -32,7 +33,7 @@ namespace HBXFEMDef
 		size_t * _iNode;	//单元内节点编号，在继承后根据类别完成内存分配
 		size_t _iMat;	//单元材料索引
 
-		Tri2D3NElemt(int _id, Domain* _dm);
+		Tri2D3NElemt( Engng* _engng, Domain* _dm = nullptr, int _id = TRI2D3NELEMET);
 
 		Tri2D3NElemt(HBXDef::UserCalPrec* _begin, size_t _lgth);
 
@@ -47,10 +48,10 @@ namespace HBXFEMDef
 		StateMachine<Tri2D3NElemt>* GetFSM() const { return m_pStateMachine; };
 
 		//自身函数
+//		void ResetDomain(Domain* _dm);
 
 		//刚度矩阵计算
 		void StiffMatCal();
-
 		//质量矩阵计算
 		void MassMatCal();
 

@@ -1,12 +1,11 @@
 #pragma once
-#include <ExportDef.h>
-#include <map>
-#include <string>
+#include <HBXPreDef.h>
 
 
 
 namespace HBXFEMDef
 {
+
 	class Domain;
 	class BaseMaterial;
 	class BaseElem;
@@ -17,13 +16,10 @@ namespace HBXFEMDef
 	class BaseNumMethod;
 	class BaseComponent;
 
-
 	typedef void* (*AnyCreator)(int, Domain);
 
-	//新增的容器，用以实现消息机制，源自WestWorldWithMessage，
-	//http://blog.csdn.net/shanyongxu/article/details/48024271
-	typedef std::map<unsigned int, BaseComponent*> EntityMap;
-
+//	typedef bimap< tagged<int, struct id >, tagged< std::string, struct name >> EntityMap;
+//	typedef std::map< bimap<tagged<int, struct id >, tagged< std::string, struct name >>, BaseComponent*> EntityMap;
 
 #define REGIST_ENGNG(class) static bool __dummy_ ## class = GetClassFactory().RegistEngng( _EX_ ## class ## _Name, EngngCreator<class> );
 //#define REGIST_ENGNG(class) static bool = GetClassFactory.RegistEngng( _EX_ ## class ## _Name, EngngCreator<class> )
@@ -34,19 +30,18 @@ namespace HBXFEMDef
 	{
 	private:
 		//单元种类列表，从xml里读取
-		std::map<std::string, BaseElem*(*)(void)>	ElemList;
+		std::map<std::string, BaseElem*(*)(Engng* , Domain*, int _id)>	ElemList;
 		//材料种类列表，从xml里读取
-		std::map<std::string, BaseMaterial*(*)(int, Domain*)>	MaterialList;
+		std::map<std::string, BaseMaterial*(*)(Domain*, int)>	MaterialList;
 		//截面种类列表，从xml里读取
-		std::map<std::string, BaseSection*(*)(int, Domain*)>	SecList;
+		std::map<std::string, BaseSection*(*)(Domain*, int)>	SecList;
 		//边界种类列表
-		std::map<std::string, BaseBoundary*(*)(int, Domain*)>	LoadList;
+		std::map<std::string, BaseBoundary*(*)(Domain*, int)>	LoadList;
 		//引擎种类列表
-		std::map<std::string, Engng*(*)(int, Engng*)>	EngngList;
+		std::map<std::string, Engng*(*)(Engng*, int)>	EngngList;
 		//算法种类列表
-		std::map<std::string, BaseNumMethod*(*)(Domain*, Engng*)>	NumericalMethodList;
+		std::map<std::string, BaseNumMethod*(*)(Domain*, Engng*, int)>	NumericalMethodList;
 
-		EntityMap	m_EntityMap;
 	protected:
 	public:
 		ClassFactory();
@@ -54,45 +49,40 @@ namespace HBXFEMDef
 
 #pragma region 工厂函数
 		//创建一个新单元
-		BaseElem* CreateElem(const char* _name, int _n, Domain* _dm);
+		BaseElem* CreateElem(const char* _name, Engng* _eg, Domain* _dm, int _id);
 		//注册一个新的单元，传入名称和构造函数对象
-		bool RegistElem(const char* _name, BaseElem*(*creator)(void));
+		bool RegistElem(const char* _name, BaseElem*(*creator)(Engng*, Domain*, int));
 
 		//移除一个已有单元
-		bool RemoveElem(const char* _name, BaseElem*(*creator)(void));
+		bool RemoveElem(const char* _name);
 
 		//创建一个新材料
-		BaseMaterial* CreateMaterial(const char* _name, int _n, Domain* _dm);
+		BaseMaterial* CreateMaterial(const char* _name, Domain* _dm, int _id);
 		//注册一个新的材料，传入名称和构造函数对象
-		bool RegistMaterial(const char* _name, BaseMaterial*(*creator)(int, Domain*));
+		bool RegistMaterial(const char* _name, BaseMaterial *(*creator)(Domain*, int));
 
 		//创建一个新截面
-		BaseSection* CreateSection(const char* _name, int _n, Domain* _dm);
+		BaseSection* CreateSection(const char* _name, Domain* _dm, int _id);
 		//注册一个新的材料，传入名称和构造函数对象
-		bool RegistSection(const char* _name, BaseSection*(*creator)(int, Domain*));
+		bool RegistSection(const char* _name, BaseSection *(*creator)(Domain*, int));
 
 		//创建一个新边界
-		BaseBoundary* CreateLoad(const char* _name, int _n, Domain* _dm);
+		BaseBoundary* CreateLoad(const char* _name, Domain* _dm, int _id);
 		//注册一个新的边界条件
-		bool RegistLoad(const char* _name, BaseBoundary*(*creator)(int, Domain*));
+		bool RegistLoad(const char* _name, BaseBoundary *(*creator)(Domain*, int));
 
 		//创建一个新引擎
-		Engng* CreateEngng(const char* _name, int _n, Engng* _master);
+		Engng* CreateEngng(const char* _name, Engng * _master, int _id);
 		//注册一个新引擎，传入名称和构造函数对象
-		bool RegistEngng(const char* _name, Engng*(*creator)(int, Engng*));
+		bool RegistEngng(const char* _name, Engng*(*creator)(Engng*, int));
 
 		//创建一个新算法
-		BaseNumMethod* CreateNumMethod(const char* _name, Domain* _dm, Engng* _master);
+		BaseNumMethod* CreateNumMethod(const char * _name, Domain * _dm, Engng * _master, int _id);
 		//注册一个新引擎，传入名称和构造函数对象
-		bool RegistNumMethod(const char* _name, BaseNumMethod*(*creator)(Domain*, Engng*));
+		bool RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *, int));
 
 #pragma endregion 工厂函数
 
-		void RegistEntity(BaseComponent* pEntity);
-
-		BaseComponent* GetEntityFromID(unsigned int _id) const;
-
-		void RemoveEntity(BaseComponent* pEntity);
 	};
 
 	extern ClassFactory& classFactory;

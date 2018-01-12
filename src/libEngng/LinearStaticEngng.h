@@ -1,8 +1,8 @@
 #pragma once
 
 #include <hbxpredef.h>
-#include "libCUFEM\StructEngng.h"
-#include "libCUFEM\BaseNumMethod.h"
+#include <libEngng\StructEngng.h>
+#include <libCUFEM\BaseNumMethod.h>
 
 
 

@@ -2,9 +2,13 @@
 
 #include "FSM\State.h"
 #include <Package.h>
+#include <libCUFEM\Dispatch.h>
 
 namespace HBXFEMDef
 {
+	const double SEND_MSG_IMMEDIATELY = 0.0f;
+	const int	NO_ADDITIONAL_INFO = 0;
+
 	class Tri2D3NElemt;
 	class Package;
 

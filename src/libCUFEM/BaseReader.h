@@ -1,9 +1,9 @@
 #pragma once
 #include <HBXPreDef.h>
-
 #include "libCUFEM\ElementProp.h"
 #include "libCUFEM\domain.h"
-#include "libCUFEM\BaseSlnRecord.h"
+#include <libCUFEM\BaseSlnRecord.h>
+
 
 namespace HBXFEMDef
 {
@@ -20,7 +20,9 @@ namespace HBXFEMDef
 		boost::filesystem::path	m_path;	//源文件路径
 		std::string	m_descriptor;
 
-		_SlnPropInpair m_SlnInPair;	//使用pair是因为每个实例化对象的读取器只至多存储一个解决方案，即一个仿真实例
+		//使用pair是因为每个实例化对象的读取器只至多存储一个解决方案，即一个仿真实例
+//		std::map< BaseSlnRecord, std::pair< std::string, Domain* >, RecordLess > m_SlnInPair;
+		BaseSlnRecord* m_SlnRecord;
 	public:
 		typedef enum InputRecorType
 		{
@@ -34,7 +36,8 @@ namespace HBXFEMDef
 
 //		BaseReader(HBXFEMDef::_EltPtyInMap & _EltPty) = delete;
 //		BaseReader &operator = (const BaseReader& src) = delete;
-		virtual ~BaseReader() {};
+		virtual ~BaseReader() {
+		};
 
 		//设置索引路径，会根据当前索引路径下所有文件夹索引，搜索到的第一个当前文件读入
 		virtual bool SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath);
@@ -56,10 +59,10 @@ namespace HBXFEMDef
 		std::string GetDescriptor() const { return this->m_descriptor; };
 		
 		//获取整个map容器
-		_SlnPropInpair*	GetSlnInpair() { return &m_SlnInPair; };
+//		_SlnPropInpair*	GetSlnInpair() { return &this->m_SlnInPair; };
 
 		//获取解算属性
-		BaseSlnRecord*	GetSlnRecord() { return &m_SlnInPair.first; };
+		BaseSlnRecord*	GetSlnRecord();
 
 		//输出错误
 		//@_errstr:
@@ -67,14 +70,14 @@ namespace HBXFEMDef
 		//@kwd:
 		//@_file:
 		//@_line:
-		void export_error(const char* _errstr, const char* proc, const char* kwd, const char* _file, int _line);
+//		void export_error(const char* _errstr, const char* proc, const char* kwd, const char* _file, int _line);
 
 	};
 
 	//typedef BaseReader* (*Func)();
 
-	template<typename _T> BaseReader* ReaderCreator() { return new T() };
-	template<typename _T> BaseReader* ReaderCreator(int _n, Domain *_dm) {return new T(_n,_dm)};
+	template<typename T> BaseReader* ReaderCreator() { return (new T()); };
+	template<typename T> BaseReader* ReaderCreator(Domain *_dm, int _id) { return (new T(_dm, _id)); };
 
 
 	//extern "C" BOOST_SYMBOL_EXPORT BaseReader CBaseReader;

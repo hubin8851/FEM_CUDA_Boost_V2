@@ -2,6 +2,7 @@
 
 #include <ExportDef.h>
 #include <libCUFEM\solverEnum.h>
+#include <libCUFEM\BaseSlnRecord.h>
 
 namespace HBXFEMDef
 {

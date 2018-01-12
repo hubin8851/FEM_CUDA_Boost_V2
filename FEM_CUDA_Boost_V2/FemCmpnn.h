@@ -1,9 +1,8 @@
 #pragma once
 
 //当前文档的智能指针皆为boost下的，为统一接口
-#include <hbxdef\BoostPreDef.h>
-#include <hbxdef\HBXPreDef.h>
-#include <hbxdef\HbxDefMacro.h>
+
+#include <HBXPreDef.h>
 #include <hbxdef\HBXDefStruct.h>
 
 #include BOOST_TYPEOF_INCREMENT_REGISTRATION_GROUP()
@@ -34,7 +33,7 @@ namespace HBXFEMDef
 		//虚析构函数
 		virtual ~FemComponent() {};
 		//运行时类型检查,
-		virtual classType getClassID() const { return HBXDef::FemComponentClass };
+		virtual classType getClassID() const { return classType::FEMCOMPONENTCLASS };
 		//运行时类型检查, 可以是用typeid——可用boost完成...20171019
 		//virtual std::string getClassName() const { return ** };
 

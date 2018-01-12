@@ -1,9 +1,7 @@
 #pragma once
 
 #include <HBXPreDef.h>
-// #include <BoostPreDef.h>
-// #include <ExportDef.h>
-// #include <HbxDefMacro.h>
+#include <libCUFEM\EngngMod.h>
 
 namespace HBXFEMDef
 {
@@ -15,7 +13,7 @@ namespace HBXFEMDef
 	//根据虚函数派生出来的接口通过相关参数得到，算法返回算法状态枚举值。
 	//数据通过传参的方式传给该类。每一个特定的引擎实例负责将相应的线性方程部分传给相应的数值计算组件。
 	//这样可以将算法实现和数据剥离
-	class BOOST_SYMBOL_EXPORT BaseNumMethod
+	class BOOST_SYMBOL_EXPORT BaseNumMethod:BaseComponent
 	{
 	private:
 	protected:
@@ -24,7 +22,7 @@ namespace HBXFEMDef
 
 
 	public:
-		BaseNumMethod(Domain* _dm, Engng* _eng) :MyDomain(_dm), MyEngng(_eng) {};
+		BaseNumMethod(Domain* _dm, Engng* _eng, int _id = classType::NUMERICALMETHOD);
 
 		virtual ~BaseNumMethod();
 

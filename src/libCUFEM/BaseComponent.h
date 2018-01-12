@@ -22,15 +22,15 @@ namespace HBXFEMDef
 
 	public:
 		//该函数用来调用以保证ID设置的正确性。其保证传给算法的值大于或者等于ID，以保证map树状图内的值不冲突
-		void ResetID(unsigned int _id);
+		void ResetID(int _id);
 
-		unsigned int GetID() const { return m_MyID; };
+		int GetID() const { return m_MyID; };
 
 		virtual const char* GetClassName() const = 0;
 
-		BaseComponent(unsigned int _id)
+		BaseComponent( int _id = classType::FEMCOMPONENTCLASS):m_MyID(_id)
 		{
-			ResetID(_id);
+			
 		}
 		virtual ~BaseComponent() {};
 

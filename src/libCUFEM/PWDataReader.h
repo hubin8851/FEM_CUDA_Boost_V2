@@ -1,12 +1,11 @@
 #pragma once
 
 #include <HBXPreDef.h>
-#include <libCUFEM\BaseReader.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\AttriRecord.h>
-
+#include <libCUFEM\BaseReader.h>
 
 
 namespace HBXFEMDef

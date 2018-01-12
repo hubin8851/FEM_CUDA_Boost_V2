@@ -18,7 +18,7 @@ namespace HBXFEMDef
 		};
 	private:
 	public:
-		BaseBoundary(int _n, Domain* _dm) {};
+		BaseBoundary(Domain* _dm, int _id) {};
 
 	};
 
