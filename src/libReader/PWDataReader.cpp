@@ -1,5 +1,4 @@
-#include <helper_hbx.h>
-#include <CudaPreDef.h>
+#include <HBXPreDef.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\Set.h>
 #include <libCUFEM\BaseBoundary.h>
@@ -173,11 +172,6 @@ namespace HBXFEMDef
 	void PWDataReader::terminate()
 	{
 
-	}
-
-	const char * PWDataReader::GetSourceName() const
-	{
-		return nullptr;
 	}
 
 	std::size_t PWDataReader::size()

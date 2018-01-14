@@ -4,7 +4,8 @@
 #include "stdafx.h"
 #include "FEM_CUDA_Boost_V2.h"
 #include <HBXPreDef.h>
-#include <libCUFEM\PWDataReader.h>
+#include <libReader\PWDataReader.h>
+#include <libReader\InpDataReader.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -24,7 +25,7 @@ int main()
 	if (1)
 	{
 		using namespace HBXFEMDef;
-		BaseReader* xxx = InstancePWReader();
+		BaseReader* xxx = InstanceInpReader();
 		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
 		xxx->SetInputData();
 	}

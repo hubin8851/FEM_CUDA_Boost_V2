@@ -32,9 +32,9 @@
     <ClCompile Include="..\src\libCUFEM\domain.cpp" />
     <ClCompile Include="..\src\libCUFEM\EngngMod.cpp" />
     <ClCompile Include="..\src\libCUFEM\MetaStep.cpp" />
-    <ClCompile Include="..\src\libCUFEM\PWDataReader.cpp" />
     <ClCompile Include="..\src\libCUFEM\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp" />
     <ClCompile Include="libFEMWithCUDA.cpp" />
     <ClCompile Include="stdafx.cpp" />
@@ -61,12 +61,13 @@
     <ClInclude Include="..\src\libCUFEM\ElementProp.h" />
     <ClInclude Include="..\src\libCUFEM\EngngMod.h" />
     <ClInclude Include="..\src\libCUFEM\HBXFEMEngng.h" />
+    <ClInclude Include="..\src\libCUFEM\InputRecord.h" />
     <ClInclude Include="..\src\libCUFEM\MetaStep.h" />
-    <ClInclude Include="..\src\libCUFEM\PWDataReader.h" />
     <ClInclude Include="..\src\libCUFEM\Set.h" />
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MessageType.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\Package.h" />

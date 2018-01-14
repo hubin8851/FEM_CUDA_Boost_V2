@@ -5,7 +5,9 @@
 #include <libCUFEM\BaseElement.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\AttriRecord.h>
+#include <libCUFEM\BaseSlnRecord.h>
 #include <libCUFEM\BaseReader.h>
+#include <MyTimer.h>
 
 
 namespace HBXFEMDef
@@ -42,8 +44,6 @@ namespace HBXFEMDef
 
 		//强制断开所有数据连接
 		void terminate();
-
-		const char* GetSourceName() const;
 
 		//boost.dll输出的某一种方式中使用，弃坑。
 		static std::size_t size();

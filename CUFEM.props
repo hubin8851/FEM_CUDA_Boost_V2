@@ -5,6 +5,8 @@
   <PropertyGroup>
     <IncludePath>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ClCompile />
+  </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

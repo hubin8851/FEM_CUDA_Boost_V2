@@ -28,7 +28,7 @@ namespace HBXFEMDef
 		//this class is a singleton
 //		static MessageDispatcher* Instance();
 
-		MessageDispatcher(Engng* _Engng):MyEngng(_Engng) {}
+		MessageDispatcher(Engng* _Engng) :MyEngng(_Engng) {};
 
 		//send a message to another agent. Receiving agent is referenced by ID.
 		void DispatchMessage(double  delay,

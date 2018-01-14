@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\libCUFEM\PWDataReader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\libCUFEM\ClassFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -72,11 +69,11 @@
     <ClCompile Include="..\src\libCUFEM\Dispatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\libCUFEM\PWDataReader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -168,6 +165,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\InputRecord.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

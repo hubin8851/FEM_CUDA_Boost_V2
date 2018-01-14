@@ -13,7 +13,7 @@ namespace HBXFEMDef
 {
 	class FemComponent;
 	struct Node;
-	struct BaseElem;
+	class BaseElem;
 	class BaseMaterial;
 	class BaseSection;
 	class BaseBoundary;
@@ -32,7 +32,7 @@ namespace HBXFEMDef
 		//std::vector<FemComponent<_T>>* p_vFemCmpnn;
 		std::vector<Node>		_vNode;
 		//单元向量容器
-		std::vector<BaseElem> _vElmt;
+		std::vector<BaseElem > _vElmt;
 		//材料向量容器
 		std::vector<BaseMaterial> _vMat;
 		//界面向量容器

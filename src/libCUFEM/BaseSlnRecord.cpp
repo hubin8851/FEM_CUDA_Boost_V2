@@ -12,5 +12,11 @@ namespace HBXFEMDef
 	{
 	}
 
+	void HBXFEMDef::InsertNode(Domain*, int _id)
+	{
+		
+
+	}
+
 }
 

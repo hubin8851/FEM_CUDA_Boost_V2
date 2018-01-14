@@ -11,10 +11,9 @@ namespace HBXFEMDef
 	class AttriRecord;
 
 	//解算器相关记录。包括解算类型，元步信息，积分方法等。
+	//也包含待计算的数据
 	class BOOST_SYMBOL_EXPORT BaseSlnRecord
 	{
-	private:
-	protected:
 	public:
 		BaseSlnRecord();
 		virtual ~BaseSlnRecord();
@@ -22,8 +21,14 @@ namespace HBXFEMDef
 		//计算类型
 		std::string keyword;
 
+		bool PlaneStressOrStrain;
+
 		std::vector< AttriRecord > m_vAtrriRecord;
 
+		std::vector<Domain*>	m_DomainList;
+
+	public:
+		void InsertNode(Domain* _dm, int _id);
 	};
 
 	struct RecordLess

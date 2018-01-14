@@ -1,10 +1,12 @@
 #pragma once
-#include <boost/dll.hpp>
-#include <ExportDef.h>
-
+#include <HBXPreDef.h>
 
 namespace HBXFEMDef
 {
+
+#define _EX_Node_Name "node"
+#define _EX_Node_coords "coords"
+
 	//以xyz三个方向的坐标分别存储成向量形式，用以GPU的向量化计算
 	template<typename _T>
 	struct BOOST_SYMBOL_EXPORT _Nodes
@@ -25,9 +27,11 @@ namespace HBXFEMDef
 
 	struct BOOST_SYMBOL_EXPORT Node
 	{
-		double _X;
-		double _Y;
-		double _Z;
+		HBXDef::UserReadPrec _X;
+		HBXDef::UserReadPrec _Y;
+		HBXDef::UserReadPrec _Z;
+
+		Node(HBXDef::UserReadPrec _x, HBXDef::UserReadPrec _y, HBXDef::UserReadPrec _z) :_X(_x), _Y(_y), _Z(_z) {};
 	};
 
 }

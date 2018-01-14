@@ -3,12 +3,13 @@
 #include "libCUFEM\ElementProp.h"
 #include "libCUFEM\domain.h"
 #include <libCUFEM\BaseSlnRecord.h>
-
+#include <libCUFEM\InputRecord.h>
 
 namespace HBXFEMDef
 {
 	class Domain;
 	class BaseSlnRecord;
+	class InputRecord;
 
 	//所有读入数据类的基类，派生类可能包括XML解析器以及INP文件读取器，PW文件读取器。
 	//输入记录的判别主要依据记录类型和组件数量。该类依赖boost。
@@ -20,8 +21,15 @@ namespace HBXFEMDef
 		boost::filesystem::path	m_path;	//源文件路径
 		std::string	m_descriptor;
 
+		// 迭代器
+		std::list< std::unique_ptr< InputRecord > > ::iterator MyIter;
+		/// All record types will be appended to this list, no split in terms of InputRecordType is implemented yet.
+		std::list< std::unique_ptr< InputRecord > > RecordList;
+
+		std::map<std::string, std::unique_ptr<InputRecord> > RecordMap;
+
 		//使用pair是因为每个实例化对象的读取器只至多存储一个解决方案，即一个仿真实例
-//		std::map< BaseSlnRecord, std::pair< std::string, Domain* >, RecordLess > m_SlnInPair;
+		//std::map< BaseSlnRecord, std::list< std::string, Domain* >, RecordLess > m_SlnInPair;
 		BaseSlnRecord* m_SlnRecord;
 	public:
 		typedef enum InputRecorType
@@ -36,8 +44,7 @@ namespace HBXFEMDef
 
 //		BaseReader(HBXFEMDef::_EltPtyInMap & _EltPty) = delete;
 //		BaseReader &operator = (const BaseReader& src) = delete;
-		virtual ~BaseReader() {
-		};
+		virtual ~BaseReader() {};
 
 		//设置索引路径，会根据当前索引路径下所有文件夹索引，搜索到的第一个当前文件读入
 		virtual bool SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath);
@@ -49,10 +56,12 @@ namespace HBXFEMDef
 		virtual void terminate() = 0;
 		
 
+		void InsertInputRecord(InputRecord* _record) { this->RecordList.emplace_back(_record); };
+
 		//获取输入文件路径
-		std::string GetSourcePath() const { return this->m_path.string(); };
+		const char* GetSourcePath() const { return this->m_path.string().c_str(); };
 		//获取源文件名称
-		std::string GetSourceName() const { return this->m_SrcFileName; };
+		const char* GetSourceName() const { return this->m_SrcFileName.c_str(); };
 //		virtual const char* GetSourceName() const = 0;
 
 		//获的文件描述
