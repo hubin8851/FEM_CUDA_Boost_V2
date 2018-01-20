@@ -31,6 +31,7 @@ namespace HBXFEMDef
 		HBXDef::UserReadPrec _Y;
 		HBXDef::UserReadPrec _Z;
 
+		Node(){};
 		Node(HBXDef::UserReadPrec _x, HBXDef::UserReadPrec _y, HBXDef::UserReadPrec _z) :_X(_x), _Y(_y), _Z(_z) {};
 	};
 

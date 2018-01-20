@@ -22,11 +22,11 @@ namespace HBXFEMDef
 		std::string	m_descriptor;
 
 		// 迭代器
-		std::list< std::unique_ptr< InputRecord > > ::iterator MyIter;
+//		std::list< InputRecord* > ::iterator MyIter;
 		/// All record types will be appended to this list, no split in terms of InputRecordType is implemented yet.
-		std::list< std::unique_ptr< InputRecord > > RecordList;
+		std::list< InputRecord* > RecordList;
 
-		std::map<std::string, std::unique_ptr<InputRecord> > RecordMap;
+//		std::map<std::string, InputRecord* > RecordMap;
 
 		//使用pair是因为每个实例化对象的读取器只至多存储一个解决方案，即一个仿真实例
 		//std::map< BaseSlnRecord, std::list< std::string, Domain* >, RecordLess > m_SlnInPair;

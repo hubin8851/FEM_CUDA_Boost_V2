@@ -17,7 +17,7 @@ namespace HBXFEMDef
 	class AttriRecord;
 	class Domain;
 	class InputRecord;
-	struct BaseElem;
+	class BaseElem;
 
 	class DynamicInputRecord;
 

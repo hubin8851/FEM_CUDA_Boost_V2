@@ -8,11 +8,11 @@ namespace HBXFEMDef
 		keyword = "LinearStaticProblem";
 	}
 
-	HBXFEMDef::BaseSlnRecord::~BaseSlnRecord()
+	BaseSlnRecord::~BaseSlnRecord()
 	{
 	}
 
-	void HBXFEMDef::InsertNode(Domain*, int _id)
+	void BaseSlnRecord::InsertNode(Domain*, int _id)
 	{
 		
 

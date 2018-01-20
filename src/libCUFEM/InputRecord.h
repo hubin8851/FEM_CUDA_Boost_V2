@@ -10,13 +10,13 @@ namespace HBXFEMDef
 	{
 	public:
 		//默认构造函数
-		InputRecord();
+		InputRecord() {};
 		//拷贝构造函数
-		InputRecord(const InputRecord&);
+		InputRecord(const InputRecord&) {};
 		//
-		virtual ~InputRecord();
+		virtual ~InputRecord() {};
 
-		InputRecord& operator = (const InputRecord&);
+		InputRecord& operator = (const InputRecord&) { return *this; };
 
 		virtual InputRecord* GiveCopy() = 0;
 

@@ -1,17 +1,17 @@
 #pragma once
+#pragma warning(disable : 4786 )
+#include <vector>
+#include <string>
+#include <map>
 #include <HBXPreDef.h>
-#include <libReader\InputRecord.h>
+#include <libCUFEM\InputRecord.h>
 #include <libCUFEM\BaseComponent.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h>
 
 namespace HBXFEMDef
 {
-	class BaseComponent;
-	class Domain;
-	class Node;
-
-
+	using namespace std;
 
 	//该类的主要作用是添加新的记录集。输入记录可以经由任意方法实现，
 	//但最终由该类统一格式。
@@ -26,10 +26,10 @@ namespace HBXFEMDef
 		std::map< std::string, int > intRecord;
 		std::map< std::string, double > doubleRecord;
 		std::map< std::string, bool > boolRecord;
-		std::map< std::string, std::string > stringRecord;
-		std::map< std::string, std::vector<int> > intArrayRecord;
-		std::map< std::string, Node > NodeArrayRecord;
-		std::map< std::string, std::vector< std::string > > stringListRecord;
+ 		std::map< std::string, std::string > stringRecord;
+ 		std::map< std::string, std::vector<int> > intArrayRecord;
+ 		std::map< std::string, std::vector<HBXFEMDef::Node> > NodeArrayRecord;
+ 		std::map< std::string, std::vector< std::string > > stringListRecord;
 
 	public:
 		//默认构造函数
