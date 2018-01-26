@@ -50,9 +50,9 @@ namespace HBXFEMDef
 
 		virtual void SetField(double &_input, InputFieldType _id);
 
-		virtual void SetField(Node _n, InputFieldType _id);
+		virtual void SetField(Node& _n, InputFieldType _id);
 
-		virtual void SetField(std::vector<int> _item, InputFieldType _id);
+		virtual void SetField(std::vector<int>& _item, InputFieldType _id);
 
 		virtual InputFileResult_t GiveField(double &answer, InputFieldType _id);
 

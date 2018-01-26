@@ -72,6 +72,9 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h">
@@ -171,6 +174,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\libCUFEM\InputRecord.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

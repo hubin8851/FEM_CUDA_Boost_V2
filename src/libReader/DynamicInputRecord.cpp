@@ -40,13 +40,13 @@ namespace HBXFEMDef
 		this->doubleRecord[_id] = _input;
 	}
 
-	void DynamicInputRecord::SetField(Node _n, InputFieldType _id)
+	void DynamicInputRecord::SetField(Node& _n, InputFieldType _id)
 	{
 //		this->NodeArrayRecord[_id] = std::move(_n);
 
 	}
 
-	void DynamicInputRecord::SetField(std::vector<int> _item, InputFieldType _id)
+	void DynamicInputRecord::SetField(std::vector<int>& _item, InputFieldType _id)
 	{
 //		this->intArrayRecord[_id].emplace_back(_item);
 	}
@@ -66,13 +66,13 @@ namespace HBXFEMDef
 	DynamicInputRecord * CreateNodeIR(int _id, InputFieldType nodeType, Node _n)
 	{
 		DynamicInputRecord *result = new DynamicInputRecord(nodeType, _id);
-		result->SetField(std::move(_n), _EX_Node_coords);
+		result->SetField(_n, _EX_Node_coords);
 		return result;
 	}
 	DynamicInputRecord * CreateElementIR(int _id, InputFieldType elementType, std::vector<int> nodes, int cs)
 	{
 		DynamicInputRecord *result = new DynamicInputRecord(elementType, _id);
-		result->SetField(std::move(nodes), _EX_Element_nodes);
+		result->SetField(nodes, _EX_Element_nodes);
 		if (0 != cs)
 		{
 			result->SetField(cs, _EX_Element_crosssect);

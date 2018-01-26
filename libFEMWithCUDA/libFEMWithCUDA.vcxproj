@@ -34,6 +34,7 @@
     <ClCompile Include="..\src\libCUFEM\MetaStep.cpp" />
     <ClCompile Include="..\src\libCUFEM\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp" />
     <ClCompile Include="libFEMWithCUDA.cpp" />
@@ -67,6 +68,7 @@
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MessageType.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
