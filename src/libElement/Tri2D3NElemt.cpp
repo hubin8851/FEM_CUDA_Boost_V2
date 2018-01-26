@@ -1,5 +1,5 @@
-#include "ElementLib\Tri2D3NElemt.h"
-#include "ElementLib\Tri2D3NElemtOwnedStates.h"
+#include <libElement\Tri2D3NElemt.h>
+#include <libElement\Tri2D3NElemtOwnedStates.h>
 
 namespace HBXFEMDef
 {
@@ -12,9 +12,6 @@ namespace HBXFEMDef
 		m_pStateMachine->SetCurrentState(Tri2D3NReadyToCal::Instance());
 	}
 
-	Tri2D3NElemt::Tri2D3NElemt(HBXDef::UserCalPrec * _begin, size_t _lgth):BaseElem(_begin, _lgth)
-	{
-	}
 
 	Tri2D3NElemt::~Tri2D3NElemt()
 	{

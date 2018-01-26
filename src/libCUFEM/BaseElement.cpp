@@ -15,11 +15,11 @@ namespace HBXFEMDef
 		MyEngng->RegistEntity(_id, this);
 	}
 
-	BaseElem::BaseElem(HBXDef::UserCalPrec * _begin, size_t _lgth, int _id):BaseComponent(_id)
-	{
-		_iNode = new size_t(_lgth);
-		memcpy_s(_iNode, _lgth, _begin, _lgth);
-	}
+// 	BaseElem::BaseElem(HBXDef::UserCalPrec * _begin, size_t _lgth, int _id):BaseComponent(_id)
+// 	{
+// 		_iNode = new size_t(_lgth);
+// 		memcpy_s(_iNode, _lgth, _begin, _lgth);
+// 	}
 
 	BaseElem::~BaseElem()
 	{

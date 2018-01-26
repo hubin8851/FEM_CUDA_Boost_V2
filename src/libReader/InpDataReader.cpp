@@ -9,7 +9,6 @@ namespace HBXFEMDef
 	InputFileResult InpDataReader::ReadInpFile()
 	{
 		using namespace std;
-		using namespace boost;
 		using namespace HBXDef;
 		using namespace HBXFEMDef;
 		int		_Dim;
@@ -23,7 +22,9 @@ namespace HBXFEMDef
 		int	 marknumber;			//数据类型的判定
 		int _markloop;				//循环标记，可能不会用到
 		HBXDef::ControlMark_t ipControlMark;//控制流标记
-		std::string _tmpName;		//临时变量名，记录名称
+		std::string _tmpName, _SetName, _SectionName, _MatName;
+		std::string _Elset, _Nset;	//单元集合，节点集合
+		std::string _InstanceName, _partName;	//临时变量名，记录名称
 		boost::filesystem::path _tmppath;		//路径临时变量
 		std::regex	RegRule2("\\w+[=]?\\w+");
 		std::regex	IfNumRule("((\\s*\\d+(\.?)\\d*)(\,)?)*$");	//在读取pw文件时，所需的正则表达式
@@ -41,9 +42,9 @@ namespace HBXFEMDef
 		}
 
 		//可能出现的某几种类型的指针
-		Domain*	_tmpZone;
+		std::unique_ptr< Domain >	_tmpZone;
 		std::vector<Node>	_tmpVNode;
-		std::vector<vector<HBXDef::UserReadPrec>> _tmpVElem;
+//		std::vector<vector<HBXDef::UserReadPrec>> _tmpVElem;
 		BaseMaterial* _pMaterial;
 		BaseSection* _pSection;
 		BaseBoundary* _pBoundary;
@@ -69,6 +70,7 @@ namespace HBXFEMDef
 				{
 					vFloat.emplace_back(std::move( std::stoi(it->str()) ) );
 				}
+				marknumber = _markloop;
 				goto ReadDigtal;
 			}
 			else
@@ -93,33 +95,80 @@ namespace HBXFEMDef
 					if (boost::icontains("name=", _str))
 					{
 						boost::ierase_first(_str, "name=");
+						_InstanceName = _str->c_str();
+						_tmpZone = std::make_unique<Domain>(_InstanceName);
+					}
+					else if (boost::icontains("part=", _str))
+					{
+						boost::ierase_first(_str, "part=");
+						_partName = _str->c_str();
 					}
 				}
 				continue;
  			}
-			// 			else if (boost::iequals("Node", vstrLine[0]))//判断是否进入节点段
-			// 			{
-			// 				_markloop = 10;
-			// 				ipControlMark = NODE;
-			// //				_tmpVNode = std::make_unique<std::vector<Node>>();
-			// 			}
-			// 			else if (boost::iequals("Element", vstrLine[0]) && icontains(stringLine, "type="))//判断是否进入单元段
-			// 			{
-			// 				boost::ierase_first(vstrLine[1], "type=");
-			// 				_tmpName = vstrLine[1];	//获的单元的名称
-			// 				_markloop = 20;
-			// 				ipControlMark = ELEMENT;
-			// //				_tmpVElem = std::make_unique<std::vector<vector<HBXDef::UserReadPrec>>>();
-			// 			}
-			// 
+ 			else if (boost::iequals("Node", vstrLine[0]))//判断是否进入节点段
+ 			{
+ 				_markloop = 10;
+ 				ipControlMark = NODE;
+ //				_tmpVNode = std::make_unique<std::vector<Node>>();
+ 			}
+ 			else if (boost::iequals("Element", vstrLine[0]) && boost::icontains(stringLine, "type="))//判断是否进入单元段
+ 			{
+ 				boost::ierase_first(vstrLine[1], "type=");
+ 				_tmpName = vstrLine[1];	//获的单元的名称
+ 				_markloop = 20;
+ 				ipControlMark = ELEMENT;
+ //				_tmpVElem = std::make_unique<std::vector<vector<HBXDef::UserReadPrec>>>();
+				continue;
+ 			}
+			//读取截面相关名称、所用集合
+			else if (boost::iequals("section:", vstrLine[0]))
+			{
+				_SectionName = vstrLine[1];
+				_markloop = 0;
+				ipControlMark = SECTION;
+			}
+			else if (ipControlMark == SECTION && boost::iequals("Section", vstrLine[1]))
+			{
+				boost::ierase_first(vstrLine[2], "elset=");
+				_Elset = vstrLine[2];
+				boost::ierase_first(vstrLine[3], "material=");
+				_MatName = vstrLine[3];
+				_markloop = 42;
+			}
+			//读取材料相关名称、所用集合
+			else if (boost::iequals("Material", vstrLine[0]))
+			{
+				boost::ierase_first(vstrLine[1], "name=");
+				_MatName = vstrLine[1];
+				_markloop = 0;
+				ipControlMark = MATERIAL;
+			}
+			else if (ipControlMark == MATERIAL && boost::iequals("Density", vstrLine[0])) _markloop = ControlMark_t::DENSITY;
+			else if (ipControlMark == MATERIAL && boost::iequals("Elastic", vstrLine[0])) _markloop = ControlMark_t::ELASTIC;
+			//读取集合相关名称
+			else if (boost::iequals("Elset", vstrLine[0]))
+			{
+				boost::ierase_first(vstrLine[1], "elset=");
+				_SetName = vstrLine[1];
+				_markloop = 51;
+				ipControlMark = ELSET;
+			}
+			else if (boost::iequals("Nset", vstrLine[0]))
+			{
+				boost::ierase_first(vstrLine[1], "nset=");
+				_SetName = vstrLine[1];
+				_markloop = 52;
+				ipControlMark = NSET;
+			}
  			//华丽的分隔符，goto位置。。。
  			ReadDigtal:
  			switch (marknumber)
  			{
  			case ControlMark_t::NODE:
- // 				_tmpVNode->emplace_back(Node(lexical_cast<HBXDef::UserReadPrec>(vstrLine[0]), 
- // 									lexical_cast<HBXDef::UserReadPrec>(vstrLine[1]),
- // 									lexical_cast<HBXDef::UserReadPrec>(vstrLine[2])) );
+  				_tmpVNode.emplace_back(Node(stof(vstrLine[0]), 
+										stof(vstrLine[1]),
+										stof(vstrLine[2])) );
  				break;
  			case ControlMark_t::ELEMENT:
  
@@ -127,9 +176,8 @@ namespace HBXFEMDef
  			default:
  				break;
  			}
- 		}
 		}
-		return InputFileResult::IRRT_BAD_FORMAT;
+		return InputFileResult::IRRT_OK;
 	}
 
 	InpDataReader::InpDataReader()

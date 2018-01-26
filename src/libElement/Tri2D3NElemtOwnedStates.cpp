@@ -1,5 +1,5 @@
 #include "Tri2D3NElemtOwnedStates.h"
-#include <ElementLib\Tri2D3NElemt.h>
+#include <libElement\Tri2D3NElemt.h>
 #include <libCUFEM\Dispatch.h>
 
 namespace HBXFEMDef

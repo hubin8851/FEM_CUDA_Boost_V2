@@ -48,7 +48,7 @@ namespace HBXFEMDef
 		//单元类所在的域必须有，数据可以没有，单元类型有默认值
 		BaseElem(Engng* _engng, Domain* _dm, int _id = classType::ELEMT);
 
-		BaseElem(HBXDef::UserCalPrec* _begin, size_t _lgth, int _id);
+//		BaseElem(HBXDef::UserCalPrec* _begin, size_t _lgth, int _id);
 
 
 		virtual ~BaseElem();
@@ -76,5 +76,6 @@ namespace HBXFEMDef
 		bool isNeedFresh() const { return m_bFresh; };
 	};
 
-
+	//用以在classfactory中注册
+	template<typename T> BaseElem* ElemtCreator(Engng * _master, Domain* _dm, int _id) { return (new T(_master, _dm, _id)); }
 }
