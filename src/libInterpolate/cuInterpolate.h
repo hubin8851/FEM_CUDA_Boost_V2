@@ -12,7 +12,7 @@ private:
 extern "C" {
 #endif
 
-	void cuInterpolate( HBXDef::_AEROTABLE& tableIn, int _streamNum,  );
+	void cuInterpolate();
 
 
 #ifdef __cplusplus

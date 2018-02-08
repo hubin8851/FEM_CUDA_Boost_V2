@@ -60,6 +60,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_debug_x64.props" />
+    <Import Project="..\CUFEM.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -156,11 +157,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libInterpolate\cuCElastic.cu" />
+    <CudaCompile Include="..\src\libInterpolate\CuInterpolation.cu" />
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libInterpolate\BaseLag.h" />
-    <ClInclude Include="..\src\libInterpolate\ElasticMacro.h" />
+    <ClInclude Include="..\src\libInterpolate\CuInterpolation.h" />
+    <ClInclude Include="..\src\libInterpolate\ElasticStruct.h" />
     <ClInclude Include="..\src\libInterpolate\cuCElastic.h" />
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\AeroTable.h" />
@@ -168,6 +171,9 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\libInterpolate\BaseLag.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\libInterpolate\cuInterpolate.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

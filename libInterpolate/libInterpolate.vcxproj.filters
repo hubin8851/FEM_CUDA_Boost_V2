@@ -15,6 +15,9 @@
     <CudaCompile Include="..\src\libInterpolate\cuCElastic.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
+    <CudaCompile Include="..\src\libInterpolate\CuInterpolation.cu">
+      <Filter>源文件</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\AeroTable.h">
@@ -29,10 +32,13 @@
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\ElasticMacro.h">
+    <ClInclude Include="..\src\libInterpolate\BaseLag.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\BaseLag.h">
+    <ClInclude Include="..\src\libInterpolate\ElasticStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\CuInterpolation.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -40,5 +46,10 @@
     <None Include="..\src\libInterpolate\BaseLag.inl">
       <Filter>源文件</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\libInterpolate\cuInterpolate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
