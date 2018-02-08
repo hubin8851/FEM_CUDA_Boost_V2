@@ -155,11 +155,19 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <CudaCompile Include="..\src\libInterpolate\cuCElastic.cu" />
     <CudaCompile Include="kernel.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\libInterpolate\BaseLag.h" />
+    <ClInclude Include="..\src\libInterpolate\ElasticMacro.h" />
+    <ClInclude Include="..\src\libInterpolate\cuCElastic.h" />
+    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\AeroTable.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\libInterpolate\BaseLag.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
