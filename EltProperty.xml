@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<root>
+	<ElementObj name="CPS3" Type="200003" classname="_Tri3D3NElmt"
+		NodeNum="3" StressOrStrain="Stress" />
+	<ElementObj name="CPE3" Type="201003"
+		NodeNum="3" StressOrStrain="Strain"	/>
+	<ElementObj name="S3" Type="200003" classname="_Tri3D3NShell"
+		NodeNum="3" StressOrStrain="INF"	/>
+	<ElementObj name="S4R" Type="200004" classname="_S4RElemt"
+		NodeNum="4" StressOrStrain="INF"	/>
+	<ElementObj name="C3D6" Type="300006"
+		NodeNum="6" StressOrStrain="INF"	/>
+	<ElementObj name="C3D8R" Type="300008"
+		NodeNum="8" StressOrStrain="INF"	/>
+</root>

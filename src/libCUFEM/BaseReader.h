@@ -1,6 +1,6 @@
 #pragma once
 #include <HBXPreDef.h>
-#include "libCUFEM\ElementProp.h"
+#include "libCUFEM\ElemtProp.h"
 #include "libCUFEM\domain.h"
 #include <libCUFEM\BaseSlnRecord.h>
 #include <libCUFEM\InputRecord.h>

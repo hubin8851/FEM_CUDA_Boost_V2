@@ -8,6 +8,8 @@
 #include <libCUFEM\BaseReader.h>
 #include <libCUFEM\Set.h>
 #include <libCUFEM\InputRecord.h>
+#include <libReader\EltPropReader.h>
+
 
 #pragma warning(disable: 4996)
 
@@ -27,11 +29,14 @@ namespace HBXFEMDef
 	private:
 		typedef InpDataReader _SameClass;
 
+		HBXFEMDef::EltPropReader	m_EltProp;
+
 	protected:
 		InputFileResult ReadInpFile();	//读取pointwise到处的点集合，为VTX做准备
 	public:
 		//默认构造函数
-		InpDataReader();
+		InpDataReader(const std::string _SourceFile = "", 
+						boost::filesystem::path _savepath = "F:\\data from HBX_phd\\vs2015");
 		//拷贝构造函数
 		//		PWDataReader(const _SameClass&) {};
 		~InpDataReader() {};

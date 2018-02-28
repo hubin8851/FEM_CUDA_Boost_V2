@@ -4,7 +4,7 @@ namespace HBXFEMDef
 {
 	BaseReader::BaseReader()
 	{
-		std::cout << "create BaseReader!" << std::endl;
+//		std::cout << "create BaseReader!" << std::endl; //验证多态性用
 		m_SlnRecord = new BaseSlnRecord;
 	}
 
