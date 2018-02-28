@@ -37,6 +37,10 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+2/27/2018 5:33:33 PM 
+弃用boost的ptree,在inp读取类中完成修改；
+BaseRead的接口改为仅有一个path，通过path的自带api完成各种文本操作；
+
 1/26/2018 10:34:58 PM    
 本程序的第一个log。thoughtworks已挂=。=，但好歹学了个markdownpad对日志文件的简单编辑。   
 修改了数据接口，采用了标准的正则表达式，在某些编译器上可能会不支持。
