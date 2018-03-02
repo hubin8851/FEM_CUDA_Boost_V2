@@ -105,7 +105,7 @@ namespace HBXFEMDef
 		m_EntityMap.erase(m_EntityMap.find(pEntity->GetID()));
 	}
 
-	void Engng::InstanceInit( BaseReader* _dr, const char *_outputFileName )
+	void Engng::InstanceSelf( BaseReader* _dr, const char *_outputFileName )
 	{
 		if (_postProcessor == this->GetProblemMode())
 		{
@@ -134,6 +134,11 @@ namespace HBXFEMDef
 		{
 			this->InstanceMetaStep(_dr);
 		}
+	}
+
+	void Engng::InstanceDomains()
+	{
+
 	}
 
 	UserStatusError_t Engng::InstanceMetaStep( BaseReader* _dr )

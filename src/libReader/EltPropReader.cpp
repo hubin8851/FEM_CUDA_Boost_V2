@@ -24,7 +24,7 @@ namespace HBXFEMDef
 		size_t	_iCount = 0;	//单元总和计数器
 		ptree	pt;
 		ptree	root;
-		HBXFEMDef::ElemProperty	_tmpElPro;	//单元属性结构体临时变量
+		HBXFEMDef::ElemtProperty	_tmpElPro;	//单元属性结构体临时变量
 		string	_ElemtName;//单元名称，临时变量
 
 		boost::optional<boost::filesystem::path> r = HBXDef::find_file(m_path, m_SrcFileName);
@@ -74,7 +74,7 @@ namespace HBXFEMDef
 				}
 				if (iequals(_tmpstr, "nodenum"))//获取单元节点数
 				{
-					_tmpElPro._NNum = lexical_cast<unsigned char>(pAttr->Value());
+					_tmpElPro._NNum = lexical_cast<unsigned short>(pAttr->Value());
 				}
 		
 				pAttr = pAttr->Next();

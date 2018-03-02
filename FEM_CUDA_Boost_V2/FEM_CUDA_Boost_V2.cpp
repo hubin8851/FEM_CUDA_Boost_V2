@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "FEM_CUDA_Boost_V2.h"
 #include <HBXPreDef.h>
+#include <libCUFEM\util.h>
 #include <libReader\PWDataReader.h>
 #include <libReader\InpDataReader.h>
 #include <regex>
@@ -23,11 +24,12 @@ int main()
 {
     int nRetCode = 0;
 
-	if (1)
+	if (0)
 	{
 		std::string  stringLine = "      1,   31054.8535,  -2140.90234,   8901.31738";
-		std::string  stringLine2 = " -2140.90234, 31054.8535";
+		std::string  stringLine2 = "*Part, name=spaceshuttle2005";
 		std::regex	IfNumRule("((\\s+[-]\\d+(\\.\\d+)?)[\,])+");	//在读取pw文件时，所需的正则表达式
+		std::regex  IfNotNum("\\*+.*");	//正则表达式，以*起始的字符串
 		std::regex	NumRule("\\s*\\d+((\.\\d*)?)");
 		std::regex  Rule3("\\s*\\d+(\\.\\d+)?(,|\\s)?");//匹配浮点数
 		std::smatch  o;
@@ -37,9 +39,9 @@ int main()
 		std::vector<float> vFloat;
 		std::sregex_iterator end_iter;
 
-		bool _rlt = std::regex_match(stringLine2, IfNumRule);
+		bool _rlt = std::regex_match(stringLine2, IfNotNum);
 
-		while (regex_search(stringLine2, o, Rule3))
+		if (!std::regex_match(stringLine, IfNotNum))
 		{
 			auto begin_iter = std::sregex_iterator(stringLine.begin(), stringLine.end(), Rule3);
 			for (auto it = begin_iter; it != end_iter; it++)
@@ -54,8 +56,11 @@ int main()
 	{
 		using namespace HBXFEMDef;
 		BaseReader* xxx = InstanceInpReader();
-		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
+//		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
+		xxx->SetSourceFilePath("beam.inp", "D:\\AbaqusTemp"); 
 		xxx->SetInputData();
+
+		HBXFEMDef::Engng* em = HBXFEMDef::InstanceProblem(xxx, problemMode_t::_processor, 0);
 	}
 
 

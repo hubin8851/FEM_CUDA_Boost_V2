@@ -1,5 +1,6 @@
 #include <HBXPreDef.h>
 #include "InpDataReader.h"
+#include <HBXFEMDefStruct.h>
 #include <libCUFEM\MatArray.h>
 #include <libCUFEM\ClassFactory.h>
 #include <libReader\DynamicInputRecord.h>
@@ -12,6 +13,8 @@ namespace HBXFEMDef
 		using namespace std;
 		using namespace HBXDef;
 //		using namespace HBXFEMDef;
+
+		double	rdens = 0.0;//重度
 		int		_Dim;
 		unsigned short _stressFlag;
 		unsigned short _nodenum;
@@ -23,13 +26,13 @@ namespace HBXFEMDef
 		int	 marknumber;			//数据类型的判定
 		int _markloop;				//循环标记，可能不会用到
 		HBXDef::ControlMark_t ipControlMark;//控制流标记
-		std::string _tmpName, _SetName, _SectionName, _MatName;
+		std::string _ElemtName, _SetName, _SectionName, _MatName;
 		std::string _Elset, _Nset;	//单元集合，节点集合
 		std::string _InstanceName, _partName;	//临时变量名，记录名称
 		boost::filesystem::path _tmppath;		//路径临时变量
 		std::regex	RegRule2("\\w+[=]?\\w+");
 		std::regex	IfNumRule("((\\s*\\d+(\\.\\d+)?)(\,|$)?)*");	//在读取pw文件时，所需的正则表达式
-//		std::regex	NumRule("\\s*\\d+((\.\\d*)?)");
+		std::regex  IfNotNum("\\*+.*");	//正则表达式，以*起始的字符串
 		std::regex  NumRule("\\s*\\d+(\\.\\d+)?(,|\\s)?");//匹配浮点数
 		std::smatch	what;
 		std::sregex_iterator end_iter;
@@ -47,10 +50,10 @@ namespace HBXFEMDef
 		std::unique_ptr< Domain >	_tmpZone;
 		std::vector<Node>	_tmpVNode;
 		std::unique_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> > _tmpElem;
-		HBXFEMDef::BaseMaterial* _pMaterial;
-		HBXFEMDef::BaseSection* _pSection;
+		std::unique_ptr<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> _pMaterial;
+		std::unique_ptr<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> _pSection;
 		HBXFEMDef::BaseBoundary* _pBoundary;
-		HBXFEMDef::Set*	_tmpSet;
+		HBXFEMDef::Set*	_pSet;
 
 		ipControlMark = HBXDef::RESET;
 		while (!inFile.eof())
@@ -61,18 +64,21 @@ namespace HBXFEMDef
 			typedef boost::tokenizer<boost::char_separator<char> >  CustonTokenizer;
 			CustonTokenizer tok(stringLine, sep);
 
-			if ( std::regex_match(stringLine, IfNumRule) )	//判断，若为数字直接swith
+			if (!std::regex_match(stringLine, IfNotNum))	//判断，若为数字直接swith
 			{
 				//sregex_iterator用法参见
 				// 
 				/* http://blog.csdn.net/caroline_wendy/article/details/17319899 */
 				/* http://bbs.csdn.net/topics/392018932 */
 				vFloat.clear();
-				auto begin_iter = std::sregex_iterator(stringLine.begin(), stringLine.end(), NumRule);
-				std::sregex_iterator end_iter;
-				for (auto it=begin_iter; it!=end_iter; it++)
+				boost::split( vstrLine, stringLine, boost::is_any_of(",") );
+// 				for (CustonTokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg)
+// 				{
+// 					vFloat.push_back( boost::lexical_cast<HBXFEMDef::UserReadPrec>(*beg) );
+// 				}
+				for (auto i = 0; i < vstrLine.size(); i++)
 				{
-					vFloat.emplace_back(std::move( std::stof(it->str()) ) );
+					vFloat.emplace_back( boost::lexical_cast<HBXFEMDef::UserReadPrec>(vstrLine[i]) );
 				}
 				marknumber = _markloop;
 				goto ReadDigtal;
@@ -85,7 +91,12 @@ namespace HBXFEMDef
 				{
 					vstrLine.push_back(*beg);
 				}
- 			}		
+				goto ReadData;
+			}
+		
+
+			//华丽的分隔符，goto位置。。。
+			ReadData:
 			marknumber = 0;
 			if (vstrLine.empty() || "" == vstrLine[0])
 			{
@@ -116,10 +127,9 @@ namespace HBXFEMDef
  			else if (boost::iequals( vstrLine[0], "Element" ) && boost::icontains( stringLine, "type=" ))//判断是否进入单元段
  			{
  				boost::ierase_first( vstrLine[1], "type=" );
- 				_tmpName = vstrLine[1];	//获的单元的名称并索引该单元的相关属性
-				auto _iter = m_EltProp.GetPtyMap()->find(_tmpName);
-				_tmpElem = std::make_unique< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> >(_iter->second._NNum);
-
+				_ElemtName = vstrLine[1];	//获的单元的名称并索引该单元的相关属性
+				auto _iter = m_EltProp.GetPtyMap()->find(_ElemtName);
+				_tmpElem = std::make_unique< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> >((unsigned short)(_iter->second._NNum));
 
  				_markloop = 20;
  				ipControlMark = ELEMENT;
@@ -131,14 +141,19 @@ namespace HBXFEMDef
 				_SectionName = vstrLine[1];
 				_markloop = 0;
 				ipControlMark = SECTION;
+				continue;
 			}
 			else if (ipControlMark == SECTION && boost::iequals("Section", vstrLine[1]))
 			{
+				for ( auto _iter = vstrLine.begin(); _iter!=vstrLine.end();_iter++ )
+				{
+				
+				}
 				boost::ierase_first(vstrLine[2], "elset=");
 				_Elset = vstrLine[2];
 				boost::ierase_first(vstrLine[3], "material=");
 				_MatName = vstrLine[3];
-				_markloop = 42;
+				_markloop = SECTION;
 			}
 			//读取材料相关名称、所用集合
 			else if (boost::iequals("Material", vstrLine[0]))
@@ -147,6 +162,7 @@ namespace HBXFEMDef
 				_MatName = vstrLine[1];
 				_markloop = 0;
 				ipControlMark = MATERIAL;
+				continue;
 			}
 			else if (ipControlMark == MATERIAL && boost::iequals("Density", vstrLine[0])) _markloop = ControlMark_t::DENSITY;
 			else if (ipControlMark == MATERIAL && boost::iequals("Elastic", vstrLine[0])) _markloop = ControlMark_t::ELASTIC;
@@ -170,15 +186,41 @@ namespace HBXFEMDef
  			switch (marknumber)
  			{
  			case ControlMark_t::NODE:
-  				_tmpVNode.emplace_back(Node(stof(vstrLine[0]), 
-										stof(vstrLine[1]),
-										stof(vstrLine[2])) );
+				if (3 == vFloat.size())//节点的坐标为二维坐标
+				{
+					vFloat.emplace_back(0);//Z轴坐标置零
+				}
+  				_tmpVNode.emplace_back( Node(vFloat[1],
+										vFloat[2],
+										vFloat[3]) );
  				break;
  			case ControlMark_t::ELEMENT:
+				vFloat.erase(vFloat.begin());
 				_tmpElem->emplace_back(vFloat);
  				break;
 			case ControlMark_t::ZONE:
+			case ControlMark_t::NSET:
+				_pSet = new HBXFEMDef::Set( (unsigned int*)&vFloat[0], vFloat.size(), false);
 
+			case ControlMark_t::ELSET:
+				_pSet = new HBXFEMDef::Set((unsigned int*)&vFloat[0], vFloat.size(), true);
+
+			case ControlMark_t::SECTION:
+				_pSection = std::make_unique<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>>( _SectionName.c_str(), 
+								_Elset.c_str(), 
+								_MatName.c_str(),
+								vFloat[0],
+								vFloat[1]);
+
+			case ControlMark_t::DENSITY:
+				rdens = vFloat[0] * 9.8f;	//重度 = 密度*9.8
+				break;
+			case ControlMark_t::ELASTIC:
+				_pMaterial = std::make_unique<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
+					vFloat[1],
+					rdens,
+					_MatName.c_str());
+				break;
  			default:
  				break;
  			}

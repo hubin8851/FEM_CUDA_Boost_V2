@@ -18,7 +18,10 @@ namespace HBXFEMDef
 	protected:
 
 	public:
-		MatArray(unsigned int _dim) :m_dim(_dim) {};
+		MatArray(unsigned int _dim) :m_dim(_dim) 
+		{ 
+			_MyData.resize(m_dim); 
+		};
 		~MatArray() {};
 
 		void push_back(std::vector<_T> _DataIn)

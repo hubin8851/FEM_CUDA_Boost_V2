@@ -35,7 +35,7 @@ namespace HBXFEMDef
 			problem->SetContextOutputMode(HBXFEMDef::ContextOutputMode_t::ALWAYS);
 		}
 
-		problem->InstanceInit(_dr, "");
+		problem->InstanceSelf(_dr, "");
 		problem->postInit();
 
 		return problem;

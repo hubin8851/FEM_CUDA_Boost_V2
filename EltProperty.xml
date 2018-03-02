@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="gb2312" ?>
 <root>
+	<ElementObj name="B21" Type="200002"
+		NodeNum="2" StressOrStrain="INF"	/>
 	<ElementObj name="CPS3" Type="200003" classname="_Tri3D3NElmt"
 		NodeNum="3" StressOrStrain="Stress" />
 	<ElementObj name="CPE3" Type="201003"
