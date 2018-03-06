@@ -2,7 +2,7 @@
 
 #include <HBXPreDef.h>
 #include <vector>
-
+#include <initializer_list>
 
 namespace HBXFEMDef
 {
@@ -13,6 +13,8 @@ namespace HBXFEMDef
 	class  MatArray
 	{
 	private:
+		typedef MatArray<_T> _SameClass;
+
 		unsigned int m_dim;	//当前数据的维度
 		std::vector< std::vector<_T> > _MyData;
 	protected:
@@ -24,7 +26,7 @@ namespace HBXFEMDef
 		};
 		~MatArray() {};
 
-		void push_back(std::vector<_T> _DataIn)
+		void push_back(std::vector<_T>& _DataIn)
 		{
 			Assert(m_dim == _DataIn.size());//判断两者维度是否相等
 			for (auto i = 0; i < m_dim; i++)
@@ -33,6 +35,14 @@ namespace HBXFEMDef
 			}
 		}
 
+		void push_back(std::initializer_list<_T> _DataIn)
+		{
+			Assert(m_dim == _DataIn.size());//判断两者维度是否相等
+			int i = 0;
+			for (auto p = _DataIn.begin(); p != _DataIn.end(); p++, i++)   //使用迭代器访问参数
+				_MyData[i].emplace_back(*p);
+		};
+
 		void emplace_back(std::vector<_T> _DataIn)
 		{
 			Assert(m_dim == _DataIn.size());//判断两者维度是否相等
@@ -40,6 +50,36 @@ namespace HBXFEMDef
 			{
 				_MyData[i].emplace_back(_DataIn[i]);
 			}
+		};
+
+		void emplace_back( std::initializer_list<_T> _DataIn )
+		{
+			Assert(m_dim == _DataIn.size());//判断两者维度是否相等
+			int i = 0;
+			for (auto p = _DataIn.begin(); p != _DataIn.end(); p++, i++)   //使用迭代器访问参数
+				_MyData[i].emplace_back(*p);
+		};
+
+		unsigned int GetDim()const { return this->m_dim; };
+
+		_SameClass& operator = (const _SameClass& _rhs)
+		{
+			Assert(m_dim == _rhs.GetDim());
+			for (int i =0; i<_MyData.size(); i++)
+			{
+				this->_MyData[i] = _rhs._MyData[i];
+			}
+			return *this;
+		};
+
+		_SameClass& operator = (const _SameClass&& _rhs)
+		{
+			Assert(m_dim == _rhs.GetDim());
+			for (int i = 0; i < _MyData.size(); i++)
+			{
+				this->_MyData[i] = _rhs._MyData[i];
+			}
+			return *this;
 		};
 	};
 

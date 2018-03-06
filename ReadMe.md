@@ -37,6 +37,12 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+3/6/2018 9:08:14 PM 
+沿用boost——MPI的设计思路选用shared_ptr存放，均放在dynrecord类中。文本读取工作基本完成。
+
+3/5/2018 4:27:19 PM 
+inp文件的set尚未正确配置，届时放在后面处理。
+
 2/27/2018 5:33:33 PM 
 弃用boost的ptree,在inp读取类中完成修改；
 BaseRead的接口改为仅有一个path，通过path的自带api完成各种文本操作；

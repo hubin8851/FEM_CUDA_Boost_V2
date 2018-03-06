@@ -9,6 +9,7 @@
 #include <libCUFEM\Set.h>
 #include <libCUFEM\InputRecord.h>
 #include <libReader\EltPropReader.h>
+#include <libReader\DynamicInputRecord.h>
 
 
 #pragma warning(disable: 4996)
@@ -21,7 +22,6 @@ namespace HBXFEMDef
 	class InputRecord;
 	class BaseElem;
 
-	class DynamicInputRecord;
 
 	class BOOST_SYMBOL_EXPORT InpDataReader :
 		public BaseReader
@@ -31,7 +31,12 @@ namespace HBXFEMDef
 
 		HBXFEMDef::EltPropReader	m_EltProp;
 
+		DynamicInputRecord	m_DynRecord;
 	protected:
+		void GetSecMesg(std::vector<std::string>& _vecIn, std::string& _elset,
+			std::string& _mat,
+			std::string& _secshape);
+
 		InputFileResult ReadInpFile();	//读取pointwise到处的点集合，为VTX做准备
 	public:
 		//默认构造函数

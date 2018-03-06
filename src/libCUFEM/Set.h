@@ -40,6 +40,55 @@ namespace HBXFEMDef
 			}
 
 		};
+
+		Set( std::vector<double> _vec,  bool _whichset = 1) :_ElOrN(_whichset)
+		{
+			if (nullptr != _vec.data())
+			{
+				_vSort.clear();
+				for (size_t i = 0; i < _vec.size(); i++)
+				{
+					_vSort.emplace_back( (unsigned int)_vec[i] );
+				}
+				m_begin = _vSort[0];
+				//以下判断是作为
+				if (1 == _vSort.size())
+				{
+					m_end = m_begin;
+				}
+				else m_end = _vSort[1];
+			}
+			else
+			{
+				std::cerr << "传入空指针初始化失败" << std::endl;
+			}
+
+		};
+
+		Set(std::vector<float> _vec, bool _whichset = 1) :_ElOrN(_whichset)
+		{
+			if (nullptr != _vec.data())
+			{
+				_vSort.clear();
+				for (size_t i = 0; i < _vec.size(); i++)
+				{
+					_vSort.emplace_back((unsigned int)_vec[i]);
+				}
+				m_begin = _vSort[0];
+				//以下判断是作为
+				if (1 == _vSort.size())
+				{
+					m_end = m_begin;
+				}
+				else m_end = _vSort[1];
+			}
+			else
+			{
+				std::cerr << "传入空指针初始化失败" << std::endl;
+			}
+
+		};
+
 		~Set() 
 		{
 			_vSort.clear();

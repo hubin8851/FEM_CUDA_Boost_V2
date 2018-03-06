@@ -40,16 +40,42 @@ namespace HBXFEMDef
 		this->doubleRecord[_id] = _input;
 	}
 
-	void DynamicInputRecord::SetField(Node& _n, InputFieldType _id)
+	void DynamicInputRecord::SetField(Node _n, InputFieldType _id)
 	{
-//		this->NodeArrayRecord[_id] = std::move(_n);
+		this->NodeRecord[_id] = std::move(_n);
+	}
+
+	void DynamicInputRecord::SetField(std::vector<Node> _n, InputFieldType _id)
+	{
+		this->NodeArrayRecord[_id] = std::move(_n);
 
 	}
 
-	void DynamicInputRecord::SetField(std::vector<int>& _item, InputFieldType _id)
+	void DynamicInputRecord::SetField(std::vector<int> _item, InputFieldType _id)
 	{
-//		this->intArrayRecord[_id].emplace_back(_item);
+		this->intArrayRecord[_id] = std::move(_item);
 	}
+
+	void DynamicInputRecord::SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id)
+	{
+		this->SetRecord.insert(std::make_pair(_id, _item));
+	}
+
+	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	{
+		this->CrossRecord[_id] = std::move(_item);
+	}
+
+	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	{
+		this->MatRecord.insert(std::make_pair(_id, _item));
+	}
+
+	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	{
+		this->ElemtArrayRecord[_id] = std::move(_item);
+	}
+
 
 	InputFileResult_t DynamicInputRecord::GiveField(double & answer, InputFieldType _id)
 	{

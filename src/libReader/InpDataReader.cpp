@@ -7,7 +7,37 @@
 #include <regex>
 namespace HBXFEMDef
 {
+	void InpDataReader::GetSecMesg(std::vector<std::string>& _vecIn, 
+		std::string & _elset, 
+		std::string & _mat, 
+		std::string & _secshape)
+	{
+		for (auto _iter = _vecIn.begin(); _iter != _vecIn.end(); _iter++)
+		{
+			if (boost::icontains(*_iter, "elset="))
+			{
+				boost::ierase_first(*_iter, "elset=");
+				_elset = *_iter;
+				continue;
+			}
+			if (boost::icontains(*_iter, "material="))
+			{
+				boost::ierase_first(*_iter, "material=");
+				_mat = *_iter;
+				continue;
+			}
+			if (boost::icontains(*_iter, "section="))
+			{
+				boost::ierase_first(*_iter, "section=");
+				_secshape = *_iter;
+				continue;
+			}
 
+		}
+		return;
+	}
+	
+	
 	InputFileResult InpDataReader::ReadInpFile()
 	{
 		using namespace std;
@@ -26,7 +56,7 @@ namespace HBXFEMDef
 		int	 marknumber;			//数据类型的判定
 		int _markloop;				//循环标记，可能不会用到
 		HBXDef::ControlMark_t ipControlMark;//控制流标记
-		std::string _ElemtName, _SetName, _SectionName, _MatName;
+		std::string _ElemtName, _SetName, _SectionName, _MatName, _SecShape;
 		std::string _Elset, _Nset;	//单元集合，节点集合
 		std::string _InstanceName, _partName;	//临时变量名，记录名称
 		boost::filesystem::path _tmppath;		//路径临时变量
@@ -47,13 +77,13 @@ namespace HBXFEMDef
 		}
 
 		//可能出现的某几种类型的指针
-		std::unique_ptr< Domain >	_tmpZone;
-		std::vector<Node>	_tmpVNode;
-		std::unique_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> > _tmpElem;
-		std::unique_ptr<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> _pMaterial;
-		std::unique_ptr<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> _pSection;
+		std::shared_ptr< Domain >	_tmpZone;
+		std::shared_ptr< std::vector<Node> >	_tmpVNode;
+		std::shared_ptr<HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec>> _tmpElem;
+		std::shared_ptr<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> _pMaterial;
+		std::shared_ptr<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> _pSection;
 		HBXFEMDef::BaseBoundary* _pBoundary;
-		HBXFEMDef::Set*	_pSet;
+		std::shared_ptr<HBXFEMDef::Set>	_pSet;
 
 		ipControlMark = HBXDef::RESET;
 		while (!inFile.eof())
@@ -71,15 +101,26 @@ namespace HBXFEMDef
 				/* http://blog.csdn.net/caroline_wendy/article/details/17319899 */
 				/* http://bbs.csdn.net/topics/392018932 */
 				vFloat.clear();
-				boost::split( vstrLine, stringLine, boost::is_any_of(",") );
-// 				for (CustonTokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg)
+//				boost::split( vstrLine, stringLine, boost::is_any_of(",") );
+// 				for (auto i = 0; i < vstrLine.size(); i++)
 // 				{
-// 					vFloat.push_back( boost::lexical_cast<HBXFEMDef::UserReadPrec>(*beg) );
+// 					vFloat.push_back( boost::lexical_cast<HBXFEMDef::UserReadPrec>(vstrLine[i]) );
 // 				}
-				for (auto i = 0; i < vstrLine.size(); i++)
+				if ( ELEMENT == _markloop)
 				{
-					vFloat.emplace_back( boost::lexical_cast<HBXFEMDef::UserReadPrec>(vstrLine[i]) );
+					for (CustonTokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg)
+					{
+						vFloat.push_back(boost::lexical_cast<HBXFEMDef::UserReadPrec>(*beg)-1);
+					}
 				}
+				else
+				{
+					for (CustonTokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg)
+					{
+						vFloat.push_back(boost::lexical_cast<HBXFEMDef::UserReadPrec>(*beg));
+					}
+				}
+
 				marknumber = _markloop;
 				goto ReadDigtal;
 			}
@@ -101,6 +142,7 @@ namespace HBXFEMDef
 			if (vstrLine.empty() || "" == vstrLine[0])
 			{
 				_markloop = 0;
+				ipControlMark = RESET;
 				continue;
 			}
 			else if (boost::iequals("instance", vstrLine[0]))//判断是否进入实例
@@ -122,14 +164,16 @@ namespace HBXFEMDef
  			{
  				_markloop = 10;
  				ipControlMark = NODE;
- //				_tmpVNode = std::make_unique<std::vector<Node>>();
+ 				_tmpVNode = std::make_shared<std::vector<Node>>();
+				m_DynRecord.SetField(*_tmpVNode, "Node");
  			}
  			else if (boost::iequals( vstrLine[0], "Element" ) && boost::icontains( stringLine, "type=" ))//判断是否进入单元段
  			{
  				boost::ierase_first( vstrLine[1], "type=" );
 				_ElemtName = vstrLine[1];	//获的单元的名称并索引该单元的相关属性
 				auto _iter = m_EltProp.GetPtyMap()->find(_ElemtName);
-				_tmpElem = std::make_unique< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> >((unsigned short)(_iter->second._NNum));
+				_tmpElem = std::make_shared< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec>>((unsigned short)(_iter->second._NNum));
+				m_DynRecord.SetField(_tmpElem, _ElemtName.c_str());
 
  				_markloop = 20;
  				ipControlMark = ELEMENT;
@@ -145,14 +189,7 @@ namespace HBXFEMDef
 			}
 			else if (ipControlMark == SECTION && boost::iequals("Section", vstrLine[1]))
 			{
-				for ( auto _iter = vstrLine.begin(); _iter!=vstrLine.end();_iter++ )
-				{
-				
-				}
-				boost::ierase_first(vstrLine[2], "elset=");
-				_Elset = vstrLine[2];
-				boost::ierase_first(vstrLine[3], "material=");
-				_MatName = vstrLine[3];
+				GetSecMesg(vstrLine, _Elset, _MatName, _SecShape);
 				_markloop = SECTION;
 			}
 			//读取材料相关名称、所用集合
@@ -166,20 +203,21 @@ namespace HBXFEMDef
 			}
 			else if (ipControlMark == MATERIAL && boost::iequals("Density", vstrLine[0])) _markloop = ControlMark_t::DENSITY;
 			else if (ipControlMark == MATERIAL && boost::iequals("Elastic", vstrLine[0])) _markloop = ControlMark_t::ELASTIC;
+			else if (ipControlMark == MATERIAL && boost::iequals("Plastic", vstrLine[0])) _markloop = ControlMark_t::PLASTIC;
 			//读取集合相关名称
 			else if (boost::iequals("Elset", vstrLine[0]))
 			{
 				boost::ierase_first(vstrLine[1], "elset=");
 				_SetName = vstrLine[1];
-				_markloop = 51;
-				ipControlMark = ELSET;
+				_markloop = ELSET;
+				continue;
 			}
 			else if (boost::iequals("Nset", vstrLine[0]))
 			{
 				boost::ierase_first(vstrLine[1], "nset=");
 				_SetName = vstrLine[1];
-				_markloop = 52;
-				ipControlMark = NSET;
+				_markloop = NSET;
+				continue;
 			}
  			//华丽的分隔符，goto位置。。。
  			ReadDigtal:
@@ -190,7 +228,7 @@ namespace HBXFEMDef
 				{
 					vFloat.emplace_back(0);//Z轴坐标置零
 				}
-  				_tmpVNode.emplace_back( Node(vFloat[1],
+  				_tmpVNode->emplace_back( Node(vFloat[1],
 										vFloat[2],
 										vFloat[3]) );
  				break;
@@ -200,26 +238,36 @@ namespace HBXFEMDef
  				break;
 			case ControlMark_t::ZONE:
 			case ControlMark_t::NSET:
-				_pSet = new HBXFEMDef::Set( (unsigned int*)&vFloat[0], vFloat.size(), false);
-
+				_pSet = std::make_shared< HBXFEMDef::Set >(vFloat, false);
+				m_DynRecord.SetField(_pSet, _SetName.c_str());
+				break;
 			case ControlMark_t::ELSET:
-				_pSet = new HBXFEMDef::Set((unsigned int*)&vFloat[0], vFloat.size(), true);
-
+				_pSet = std::make_shared< HBXFEMDef::Set >(vFloat, true);
+				m_DynRecord.SetField(_pSet, _SetName.c_str());
+				break;
 			case ControlMark_t::SECTION:
-				_pSection = std::make_unique<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>>( _SectionName.c_str(), 
+				_pSection = std::make_shared<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>>( _SectionName.c_str(),
 								_Elset.c_str(), 
 								_MatName.c_str(),
 								vFloat[0],
 								vFloat[1]);
-
+				m_DynRecord.SetField(_pSection, _SectionName.c_str());
+				break;
 			case ControlMark_t::DENSITY:
 				rdens = vFloat[0] * 9.8f;	//重度 = 密度*9.8
 				break;
 			case ControlMark_t::ELASTIC:
-				_pMaterial = std::make_unique<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
+				_pMaterial = std::make_shared<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
 					vFloat[1],
 					rdens,
 					_MatName.c_str());
+				m_DynRecord.SetField(_pMaterial, _MatName.c_str());
+			case ControlMark_t::PLASTIC:
+				_pMaterial = std::make_shared<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
+					vFloat[1],
+					rdens,
+					_MatName.c_str());
+				m_DynRecord.SetField(_pMaterial, _MatName.c_str());
 				break;
  			default:
  				break;
