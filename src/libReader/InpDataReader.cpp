@@ -165,7 +165,7 @@ namespace HBXFEMDef
  				_markloop = 10;
  				ipControlMark = NODE;
  				_tmpVNode = std::make_shared<std::vector<Node>>();
-				m_DynRecord.SetField(*_tmpVNode, "Node");
+				m_DynRecord.SetField(_tmpVNode, "Node");
  			}
  			else if (boost::iequals( vstrLine[0], "Element" ) && boost::icontains( stringLine, "type=" ))//判断是否进入单元段
  			{
@@ -262,6 +262,7 @@ namespace HBXFEMDef
 					rdens,
 					_MatName.c_str());
 				m_DynRecord.SetField(_pMaterial, _MatName.c_str());
+				break;
 			case ControlMark_t::PLASTIC:
 				_pMaterial = std::make_shared<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
 					vFloat[1],

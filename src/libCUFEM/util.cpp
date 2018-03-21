@@ -10,12 +10,12 @@ namespace HBXFEMDef
 	class BaseReader;
 	class BaseSlnRecord;
 
-	CUFEM_EXPORT Engng * HBXFEMDef::InstanceProblem( BaseReader* _dr, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
+	CUFEM_EXPORT Engng * HBXFEMDef::InstanceProblem( BaseReader* _ir, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
 	{
 		Engng* problem;
 
-		std::string SourceFileName = _dr->GetSourceName();
-		BaseSlnRecord* ModeRec = _dr->GetSlnRecord();
+		std::string SourceFileName = _ir->GetSourceName();
+		BaseSlnRecord* ModeRec = _ir->GetSlnRecord();
 
 		problem = classFactory.CreateEngng( ModeRec->keyword.c_str(), _Master, 1);
 		if (!problem)
@@ -35,7 +35,7 @@ namespace HBXFEMDef
 			problem->SetContextOutputMode(HBXFEMDef::ContextOutputMode_t::ALWAYS);
 		}
 
-		problem->InstanceSelf(_dr, "");
+		problem->InstanceSelf(_ir, "");
 		problem->postInit();
 
 		return problem;

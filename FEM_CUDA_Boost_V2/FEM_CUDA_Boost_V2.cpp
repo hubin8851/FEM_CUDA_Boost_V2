@@ -7,6 +7,7 @@
 #include <libCUFEM\util.h>
 #include <libReader\PWDataReader.h>
 #include <libReader\InpDataReader.h>
+#include <libEngng\LinearStaticEngng.h>
 #include <regex>
 
 #ifdef _DEBUG
@@ -59,6 +60,8 @@ int main()
 //		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
 		xxx->SetSourceFilePath("beam.inp", "D:\\AbaqusTemp"); 
 		xxx->SetInputData();
+
+
 
 		HBXFEMDef::Engng* em = HBXFEMDef::InstanceProblem(xxx, problemMode_t::_processor, 0);
 	}

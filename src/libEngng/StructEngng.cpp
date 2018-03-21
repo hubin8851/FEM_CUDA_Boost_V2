@@ -4,8 +4,8 @@
 namespace HBXFEMDef
 {
 
-	StructEngng::StructEngng(int _n, Engng * _master)
-		:Engng(_n, _master)
+	StructEngng::StructEngng(  Engng* _master, int _n )
+		:Engng( _master, _n )
 	{
 
 	}

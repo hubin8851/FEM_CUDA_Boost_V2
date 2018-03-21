@@ -28,7 +28,7 @@ namespace HBXFEMDef
 		//数值算法
 		std::unique_ptr< BaseNumMethod >  Method;
 	public:
-		LinearStaticEngng( int _n, Engng* _master = nullptr );
+		LinearStaticEngng( Engng* _master = nullptr, int _n = classType::ENGNG );
 		virtual ~LinearStaticEngng();
 
 		//初始化

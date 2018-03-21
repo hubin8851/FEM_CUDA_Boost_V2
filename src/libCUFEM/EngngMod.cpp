@@ -105,8 +105,10 @@ namespace HBXFEMDef
 		m_EntityMap.erase(m_EntityMap.find(pEntity->GetID()));
 	}
 
-	void Engng::InstanceSelf( BaseReader* _dr, const char *_outputFileName )
+	UserStatusError_t Engng::InstanceSelf( BaseReader* _dr, const char *_outputFileName )
 	{
+		bool _bFinish = true;
+
 		if (_postProcessor == this->GetProblemMode())
 		{
 			//超线程问题的文件输出相关操作
@@ -117,14 +119,9 @@ namespace HBXFEMDef
 			std::cerr << "打开并写入文件失败" << std::endl;
 		}
 
-#pragma region	清理domainlist相关 		
-		domainList.clear();
-		domainList.reserve(ndomains);//清理后将vector的尺寸重置为ndomains个大小，减少内存使用量
-		for (size_t i=0; 1<ndomains; i++)
-		{
-			domainList.emplace_back(new Domain(i, 0, this));
-		}
-#pragma region	清理domainlist相关
+		this->Instance_init();
+
+		this->InstanceFrom(_dr->GetSlnRecord());
 
 		if ( 0 == this->nMetaStep )
 		{
@@ -134,9 +131,28 @@ namespace HBXFEMDef
 		{
 			this->InstanceMetaStep(_dr);
 		}
+
+		this->InstanceDomains(_dr);
 	}
 
-	void Engng::InstanceDomains()
+	void Engng::Instance_init()
+	{
+#pragma region	清理domainlist相关 		
+		domainList.clear();
+		domainList.reserve(ndomains);//清理后将vector的尺寸重置为ndomains个大小，减少内存使用量
+		for (size_t i = 0; 1 < ndomains; i++)
+		{
+			domainList.emplace_back(new Domain(i, 0, this));
+		}
+#pragma region	清理domainlist相关
+	}
+
+	void Engng::InstanceDomains( BaseReader* _dr )
+	{
+
+	}
+
+	void Engng::InstanceFrom( BaseSlnRecord* _Slnr )
 	{
 
 	}

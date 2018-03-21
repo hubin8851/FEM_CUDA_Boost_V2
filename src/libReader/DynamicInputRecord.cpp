@@ -40,20 +40,20 @@ namespace HBXFEMDef
 		this->doubleRecord[_id] = _input;
 	}
 
-	void DynamicInputRecord::SetField(Node _n, InputFieldType _id)
-	{
-		this->NodeRecord[_id] = std::move(_n);
-	}
-
-	void DynamicInputRecord::SetField(std::vector<Node> _n, InputFieldType _id)
-	{
-		this->NodeArrayRecord[_id] = std::move(_n);
-
-	}
-
 	void DynamicInputRecord::SetField(std::vector<int> _item, InputFieldType _id)
 	{
 		this->intArrayRecord[_id] = std::move(_item);
+	}
+
+	void DynamicInputRecord::SetField(HBXFEMDef::Node _item, InputFieldType _id)
+	{
+		this->NodeRecord[_id] = std::move(_item);
+	}
+
+	void DynamicInputRecord::SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>> _item, InputFieldType _id)
+	{
+		this->NodeArrayRecord[_id] = std::move(_item);
+
 	}
 
 	void DynamicInputRecord::SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id)

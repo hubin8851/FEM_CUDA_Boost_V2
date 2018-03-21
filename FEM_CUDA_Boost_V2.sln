@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FEM_CUDA_Boost_V2", "FEM_CUDA_Boost_V2\FEM_CUDA_Boost_V2.vcxproj", "{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libReader", "libReader\libReader.vcxproj", "{C63B4EC3-AED5-41B2-A4CD-6F359F64B7BC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libInterpolate", "libInterpolate\libInterpolate.vcxproj", "{ED2AB05D-EDA8-4792-9E36-33F2BCFAB64E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libVtk", "libVtk\libVtk.vcxproj", "{8D7FD536-25C7-44FD-B260-94AAB4C3C182}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +83,14 @@ Global
 		{ED2AB05D-EDA8-4792-9E36-33F2BCFAB64E}.Release|x64.Build.0 = Release|x64
 		{ED2AB05D-EDA8-4792-9E36-33F2BCFAB64E}.Release|x86.ActiveCfg = Release|Win32
 		{ED2AB05D-EDA8-4792-9E36-33F2BCFAB64E}.Release|x86.Build.0 = Release|Win32
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Debug|x64.ActiveCfg = Debug|x64
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Debug|x64.Build.0 = Debug|x64
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Debug|x86.ActiveCfg = Debug|Win32
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Debug|x86.Build.0 = Debug|Win32
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Release|x64.ActiveCfg = Release|x64
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Release|x64.Build.0 = Release|x64
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Release|x86.ActiveCfg = Release|Win32
+		{8D7FD536-25C7-44FD-B260-94AAB4C3C182}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

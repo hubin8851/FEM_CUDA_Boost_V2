@@ -18,7 +18,7 @@ namespace HBXFEMDef
 	protected:
 
 	public:
-		StructEngng( int _n = 0, Engng* _master = nullptr );
+		StructEngng( Engng* _master = nullptr, int _n = classType::ENGNG );
 		virtual ~StructEngng();
 
 #pragma region 计算相关函数

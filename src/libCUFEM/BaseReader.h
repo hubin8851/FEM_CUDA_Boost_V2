@@ -13,6 +13,7 @@ namespace HBXFEMDef
 
 	//所有读入数据类的基类，派生类可能包括XML解析器以及INP文件读取器，PW文件读取器。
 	//输入记录的判别主要依据记录类型和组件数量。该类依赖boost。
+	//应包括至少一个输入记录，且对应相应的解算信息。
 	class BOOST_SYMBOL_EXPORT BaseReader
 	{
 	private:

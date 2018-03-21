@@ -187,10 +187,17 @@ namespace HBXFEMDef
 
 		//根据问题描述初始化整个解算器,为初始化两步走的第一步。
 		//完成输出文件流的打开，实例化其他模块的接收器等
-		void InstanceSelf( BaseReader* _dr, const char *_outputFileName);
+		UserStatusError_t InstanceSelf( BaseReader* _dr, const char *_outputFileName);
 
-		//处理输入文件，初始化域对象
-		void InstanceDomains();
+		//清理domain列表并重置
+		void Instance_init();
+
+		//初始化域对象，这里可能存在inputrecord和domain之间的转换，故有此函数
+		void InstanceDomains(BaseReader* _dr);
+
+		//处理输入文件,获取解算信息
+		//获取输出流的相关信息，设定boost::log的core及前后端
+		void InstanceFrom( BaseSlnRecord* _Slnr );
 
 		//实例化所有的元步属性
 		virtual UserStatusError_t InstanceMetaStep( BaseReader* _dr );
