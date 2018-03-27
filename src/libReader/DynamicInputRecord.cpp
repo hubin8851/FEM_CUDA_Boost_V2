@@ -71,7 +71,7 @@ namespace HBXFEMDef
 		this->MatRecord.insert(std::make_pair(_id, _item));
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
 	{
 		this->ElemtArrayRecord[_id] = std::move(_item);
 	}

@@ -133,6 +133,7 @@ namespace HBXFEMDef
 		}
 
 		this->InstanceDomains(_dr);
+		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
 	void Engng::Instance_init()

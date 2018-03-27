@@ -1,22 +1,89 @@
 #pragma once
 #include <HBXPreDef.h>
 #include <VtkPreDef.h>
+#include <libCUFEM\InputRecord.h>
+#include <libReader\DynamicInputRecord.h>
 #include "..\libCUFEM\domain.h"
+
+
 
 class BOOST_SYMBOL_EXPORT BaseVtk
 {
+	typedef	std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> >::iterator _ElmtIter;
+	typedef std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> >::iterator _NodeIter;
 private:
-	std::vector< vtkSmartPointer<vtkPolyDataMapper> > m_vMappers;
-	std::vector< vtkSmartPointer<vtkRenderer> > m_vRenderers;
-	std::vector< vtkSmartPointer<vtkActor> > m_vActor;
+	bool bTopologyChange;	//拓扑结构一旦改变，需要重绘节点和单元
+	bool bFreshing;			//刷新标志位
+	bool bScalarLabel;		//是否显示标签栏
+
+	unsigned int m_wide;
+	unsigned int m_height;
+	vtkIdType m_SumNodeNum;	//单元总数
+	vtkIdType m_SumElmtNum;	//单元总数
+	int		m_LabelNum;	//标签分类个数
+
+	double m_scalarRange[2];	//属性范围
+
+	std::map< std::string, vtkSmartPointer<vtkCellArray> > m_MElmt;
+
+	vtkSmartPointer<vtkPolyData> m_PolyCube;	//多边形集合，放置点、单元、属性等
+	vtkSmartPointer<vtkFloatArray> m_Scalar;	//标量存储器	
+	vtkSmartPointer<vtkCurvatures> m_curvaturesFilter;	//曲率filter
+	vtkSmartPointer<vtkLookupTable> m_ColorTable;	//颜色表
+	vtkSmartPointer<vtkPolyDataMapper>  m_Mapper;	//映射器
+	vtkSmartPointer<vtkActor> m_Actor;				//行动器
+	vtkSmartPointer<vtkScalarBarActor> m_scalarBar;	//标签栏
+	vtkSmartPointer<vtkRenderer>  m_Renderer;	//绘制类
+	vtkSmartPointer<vtkRenderWindow> m_RenderWin;	//绘制窗体
+	vtkSmartPointer<vtkRenderWindowInteractor> m_Interactor;//交互器
+
 	std::vector< vtkSmartPointer<vtkPolyDataAlgorithm> > m_vGeometricObjectSources;
 	std::vector< vtkSmartPointer<vtkTextMapper> >	m_vTextMapper;
+
+private:
+	//实例化点集
+	virtual UserStatusError_t InstanceNodes(vtkSmartPointer<vtkPoints> _Node, _NodeIter _NIter);
+	//实例化单元
+	virtual UserStatusError_t InstanceElmts(vtkSmartPointer<vtkCellArray> _Elmt, _ElmtIter _EIter);
+	//依据属性名称获取曲率数据
+	virtual vtkFloatArray* GetCurData();
+	//设置属性数组
+	virtual void SetScalar(vtkDataArray* _inArray);
 public:
 	BaseVtk();
+	BaseVtk( unsigned int _wide, unsigned int _height );
 	~BaseVtk();
 
-	virtual UserStatusError_t Initial();
+	//实例化actor、renderer和renderwin等
+	virtual UserStatusError_t Instance();
 
-	virtual UserStatusError_t SetData( HBXFEMDef::Domain* _dm );
+	//重置相关参数
+	virtual void Reset();
 
+	//重新定义窗口尺寸
+	void ResizeWin(unsigned int _wide, unsigned int _height);
+
+	//导入模型数据
+	virtual UserStatusError_t SetData( HBXFEMDef::InputRecord* _ir );
+
+	//设置颜色表,必须在setdata函数后使用
+	void SetColorTable();
+
+	//设置标签栏,必须在设置颜色表函数后使用，否则无效
+	void SetScalarBar();
+
+	//根据单元编号着色,必须在setdata函数后使用
+	virtual void FreshWithNum();
+
+	//根据曲率着色,必须在setdata函数后使用
+	virtual void FreshWithCur();
+
+	//模仿MFC，在标准窗口、对话框等派生窗口中使用
+	virtual UserStatusError_t Paint();
+
+	//特殊的，值适用于CView类的重绘
+	virtual UserStatusError_t Draw();
+
+	//设置背景颜色
+	void SetBackground( vtkSmartPointer<vtkRenderer> _render, double* _rgb);
 };

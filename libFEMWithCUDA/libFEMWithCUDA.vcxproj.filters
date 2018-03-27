@@ -182,9 +182,6 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libCUFEM\MatArray.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libCUFEM\ElemtProp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -192,6 +189,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\NSortMat.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #include <HBXPreDef.h>
 #include <BoostPreDef.h>
 #include <HBXFEMDefStruct.h>
-#include <libCUFEM\MatArray.h>
+#include <libCUFEM\NSortMat.h>
 #include <libCUFEM\InputRecord.h>
 #include <libCUFEM\BaseComponent.h>
 #include <libCUFEM\BaseNode.h>
@@ -33,7 +33,7 @@ namespace HBXFEMDef
  		std::map< std::string, std::vector<int> > intArrayRecord;
 		std::map<  std::string, Node>	NodeRecord;
  		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> > NodeArrayRecord;//节点向量，在考虑使用散列表
-		std::map< std::string, std::shared_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec>> > ElemtArrayRecord;//单元
+		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> > ElemtArrayRecord;//单元
 		boost::unordered_map< std::string, std::shared_ptr< HBXFEMDef::Set> > SetRecord;//集合
 		std::map< std::string, std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> >  CrossRecord;//截面，可能重名
 		boost::unordered_map< std::string, std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> >  MatRecord;//材料,可能重名
@@ -66,7 +66,7 @@ namespace HBXFEMDef
 
 		virtual void SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
+		virtual void SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
 
 		virtual void SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
 
@@ -74,7 +74,9 @@ namespace HBXFEMDef
 
 		virtual InputFileResult_t GiveField(double &answer, InputFieldType _id);
 
-
+		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> >* GetNodeArray() { return &this->NodeArrayRecord; };
+		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> >* 
+			GetNSortMat() { return &this->ElemtArrayRecord; };
 	};
 
 

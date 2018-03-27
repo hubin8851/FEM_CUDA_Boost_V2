@@ -31,7 +31,7 @@ namespace HBXFEMDef
 
 		HBXFEMDef::EltPropReader	m_EltProp;
 
-		DynamicInputRecord	m_DynRecord;
+//		DynamicInputRecord	m_DynRecord;
 	protected:
 		void GetSecMesg(std::vector<std::string>& _vecIn, std::string& _elset,
 			std::string& _mat,

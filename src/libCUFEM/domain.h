@@ -8,6 +8,8 @@
 #include "libCUFEM\BaseMaterial.h"
 #include "libCUFEM\BaseBoundary.h"
 #include "libCUFEM\Set.h"
+#include "libCUFEM\NSortMat.h"
+#include "libCUFEM\InputRecord.h"
 
 namespace HBXFEMDef 
 {
@@ -31,11 +33,13 @@ namespace HBXFEMDef
 
 		//std::vector<FemComponent<_T>>* p_vFemCmpnn;
 		std::vector<Node>		_vNode;
+		//单元内节点数组容器
+		std::vector<NSortMat<HBXDef::UserCalPrec>>	_vNSortArray;
 		//单元向量容器
 		std::vector<BaseElem > _vElmt;
 		//材料向量容器
 		std::vector<BaseMaterial> _vMat;
-		//界面向量容器
+		//截面向量容器
 		std::vector<BaseSection> _vSection;
 		//载荷向量容器
 		std::vector<BaseBoundary> _vLoad;
@@ -70,7 +74,9 @@ namespace HBXFEMDef
 			_vSet.clear();
 		};
 		~Domain() {};
-	
+
+		UserStatusError_t InstanceSelf(InputRecord* _ir);
+
 		//设置当前域计算类型
 // 		void ResetType(std::string _type)
 // 		{

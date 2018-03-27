@@ -28,6 +28,7 @@ namespace HBXFEMDef
 		std::list< InputRecord* > RecordList;
 
 //		std::map<std::string, InputRecord* > RecordMap;
+		InputRecord* m_Record;
 
 		//使用pair是因为每个实例化对象的读取器只至多存储一个解决方案，即一个仿真实例
 		//std::map< BaseSlnRecord, std::list< std::string, Domain* >, RecordLess > m_SlnInPair;
@@ -52,6 +53,9 @@ namespace HBXFEMDef
 
 		//完成inp文件的导入，填充各容器并计算总刚矩阵的维度等参数
 		virtual bool SetInputData() = 0;
+
+		//依据文件名称输出记录类
+		InputRecord* GetInputRecord() { return m_Record; }
 
 		//强制断开所有数据连接
 		virtual void terminate() = 0;

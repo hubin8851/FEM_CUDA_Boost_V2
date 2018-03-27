@@ -3,7 +3,10 @@
 
 namespace HBXFEMDef
 {
-
+	UserStatusError_t Domain::InstanceSelf(InputRecord * _ir)
+	{
+		return UserStatusError_t::USER_STATUS_SUCCESS;
+	}
 	BaseBoundary* Domain::GetBoundry(int _n)
 	{
 #ifdef _DEBUG

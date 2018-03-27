@@ -1,7 +1,7 @@
 #include <HBXPreDef.h>
 #include "InpDataReader.h"
 #include <HBXFEMDefStruct.h>
-#include <libCUFEM\MatArray.h>
+#include <libCUFEM\NSortMat.h>
 #include <libCUFEM\ClassFactory.h>
 #include <libReader\DynamicInputRecord.h>
 #include <regex>
@@ -79,7 +79,7 @@ namespace HBXFEMDef
 		//可能出现的某几种类型的指针
 		std::shared_ptr< Domain >	_tmpZone;
 		std::shared_ptr< std::vector<Node> >	_tmpVNode;
-		std::shared_ptr<HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec>> _tmpElem;
+		std::shared_ptr<HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> _tmpElem;
 		std::shared_ptr<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> _pMaterial;
 		std::shared_ptr<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> _pSection;
 		HBXFEMDef::BaseBoundary* _pBoundary;
@@ -165,15 +165,15 @@ namespace HBXFEMDef
  				_markloop = 10;
  				ipControlMark = NODE;
  				_tmpVNode = std::make_shared<std::vector<Node>>();
-				m_DynRecord.SetField(_tmpVNode, "Node");
+				m_Record->SetField(_tmpVNode, "Node");
  			}
  			else if (boost::iequals( vstrLine[0], "Element" ) && boost::icontains( stringLine, "type=" ))//判断是否进入单元段
  			{
  				boost::ierase_first( vstrLine[1], "type=" );
 				_ElemtName = vstrLine[1];	//获的单元的名称并索引该单元的相关属性
 				auto _iter = m_EltProp.GetPtyMap()->find(_ElemtName);
-				_tmpElem = std::make_shared< HBXFEMDef::MatArray<HBXFEMDef::UserReadPrec>>((unsigned short)(_iter->second._NNum));
-				m_DynRecord.SetField(_tmpElem, _ElemtName.c_str());
+				_tmpElem = std::make_shared< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>>((unsigned short)(_iter->second._NNum));
+				m_Record->SetField(_tmpElem, _ElemtName.c_str());
 
  				_markloop = 20;
  				ipControlMark = ELEMENT;
@@ -239,11 +239,11 @@ namespace HBXFEMDef
 			case ControlMark_t::ZONE:
 			case ControlMark_t::NSET:
 				_pSet = std::make_shared< HBXFEMDef::Set >(vFloat, false);
-				m_DynRecord.SetField(_pSet, _SetName.c_str());
+				m_Record->SetField(_pSet, _SetName.c_str());
 				break;
 			case ControlMark_t::ELSET:
 				_pSet = std::make_shared< HBXFEMDef::Set >(vFloat, true);
-				m_DynRecord.SetField(_pSet, _SetName.c_str());
+				m_Record->SetField(_pSet, _SetName.c_str());
 				break;
 			case ControlMark_t::SECTION:
 				_pSection = std::make_shared<HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>>( _SectionName.c_str(),
@@ -251,7 +251,7 @@ namespace HBXFEMDef
 								_MatName.c_str(),
 								vFloat[0],
 								vFloat[1]);
-				m_DynRecord.SetField(_pSection, _SectionName.c_str());
+				m_Record->SetField(_pSection, _SectionName.c_str());
 				break;
 			case ControlMark_t::DENSITY:
 				rdens = vFloat[0] * 9.8f;	//重度 = 密度*9.8
@@ -261,20 +261,20 @@ namespace HBXFEMDef
 					vFloat[1],
 					rdens,
 					_MatName.c_str());
-				m_DynRecord.SetField(_pMaterial, _MatName.c_str());
+				m_Record->SetField(_pMaterial, _MatName.c_str());
 				break;
 			case ControlMark_t::PLASTIC:
 				_pMaterial = std::make_shared<HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>>(vFloat[0],
 					vFloat[1],
 					rdens,
 					_MatName.c_str());
-				m_DynRecord.SetField(_pMaterial, _MatName.c_str());
+				m_Record->SetField(_pMaterial, _MatName.c_str());
 				break;
  			default:
  				break;
  			}
 		}
-		return InputFileResult::IRRT_OK;
+ 		return InputFileResult::IRRT_OK;
 	}
 
 	InpDataReader::InpDataReader(const std::string _SourceFile, 
@@ -282,6 +282,8 @@ namespace HBXFEMDef
 	{
 		std::cout << "create InpDataReader!" << std::endl;
 		m_EltProp.SetInputData();
+
+		m_Record = new DynamicInputRecord();
 	}
 
 	bool InpDataReader::SetInputData()

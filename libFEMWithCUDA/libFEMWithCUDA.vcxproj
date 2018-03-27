@@ -65,7 +65,7 @@
     <ClInclude Include="..\src\libCUFEM\EngngMod.h" />
     <ClInclude Include="..\src\libCUFEM\HBXFEMEngng.h" />
     <ClInclude Include="..\src\libCUFEM\InputRecord.h" />
-    <ClInclude Include="..\src\libCUFEM\MatArray.h" />
+    <ClInclude Include="..\src\libCUFEM\NSortMat.h" />
     <ClInclude Include="..\src\libCUFEM\MetaStep.h" />
     <ClInclude Include="..\src\libCUFEM\Set.h" />
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
