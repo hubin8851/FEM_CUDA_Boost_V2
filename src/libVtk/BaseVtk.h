@@ -26,19 +26,21 @@ private:
 
 	std::map< std::string, vtkSmartPointer<vtkCellArray> > m_MElmt;
 
-	vtkSmartPointer<vtkPolyData> m_PolyCube;	//多边形集合，放置点、单元、属性等
+//	vtkSmartPointer<vtkPolyData> m_PolyCube;	//多边形集合，放置点、单元、属性等
+	vtkSmartPointer<vtkPolyDataAlgorithm> m_AlgorithmFilter;	//filter器，是map与polydata之间的中介。新算法皆在此基础上的接口复写函数
 	vtkSmartPointer<vtkFloatArray> m_Scalar;	//标量存储器	
-	vtkSmartPointer<vtkCurvatures> m_curvaturesFilter;	//曲率filter
 	vtkSmartPointer<vtkLookupTable> m_ColorTable;	//颜色表
 	vtkSmartPointer<vtkPolyDataMapper>  m_Mapper;	//映射器
+
 	vtkSmartPointer<vtkActor> m_Actor;				//行动器
 	vtkSmartPointer<vtkScalarBarActor> m_scalarBar;	//标签栏
 	vtkSmartPointer<vtkRenderer>  m_Renderer;	//绘制类
 	vtkSmartPointer<vtkRenderWindow> m_RenderWin;	//绘制窗体
 	vtkSmartPointer<vtkRenderWindowInteractor> m_Interactor;//交互器
 
-	std::vector< vtkSmartPointer<vtkPolyDataAlgorithm> > m_vGeometricObjectSources;
 	std::vector< vtkSmartPointer<vtkTextMapper> >	m_vTextMapper;
+
+	vtkSmartPointer<vtkCallbackCommand> m_MyCallback;	//yige callbackcommand对象，相当于观察者/命令模式的观察者
 
 private:
 	//实例化点集
@@ -46,9 +48,11 @@ private:
 	//实例化单元
 	virtual UserStatusError_t InstanceElmts(vtkSmartPointer<vtkCellArray> _Elmt, _ElmtIter _EIter);
 	//依据属性名称获取曲率数据
-	virtual vtkFloatArray* GetCurData();
+	virtual vtkFloatArray* GetCurData(vtkPolyDataAlgorithm* _dataIn);
 	//设置属性数组
 	virtual void SetScalar(vtkDataArray* _inArray);
+
+	static void CallbackFunc(vtkObject* _caller, unsigned long _eventId, void* clientdata, void* _callData);
 public:
 	BaseVtk();
 	BaseVtk( unsigned int _wide, unsigned int _height );
@@ -65,6 +69,8 @@ public:
 
 	//导入模型数据
 	virtual UserStatusError_t SetData( HBXFEMDef::InputRecord* _ir );
+	//通过stl文本导入模型数据
+	virtual UserStatusError_t SetData( const char* _FileName, boost::filesystem::path  _path);
 
 	//设置颜色表,必须在setdata函数后使用
 	void SetColorTable();
@@ -72,11 +78,25 @@ public:
 	//设置标签栏,必须在设置颜色表函数后使用，否则无效
 	void SetScalarBar();
 
-	//根据单元编号着色,必须在setdata函数后使用
-	virtual void FreshWithNum();
+	//根据节点着色，设置回调函数并自动刷新
+	void AutoFreshNodeNum();
+	//根据节点编号着色,必须在setdata函数后使用
+	virtual void SetNodeNum();
 
+	//根据单元着色，设置回调函数并自动刷新
+	void AutoFreshCellNum();
+	//根据单元编号着色,必须在setdata函数后使用
+	virtual void SetCellNum();
+
+	//根据法向量着色，设置回调函数并自动刷新
+	void AutoFreshNormal();
+	//根据法向量着色，必须在setdata函数后使用
+	virtual void SetNormal(HBXDef::NormalType_t _nt = HBXDef::NormalType_t::POINTNORMAL);
+
+	//根据曲率着色，设置回调函数并自动刷新
+	void AutoFreshCur();
 	//根据曲率着色,必须在setdata函数后使用
-	virtual void FreshWithCur();
+	virtual void SetCur(HBXDef::CurvatureType_t _t = HBXDef::CurvatureType_t::MAX);
 
 	//模仿MFC，在标准窗口、对话框等派生窗口中使用
 	virtual UserStatusError_t Paint();

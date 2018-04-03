@@ -5,7 +5,12 @@ BaseVtk::BaseVtk() : m_wide(500), m_height(500),
 					m_SumNodeNum(0), m_SumElmtNum(0), m_LabelNum(5),
 					bScalarLabel(true)
 {
-	
+	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();		//标量存储器
+	m_AlgorithmFilter = vtkSmartPointer<vtkPolyDataAlgorithm>::New();
+	m_Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();	//定义映射器
+
+	m_MyCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+//	m_MyCallback->SetCallback(BaseVtk::)
 }
 
 BaseVtk::BaseVtk(unsigned int _wide, unsigned int _height): m_wide(_wide), m_height(_height),
@@ -51,21 +56,23 @@ UserStatusError_t BaseVtk::InstanceElmts(vtkSmartPointer<vtkCellArray> _Elmt, _E
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
 
-vtkFloatArray * BaseVtk::GetCurData()
+vtkFloatArray * BaseVtk::GetCurData(vtkPolyDataAlgorithm* _dataIn)
 {
 	return static_cast<vtkFloatArray*>
-		(m_curvaturesFilter->GetOutput()->GetPointData()->GetArray("Gauss_Curvature"));
+		(_dataIn->GetOutput()->GetPointData()->GetArray("Gauss_Curvature"));
 }
 
 UserStatusError_t BaseVtk::Instance()
 {
+	m_Mapper->SetInputData( m_AlgorithmFilter->GetOutput() );
+	m_Mapper->SetScalarRange(m_scalarRange);
 
 	m_Actor = vtkSmartPointer<vtkActor>::New();
 	m_Actor->SetMapper(m_Mapper);
 
-	vtkCamera *camera = vtkCamera::New();
-	camera->SetPosition(1, 1, 1);
-	camera->SetFocalPoint(0, 0, 0);
+ 	vtkCamera *camera = vtkCamera::New();
+// 	camera->SetPosition(1, 1, 1);
+// 	camera->SetFocalPoint(0, 0, 0);
 
 	m_Renderer = vtkSmartPointer<vtkRenderer>::New();
 	m_Renderer->AddActor(m_Actor);
@@ -85,9 +92,10 @@ UserStatusError_t BaseVtk::Instance()
 //	SetBackground(m_Renderer, );
 
 	// Make an oblique view
-// 	m_Renderer->GetActiveCamera()->Azimuth(30);
-// 	m_Renderer->GetActiveCamera()->Elevation(30);
-//	m_Renderer->ResetCamera();	//重置相机
+ 	m_Renderer->GetActiveCamera()->Azimuth(30);
+ 	m_Renderer->GetActiveCamera()->Elevation(30);
+//	m_Renderer->GetActiveCamera()->tr
+	m_Renderer->ResetCamera();	//重置相机
 
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
@@ -111,10 +119,8 @@ UserStatusError_t BaseVtk::SetData(HBXFEMDef::InputRecord* _ir)
 
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	vtkSmartPointer<vtkCellArray> _pElmt = vtkSmartPointer<vtkCellArray>::New();	//为单元容器分配内存;
+	vtkSmartPointer<vtkPolyData> _PolyCube = vtkSmartPointer<vtkPolyData>::New();		//即定义多边形数据集
 
-	m_PolyCube = vtkSmartPointer<vtkPolyData>::New();		//即定义多边形数据集
-	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();		//标量存储器
-	m_Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();	//定义映射器
 
 	//传入所有的节点坐标数据
 	_NodeIter _Niter;
@@ -141,19 +147,51 @@ UserStatusError_t BaseVtk::SetData(HBXFEMDef::InputRecord* _ir)
 	}
 
 	//设置构成多边形的几何数据
-	m_PolyCube->SetPoints(points);
+	_PolyCube->SetPoints(points);
 	//设置单元类型，多边形
-	m_PolyCube->SetPolys(_pElmt);	
+	_PolyCube->SetPolys(_pElmt);	
 	
+	m_AlgorithmFilter->SetOutput( _PolyCube );
 //	m_vMappers[_ii]->SetInputData(PolyCube);
 //	m_vMappers[_ii]->SetScalarRange(0, _dm->_vNode.size() - 1);
 
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
 
+UserStatusError_t BaseVtk::SetData( const char * _FileName, boost::filesystem::path  _path)
+{
+
+	vtkSmartPointer<vtkSTLReader> _StlInstance = vtkSmartPointer<vtkSTLReader>::New();
+	vtkSmartPointer<vtkPolyData>_PolyCube = vtkSmartPointer<vtkPolyData>::New();		//即定义多边形数据集
+
+	boost::filesystem::path _tmppath(_path);
+	_tmppath.append(_FileName);
+
+	_StlInstance->SetOutput(_StlInstance->GetOutput());
+	_StlInstance->SetFileName(_tmppath.string().c_str());
+	_StlInstance->Update();
+
+	m_SumNodeNum = _StlInstance->GetOutput()->GetPoints()->GetNumberOfPoints();
+	m_SumElmtNum = _StlInstance->GetOutput()->GetCellData()->GetNumberOfArrays();
+	_PolyCube->GetNumberOfPoints();
+	std::cout << "stl模型中共计节点" << m_SumNodeNum << std::endl;
+
+	m_AlgorithmFilter = vtkSTLReader::SafeDownCast(_StlInstance);
+
+	return UserStatusError_t::USER_STATUS_SUCCESS;
+}
+
 void BaseVtk::SetScalar(vtkDataArray * _inArray)
 {
-	m_PolyCube->GetPointData()->SetScalars(_inArray);
+	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(_inArray);
+}
+
+void BaseVtk::CallbackFunc(vtkObject * _caller, unsigned long _eventId, void* clientdata, void * _callData)
+{
+	std::cout << "callbackFunc ing..." << std::endl;
+	vtkRenderWindowInteractor* tmp_Interactor = static_cast<vtkRenderWindowInteractor*>(_caller);
+
+	tmp_Interactor->Render();
 }
 
 void BaseVtk::SetColorTable()
@@ -161,11 +199,11 @@ void BaseVtk::SetColorTable()
 	//定义颜色映射表
 	m_ColorTable = vtkSmartPointer<vtkLookupTable>::New();
 	//设置颜色表中的颜色
-	m_ColorTable->SetHueRange(0.0, 0.6);        //色调范围从红色到蓝色
+	m_ColorTable->SetHueRange(0.6, 0.0);        //色调范围从红色到蓝色
 	m_ColorTable->SetAlphaRange(1.0, 1.0);
 	m_ColorTable->SetValueRange(1.0, 1.0);
 	m_ColorTable->SetSaturationRange(1.0, 1.0);
-	m_ColorTable->SetNumberOfTableValues(256);	//与setnumberofcolors一样
+	m_ColorTable->SetNumberOfTableValues(512);	//与setnumberofcolors一样
 	m_ColorTable->SetRange(m_scalarRange);
 	m_ColorTable->Build();
 
@@ -176,43 +214,118 @@ void BaseVtk::SetScalarBar()
 {
 	m_scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
 	m_scalarBar->SetLookupTable( m_Mapper->GetLookupTable() );
-//	m_scalarBar->SetTitle("max");
+	if (nullptr != m_AlgorithmFilter->GetOutput()->GetPointData()->GetScalars()->GetName())
+	{
+		m_scalarBar->SetTitle(m_AlgorithmFilter->GetOutput()->GetPointData()->GetScalars()->GetName());
+	}
 	m_scalarBar->SetNumberOfLabels(m_LabelNum);
 }
 
-void BaseVtk::FreshWithNum()
+void BaseVtk::AutoFreshNodeNum()
+{
+	m_MyCallback->SetCallback(BaseVtk::CallbackFunc);
+
+	m_Interactor->Initialize();
+	m_Interactor->CreateRepeatingTimer(50);//设置50ms刷新一次，也就是一秒20帧
+	m_Interactor->AddObserver( vtkCommand::TimerEvent, m_MyCallback );
+}
+
+void BaseVtk::SetNodeNum()
+{
+	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();
+	for (int i = 0; i < m_SumNodeNum; i++)
+		m_Scalar->InsertTuple1(i, i);
+
+	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(m_Scalar);
+
+	m_scalarRange[0] = 0;
+	m_scalarRange[1] = m_SumNodeNum;
+}
+
+void BaseVtk::SetCellNum()
 {
 	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();
 	for (int i = 0; i < m_SumElmtNum; i++)
 		m_Scalar->InsertTuple1(i,i);
-	m_PolyCube->GetCellData()->SetScalars(m_Scalar);
 
-	m_Mapper->SetInputData(m_PolyCube);
+	m_AlgorithmFilter->GetOutput()->GetCellData()->SetScalars(m_Scalar);
+
 	m_scalarRange[0] = 0;
 	m_scalarRange[1] = m_SumElmtNum;
-	m_Mapper->SetScalarRange(m_scalarRange);
+}
+
+void BaseVtk::SetNormal(HBXDef::NormalType_t _nt)
+{
+	//https://blog.csdn.net/shenziheng1/article/details/54845071
+	vtkSmartPointer<vtkPolyDataNormals> _NormalsFilter = vtkSmartPointer<vtkPolyDataNormals>::New();
+	_NormalsFilter->SetInputData(m_AlgorithmFilter->GetOutput());
+	_NormalsFilter->SetComputePointNormals(1);//开启点法向量计算  
+	_NormalsFilter->SetComputeCellNormals(0); //关闭单元法向量计算
+	_NormalsFilter->SetAutoOrientNormals(1);
+	_NormalsFilter->SetSplitting(0);
+	_NormalsFilter->Update();
+
+	//创建mark点
+	vtkSmartPointer<vtkMaskPoints> _mask =
+		vtkSmartPointer<vtkMaskPoints>::New();
+	_mask->SetInputData(_NormalsFilter->GetOutput());
+	_mask->SetMaximumNumberOfPoints(300);
+	_mask->RandomModeOn();
+	_mask->Update();
+
+	//构建箭头
+	vtkSmartPointer<vtkArrowSource> _arrow =
+		vtkSmartPointer<vtkArrowSource>::New();
+	_arrow->Update(); //一定要更新 否则数据没有添加进来，程序会报错
+
+	vtkSmartPointer<vtkGlyph3D> _glyph =
+		vtkSmartPointer<vtkGlyph3D>::New();
+	_glyph->SetInputData(_mask->GetOutput());
+	_glyph->SetSourceData(_arrow->GetOutput());//每一点用箭头代替  
+	_glyph->SetVectorModeToUseNormal();//设置向量显示模式和法向量一致  
+	_glyph->SetScaleFactor(0.01); //设置伸缩比例  
+	_glyph->Update();
+
+
+	m_scalarRange[0] = 0;
+	m_scalarRange[1] = m_SumNodeNum;
+
+	//未完待续...
 }
 
 
-void BaseVtk::FreshWithCur()
+void BaseVtk::SetCur(HBXDef::CurvatureType_t _t)
 {
 	//创建曲率属性智能指针
 	//https://blog.csdn.net/shenziheng1/article/details/54846277
-	m_curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
-	m_curvaturesFilter->SetInputData(m_PolyCube);
-//	m_curvaturesFilter->SetCurvatureTypeToMaximum();	//最大曲率
-//	m_curvaturesFilter->SetCurvatureTypeToMinimum();	//最小曲率
-//	m_curvaturesFilter->SetCurvatureTypeToGaussian();	//高斯曲率
-	m_curvaturesFilter->SetCurvatureTypeToMean();		//平均曲率
-	m_curvaturesFilter->Update();
+	vtkSmartPointer<vtkCurvatures> _curvaturesFilter = vtkSmartPointer<vtkCurvatures>::New();
+	_curvaturesFilter->SetInputData(m_AlgorithmFilter->GetOutput());
 
-	m_curvaturesFilter->GetOutput()->GetScalarRange(m_scalarRange);
+	switch (_t)
+	{
+	case  HBXDef::CurvatureType_t::MAX:
+		_curvaturesFilter->SetCurvatureTypeToMaximum();	//最大曲率
+		break;
+	case HBXDef::CurvatureType_t::MIN:
+		_curvaturesFilter->SetCurvatureTypeToMinimum();	//最小曲率
+		break;
+	case HBXDef::CurvatureType_t::GAUSS:
+		_curvaturesFilter->SetCurvatureTypeToGaussian();	//高斯曲率
+		break;
+	case HBXDef::CurvatureType_t::MEAN:
+		_curvaturesFilter->SetCurvatureTypeToMean();		//平均曲率
+		break;
+	}
 	
-	m_PolyCube->GetPointData()->SetScalars(this->GetCurData());
+	_curvaturesFilter->Update();
+
+	_curvaturesFilter->GetOutput()->GetScalarRange(m_scalarRange);
+	
+	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(this->GetCurData(_curvaturesFilter));
+
+	m_AlgorithmFilter = vtkCurvatures::SafeDownCast(_curvaturesFilter);
 
 //	m_Mapper->SetInputData(m_curvaturesFilter->GetOutput());
-	m_Mapper->SetInputData(m_PolyCube);
-	m_Mapper->SetScalarRange(m_scalarRange);
 	//存储标量值
 //	vtkFloatArray *scalars = vtkFloatArray::New();
 	//设定每个顶点的标量值
@@ -229,6 +342,7 @@ UserStatusError_t BaseVtk::Paint()
 	//设置交互模式
 	vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
 	m_Interactor->SetInteractorStyle(style);
+
 	m_Interactor->Start();
 
 	return UserStatusError_t::USER_STATUS_SUCCESS;

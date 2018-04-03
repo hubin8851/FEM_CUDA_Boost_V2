@@ -138,27 +138,28 @@ int main()
 
 	}
 
-	if (1)
+	HBXFEMDef::BaseReader* xxx = HBXFEMDef::InstanceInpReader();
+	if (0)
 	{
-		VTK_MODULE_INIT(vtkRenderingOpenGL2);
-		VTK_MODULE_INIT(vtkRenderingFreeType);
-
 		using namespace HBXFEMDef;
-		BaseReader* xxx = InstanceInpReader();
 		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
 //		xxx->SetSourceFilePath("beam.inp", "D:\\AbaqusTemp"); 
 		xxx->SetInputData();
 		
-		BaseVtk g_VTK;
-
-		g_VTK.SetData(xxx->GetInputRecord());
-		g_VTK.FreshWithNum();
-		g_VTK.SetColorTable();
-		g_VTK.SetScalarBar();
-		g_VTK.Instance();
-		g_VTK.Paint();
-		HBXFEMDef::Engng* em = HBXFEMDef::InstanceProblem(xxx, problemMode_t::_processor, 0);
+//		HBXFEMDef::Engng* em = HBXFEMDef::InstanceProblem(xxx, problemMode_t::_processor, 0);
 	}
+
+	BaseVtk g_VTK;
+
+	g_VTK.SetData("first_stage.stl", "C:\\Users\\hbx\\Desktop\\");
+//	g_VTK.SetData(xxx->GetInputRecord());
+	g_VTK.SetNodeNum();
+	g_VTK.SetColorTable();
+	g_VTK.SetScalarBar();
+
+	g_VTK.Instance();
+	g_VTK.Paint();
+
 
 
 #pragma region MFCœ‡πÿ
