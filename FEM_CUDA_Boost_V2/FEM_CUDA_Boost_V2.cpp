@@ -150,15 +150,16 @@ int main()
 	}
 
 	BaseVtk g_VTK;
+	g_VTK.Initial();
 
 	g_VTK.SetData("first_stage.stl", "C:\\Users\\hbx\\Desktop\\");
 //	g_VTK.SetData(xxx->GetInputRecord());
-	g_VTK.SetNodeNum();
+	g_VTK.AutoFreshNodeNum();
 	g_VTK.SetColorTable();
 	g_VTK.SetScalarBar();
 
 	g_VTK.Instance();
-	g_VTK.Paint();
+	g_VTK.Run();
 
 
 

@@ -1,22 +1,36 @@
 #include "BaseVtk.h"
 #include <VtkPreDef.h>
 
-BaseVtk::BaseVtk() : m_wide(500), m_height(500), 
-					m_SumNodeNum(0), m_SumElmtNum(0), m_LabelNum(5),
-					bScalarLabel(true)
-{
-	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();		//标量存储器
-	m_AlgorithmFilter = vtkSmartPointer<vtkPolyDataAlgorithm>::New();
-	m_Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();	//定义映射器
+bool BaseVtk::bScalarLabel = false;		//是否显示标签栏
 
-	m_MyCallback = vtkSmartPointer<vtkCallbackCommand>::New();
-//	m_MyCallback->SetCallback(BaseVtk::)
+vtkIdType  BaseVtk::m_SumNodeNum = 0;	//单元总数
+vtkIdType  BaseVtk::m_SumElmtNum = 0;	//单元总数
+int		 BaseVtk::m_LabelNum = 0;	//标签分类个数
+
+double BaseVtk::m_scalarRange[2] = { 0, 0 };	//属性范围
+
+vtkSmartPointer<vtkFloatArray> BaseVtk::m_Scalar = nullptr;
+vtkSmartPointer<vtkPolyDataAlgorithm> BaseVtk::m_AlgorithmFilter = nullptr;
+vtkSmartPointer<vtkRenderWindowInteractor> BaseVtk::m_Interactor = nullptr;//交互器
+vtkSmartPointer<vtkScalarBarActor> BaseVtk::m_scalarBar = nullptr;	//标签栏
+
+vtkSmartPointer<vtkPolyDataMapper>   BaseVtk::m_Mapper = nullptr;	//映射器
+vtkSmartPointer<vtkRenderer>  BaseVtk::m_Renderer = nullptr;	//绘制类
+
+BaseVtk::BaseVtk() : m_wide(500), m_height(500) 
+{
+	Initial();
 }
 
-BaseVtk::BaseVtk(unsigned int _wide, unsigned int _height): m_wide(_wide), m_height(_height),
-			m_SumNodeNum(0), m_SumElmtNum(0), m_LabelNum(5),bScalarLabel(true)
+BaseVtk::BaseVtk(unsigned int _wide, unsigned int _height): m_wide(_wide), m_height(_height)
 {
+	Initial();
+}
 
+BaseVtk * BaseVtk::New()
+{
+	static BaseVtk _tmpClass;
+	return &_tmpClass;
 }
 
 BaseVtk::~BaseVtk()
@@ -62,24 +76,25 @@ vtkFloatArray * BaseVtk::GetCurData(vtkPolyDataAlgorithm* _dataIn)
 		(_dataIn->GetOutput()->GetPointData()->GetArray("Gauss_Curvature"));
 }
 
-UserStatusError_t BaseVtk::Instance()
+UserStatusError_t BaseVtk::Initial()
 {
-	m_Mapper->SetInputData( m_AlgorithmFilter->GetOutput() );
-	m_Mapper->SetScalarRange(m_scalarRange);
+	
+	m_AlgorithmFilter = vtkSmartPointer<vtkPolyDataAlgorithm>::New();
+
+	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();		//标量存储器
+	m_scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
+
+	m_MyCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+
+	m_Mapper = vtkSmartPointer<vtkPolyDataMapper>::New();	//定义映射器
 
 	m_Actor = vtkSmartPointer<vtkActor>::New();
 	m_Actor->SetMapper(m_Mapper);
 
- 	vtkCamera *camera = vtkCamera::New();
-// 	camera->SetPosition(1, 1, 1);
-// 	camera->SetFocalPoint(0, 0, 0);
+	vtkCamera *camera = vtkCamera::New();
 
 	m_Renderer = vtkSmartPointer<vtkRenderer>::New();
 	m_Renderer->AddActor(m_Actor);
-	if (bScalarLabel)
-	{
-		m_Renderer->AddActor2D(m_scalarBar);
-	}
 	m_Renderer->SetActiveCamera(camera);
 
 	m_RenderWin = vtkSmartPointer<vtkRenderWindow>::New();
@@ -87,6 +102,23 @@ UserStatusError_t BaseVtk::Instance()
 
 	m_RenderWin->SetSize(m_wide, m_height);	//设置窗口尺寸
 	m_RenderWin->SetWindowName("vtk测试");
+
+	m_Interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+	m_Interactor->SetRenderWindow(m_RenderWin);
+	//开始绘制
+	m_Interactor->Initialize();
+	//设置交互模式
+	vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+	m_Interactor->SetInteractorStyle(style);
+
+	return UserStatusError_t();
+}
+
+UserStatusError_t BaseVtk::Instance()
+{
+	m_Mapper->SetInputData( m_AlgorithmFilter->GetOutput() );
+	m_Mapper->SetScalarRange(m_scalarRange);
+
 //	m_RenderWin->Render();		//渲染器
 
 //	SetBackground(m_Renderer, );
@@ -189,9 +221,9 @@ void BaseVtk::SetScalar(vtkDataArray * _inArray)
 void BaseVtk::CallbackFunc(vtkObject * _caller, unsigned long _eventId, void* clientdata, void * _callData)
 {
 	std::cout << "callbackFunc ing..." << std::endl;
-	vtkRenderWindowInteractor* tmp_Interactor = static_cast<vtkRenderWindowInteractor*>(_caller);
 
-	tmp_Interactor->Render();
+
+
 }
 
 void BaseVtk::SetColorTable()
@@ -212,8 +244,11 @@ void BaseVtk::SetColorTable()
 
 void BaseVtk::SetScalarBar()
 {
-	m_scalarBar = vtkSmartPointer<vtkScalarBarActor>::New();
 	m_scalarBar->SetLookupTable( m_Mapper->GetLookupTable() );
+	if (nullptr == m_AlgorithmFilter->GetOutput()->GetPointData()->GetScalars())//如果属性向量里没有数据则直接返回
+	{
+		return;
+	}
 	if (nullptr != m_AlgorithmFilter->GetOutput()->GetPointData()->GetScalars()->GetName())
 	{
 		m_scalarBar->SetTitle(m_AlgorithmFilter->GetOutput()->GetPointData()->GetScalars()->GetName());
@@ -223,16 +258,15 @@ void BaseVtk::SetScalarBar()
 
 void BaseVtk::AutoFreshNodeNum()
 {
-	m_MyCallback->SetCallback(BaseVtk::CallbackFunc);
+	m_MyCallback->SetCallback( BaseVtk::SetNodeNum );
 
 	m_Interactor->Initialize();
 	m_Interactor->CreateRepeatingTimer(50);//设置50ms刷新一次，也就是一秒20帧
 	m_Interactor->AddObserver( vtkCommand::TimerEvent, m_MyCallback );
 }
 
-void BaseVtk::SetNodeNum()
+void BaseVtk::SetNodeNum(vtkObject * _caller, unsigned long _eventId, void* clientdata, void * _callData)
 {
-	m_Scalar = vtkSmartPointer<vtkFloatArray>::New();
 	for (int i = 0; i < m_SumNodeNum; i++)
 		m_Scalar->InsertTuple1(i, i);
 
@@ -240,6 +274,8 @@ void BaseVtk::SetNodeNum()
 
 	m_scalarRange[0] = 0;
 	m_scalarRange[1] = m_SumNodeNum;
+
+	Paint();
 }
 
 void BaseVtk::SetCellNum()
@@ -335,15 +371,12 @@ void BaseVtk::SetCur(HBXDef::CurvatureType_t _t)
 
 UserStatusError_t BaseVtk::Paint()
 {
-	m_Interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
-	m_Interactor->SetRenderWindow(m_RenderWin);
-	//开始绘制
-	m_Interactor->Initialize();
-	//设置交互模式
-	vtkSmartPointer<vtkInteractorStyleTrackballCamera> style = vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
-	m_Interactor->SetInteractorStyle(style);
+	if (bScalarLabel)
+	{
+		m_Renderer->AddActor2D(m_scalarBar);
+	}
 
-	m_Interactor->Start();
+	m_Interactor->Render();
 
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
@@ -352,6 +385,12 @@ UserStatusError_t BaseVtk::Draw()
 {
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
+
+void BaseVtk::Run()
+{
+	m_Interactor->Start();
+}
+
 
 void BaseVtk::SetBackground(vtkSmartPointer<vtkRenderer> _render, double * _rgb)
 {
