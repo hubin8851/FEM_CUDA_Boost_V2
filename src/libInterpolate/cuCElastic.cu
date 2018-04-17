@@ -1,18 +1,16 @@
-#include "stdafx.h"
 
 #include <cublas.h>
 #include <cublas_v2.h>
 #include <cublas_api.h>
-#include <helper_cuda.h>
-
-#include "AeroTable.h"
+#include "helper_cuda.h"
+#include <CuDefMacro.h>
+#include <HbxCudaDef\AeroTable.h>
 #include "cuCElastic.h"
-#include "cuElastic_kernel.cuh"
-#include "cuInterpolate_kernel.cuh"
+
 
 //插值计算Xpos处振型
 extern "C" 
-void GetXposShape( HBXDef::UserDefFloat* _pSite, HBXDef::UserDefFloat* _pOutput )
+void GetXposShape( HBXDef::UserCalPrec* _pSite, HBXDef::UserCalPrec* _pOutput )
 {
 	//完成每个点的插值计算并输出
 }
@@ -20,7 +18,7 @@ void GetXposShape( HBXDef::UserDefFloat* _pSite, HBXDef::UserDefFloat* _pOutput 
 
 //插值计算Xpos处振型斜率
 extern "C" 
-void GetXposDShape( HBXDef::UserDefFloat* _pSite, HBXDef::UserDefFloat* _pOutput )
+void GetXposDShape( HBXDef::UserCalPrec* _pSite, HBXDef::UserCalPrec* _pOutput )
 {
 	//完成每个点的插值计算并输出
 }

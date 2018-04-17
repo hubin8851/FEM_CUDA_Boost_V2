@@ -8,9 +8,9 @@
 
 namespace HBXFEMDef
 {
+
 #define _EX_Element_nodes "nodes"
 #define _EX_Element_crosssect "crosssect"
-
 
 
 	template <class Entity_type> class State;

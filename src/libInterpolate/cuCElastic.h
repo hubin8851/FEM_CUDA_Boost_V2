@@ -5,7 +5,7 @@
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
 #include "HbxCudaDef\AeroTable.h"
-#include "..\libInterpolate\CElastic_common.h"
+#include "..\libEngng\CElastic_common.h"
 
 namespace HBXDef
 {

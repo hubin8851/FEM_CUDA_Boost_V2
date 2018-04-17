@@ -1,6 +1,8 @@
 #pragma once
-#include "stdafx.h"
-#include "AeroTable.h"
+#include <BoostPreDef.h>
+#include <tinyxml\tinyxml.h>
+#include <tinyxml\tinystr.h>
+#include "HbxCudaDef\AeroTable.h"
 
 using namespace std;
 

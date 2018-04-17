@@ -69,6 +69,15 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxFemDef\HBXFEMEngng.h">
       <Filter>头文件\HBXDEF</Filter>
     </ClInclude>
+    <ClInclude Include="vtktest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="regextest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="IntervalTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

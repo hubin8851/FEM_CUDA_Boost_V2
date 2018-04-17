@@ -120,7 +120,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libVtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libVtk.lib;libInterpolate.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -174,9 +174,12 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />
     <ClInclude Include="FemCmpnn.h" />
     <ClInclude Include="FEM_CUDA_Boost_V2.h" />
+    <ClInclude Include="IntervalTest.h" />
+    <ClInclude Include="regextest.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="vtktest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp">

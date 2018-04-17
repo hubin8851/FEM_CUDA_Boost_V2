@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseLag.h"
-#include "CuComponent.cuh"
+#include <HbxCudaDef\CuComponent.cuh>
 
 
 namespace HBXDef
@@ -58,7 +58,7 @@ namespace HBXDef
 		__device__ HBXDef::UserCalPrec	ReadTableData( HBXDef::UserCalPrec* _ArrayIn );
 
 		//寻找待插值点所围成空间所构成的点
-		__host__ __device__ HBXDef::UserCalPrec	findcordi( unsigned int _tmp_position[TPOW2(T)], HBXDef::UserCalPrec _tmp_proper[T], HBXDef::UserDefFloat _vecIn[T] );
+		__host__ __device__ HBXDef::UserCalPrec	findcordi( unsigned int _tmp_position[TPOW2(T)], HBXDef::UserCalPrec _tmp_proper[T], HBXDef::UserCalPrec _vecIn[T] );
 	};
 
 	template<unsigned int T, HBXDef::CudaMalloc_t M >

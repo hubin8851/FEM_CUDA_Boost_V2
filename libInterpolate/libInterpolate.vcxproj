@@ -31,7 +31,7 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v140</PlatformToolset>
@@ -61,6 +61,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_debug_x64.props" />
     <Import Project="..\CUFEM.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -97,11 +98,13 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>echo copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"
@@ -109,7 +112,8 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Include>$(hbxdef)\HBXDEF;%(Include)</Include>
+      <Include>%(Include)</Include>
+      <CodeGeneration>compute_52,sm_52</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -156,24 +160,16 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="..\src\libInterpolate\cuCElastic.cu" />
-    <CudaCompile Include="..\src\libInterpolate\CuInterpolation.cu" />
-    <CudaCompile Include="kernel.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\libInterpolate\BaseLag.h" />
-    <ClInclude Include="..\src\libInterpolate\CuInterpolation.h" />
-    <ClInclude Include="..\src\libInterpolate\ElasticStruct.h" />
-    <ClInclude Include="..\src\libInterpolate\cuCElastic.h" />
+    <ClInclude Include="..\src\libInterpolate\cuInterval_kernel.cuh" />
+    <ClInclude Include="..\src\libInterpolate\InterPosStruct.h" />
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
-    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\AeroTable.h" />
+    <ClInclude Include="..\src\libInterpolate\interval_device.cuh" />
+    <ClInclude Include="..\src\libInterpolate\interval_lib.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\TPOW.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\libInterpolate\BaseLag.inl" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\libInterpolate\cuInterpolate.cpp" />
+    <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

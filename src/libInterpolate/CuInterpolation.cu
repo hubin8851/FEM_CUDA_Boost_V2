@@ -1,5 +1,5 @@
-#include "CuComponent.cuh"
-#include "CuInterpolation.h"
+#include <HbxCudaDef\CuComponent.cuh>
+#include <libInterpolate\CuInterpolation.h>
 
 #include <stdio.h>
 
@@ -7,7 +7,7 @@ namespace HBXDef
 {
 
 	template<unsigned int T, HBXDef::CudaMalloc_t M >
-	__global__	void cutestlag1( HBXDef::CuInterpolation<T, M>* _ArrayIn, HBXDef::UserDefFloat* _outData )
+	__global__	void cutestlag1( HBXDef::CuInterpolation<T, M>* _ArrayIn, HBXDef::UserCalPrec* _outData )
 	{
 		unsigned int idx = blockIdx.x*blockDim.x + threadIdx.x;
 
@@ -20,7 +20,7 @@ namespace HBXDef
 #ifdef WITHTEST	//测试用例，若传入指针为空则生成
 //		std::cerr<<"传入指针为空..."<<std::endl;
 #endif  
-			HBXDef::UserDefFloat intercord[4];
+			HBXDef::UserCalPrec intercord[4];
 			for (size_t i = 0; i < RUNCLC; i++)
 			{
 				intercord[0] = -3.0 + i * 20.0 / RUNCLC + 20.0 * i / MAX_GPUITER;

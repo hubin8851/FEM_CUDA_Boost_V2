@@ -1,50 +1,42 @@
-
 namespace HBXDef
 {
-	template< unsigned int T >
-	__host__ CBaseLag<T>::CBaseLag( HBXDef::_AEROTABLE* _IptTable, size_t _blkId )
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ CuInterpolation<T, M>::CuInterpolation( HBXDef::_AEROTABLE* _IptTable, size_t _blkId )
 	{
-		Assert(T > 0);
 		IFNULL(_IptTable, "导入气动数据表错误...");
-		m_isInit = false;
 		m_table_p = _IptTable;
 		this->SetBlkId( _blkId );
-
-		memset( m_lag_cordinate, 0, T * sizeof(unsigned int) );
 	}
 
-	template< unsigned int T >
-	__host__ CBaseLag<T>::CBaseLag( const _SameBaseLag& _rhs )
+
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ CuInterpolation<T, M>::CuInterpolation( const HBXDef::CBaseLag<T>& _rhs )
 	{
-		Assert( T>0 )
-		memcpy( m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int) );
-
-		memset( m_lag_cordinate, 0, T * sizeof(unsigned int) );
-
-		m_cordials = _rhs.m_cordials;
-		m_data = _rhs.m_data;
-
-		m_isInit = true;
-	}
-
-	template< unsigned int T >
-	CBaseLag<T>::~CBaseLag(void)
-	{
-		if (m_table_p)
+		switch (M)
 		{
-			delete	m_table_p;
-			m_table_p = nullptr;
+		case NORMAL: PAGELOCK: UNIFIEDMEM:
+			checkCudaErrors( cudaMemcpy(m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int), cudaMemcpyHostToDevice ) );
+			checkCudaErrors( cudaMemcpy(m_lag_cordinate, _rhs.m_lag_cordinate, T * sizeof(unsigned int), cudaMemcpyHostToDevice) );
+			checkCudaErrors( cudaMemcpy(&m_cordials, &_rhs.m_cordials, sizeof(void*), cudaMemcpyDeviceToDevice));
+			checkCudaErrors( cudaMemcpy(&m_data, &_rhs.m_data, sizeof(void*), cudaMemcpyDeviceToDevice));
+			break;
+		case ARRAY2D:
+			break;
+		default:
+			break;
 		}
 
-		if (m_cordials)
-		{
-			delete	[]m_cordials;
-			m_cordials = nullptr;
-		}
 	}
 
-	template< unsigned int T >
-	UserStatusError_t CBaseLag<T>::SetBlkId( size_t _blkId )
+
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ CuInterpolation<T, M>::~CuInterpolation(void)
+	{
+
+	}
+
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ UserStatusError_t CuInterpolation<T, M>::SetBlkId( size_t _blkId )
 	{
 		if (_blkId >= m_table_p->_blocknum)
 		{
@@ -56,41 +48,57 @@ namespace HBXDef
 		{
 			return UserStatusError_t::USER_STATUS_INVALID_VALUE;
 		}
-		
+
 		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
-	template< unsigned int T >
-	bool CBaseLag<T>::Initial()
+
+	//主要是确定待插值点的数目，并完成若干待插值点坐标向量在显存上的分配
+	//@_ArrayLgth：待插值点的数目
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ bool CuInterpolation<T, M>::Initial( unsigned int _ArrayLgth )
 	{
-		memcpy( m_numperdim, m_table_p->_blocks[m_slct_block_num]._numperdim, sizeof(unsigned int)*T );
-
-		unsigned int _cordlgth = 0;	//插值节点数组的长度
-		for (int i = 0; i < m_dim; i++)
-		{
-			_cordlgth += m_numperdim[i];
-		}
-		m_cordials = new HBXDef::UserCalPrec[_cordlgth];
-
-		_cordlgth = 0;	//在此做二维转一维数组的临时变量
-		for (int i = 0; i < m_dim; i++)
-		{
-			for (int j = 0; j < m_numperdim[i]; j++)
-			{
-				m_cordials[_cordlgth] = m_table_p->_blocks[m_slct_block_num]._corddata[i][j];
-				_cordlgth++;
-			}
-		}
-		
-		m_data = m_table_p->_blocks[m_slct_block_num]._data;
+		m_isInit = false;
+		std::cout<<sizeof(_USERDEFT)<<std::endl;
+		checkCudaErrors( cudaMalloc(&p_UserDefT, _ArrayLgth * sizeof(_USERDEFT) ) );
 
 		m_isInit = true;
-		return UserStatusError_t::USER_STATUS_SUCCESS;
+		return true;
 	}
 
 
-	template< unsigned int T >
-	HBXDef::UserCalPrec	CBaseLag<T>::ReadTableData( HBXDef::UserCalPrec* _ArrayIn )
+	//从BaseLag中获取数据并初始化
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ bool CuInterpolation<T, M>::Initial( const CBaseLag<T>& _rhs )
+	{
+		m_isInit = false;
+		switch (M)
+		{
+		case NORMAL: PAGELOCK: UNIFIEDMEM:
+			checkCudaErrors( cudaMemcpy(m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int), cudaMemcpyHostToDevice ) );
+			checkCudaErrors( cudaMemcpy(m_lag_cordinate, _rhs.m_lag_cordinate, T * sizeof(unsigned int), cudaMemcpyHostToDevice) );
+			checkCudaErrors( cudaMemcpy(&m_cordials, &_rhs.m_cordials, sizeof(void*), cudaMemcpyDeviceToDevice));
+			checkCudaErrors( cudaMemcpy(&m_data, &_rhs.m_data, sizeof(void*), cudaMemcpyDeviceToDevice));
+			break;
+		case ARRAY2D:
+			break;
+		default:
+			break;
+		}
+		m_isInit = true;
+		return true;
+	}
+
+	//对同一插值表内若干个点进行插值计算,空置
+// 	template< unsigned int T, HBXDef::CudaMalloc_t M >
+// 	__global__ void CuInterpolation<T, M>::ReadTableArray( _USERDEFT* _ArrayIn )
+// 	{
+// 		
+// 	}
+
+	//@_ArrayIn:传入的带插值的坐标向量
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__device__ HBXDef::UserCalPrec	CuInterpolation<T, M>::ReadTableData( HBXDef::UserCalPrec* _ArrayIn )
 	{
 		unsigned int _tmp_position[ TPOW2(T) ];	//递归临时数组
 		HBXDef::UserCalPrec	_tmp_reducdata[ TPOW2(T) ];	//递归数据临时数组
@@ -114,12 +122,14 @@ namespace HBXDef
 			_tmpidx >> 1;//通过左移操作对另一维度的数据进行插值
 		}//在此没有将最后一步放入循环中，便于未优化情况下提高速度
 		return _tmp_reducdata[1] - _tmp_proper[0] * (_tmp_reducdata[1] - _tmp_reducdata[0]);
+
 	}
 
-	template< unsigned int T >
-	void	CBaseLag<T>::findcordi( unsigned int _tmp_position[ TPOW2(T) ], 
-									HBXDef::UserCalPrec _tmp_proper[T], 
-									HBXDef::UserCalPrec _vecIn[T] )
+
+	template< unsigned int T, HBXDef::CudaMalloc_t M >
+	__host__ __device__ HBXDef::UserCalPrec	CuInterpolation<T, M>::findcordi( unsigned int _tmp_position[TPOW2(T)],
+																		HBXDef::UserCalPrec _tmp_proper[T],
+																		HBXDef::UserCalPrec _vecIn[T] )
 	{
 		unsigned int tempmul = 1;		//每个维度插值区间上点个数的乘积
 		unsigned int temppow = 1;		//用于控制迭代过程中vec每个维度的偏移量
@@ -187,10 +197,11 @@ namespace HBXDef
 			tempmul *= _length;
 			_tmpoffset += _length;
 			temppow = temppow << 1;
-		}
-
 	}
+
 
 }
 
 
+
+}

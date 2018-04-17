@@ -9,47 +9,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="kernel.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\src\libInterpolate\cuCElastic.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
-    <CudaCompile Include="..\src\libInterpolate\CuInterpolation.cu">
-      <Filter>源文件</Filter>
-    </CudaCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\AeroTable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\cuCElastic.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\BaseLag.h">
+    <ClInclude Include="..\src\libInterpolate\InterPosStruct.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\ElasticStruct.h">
+    <ClInclude Include="..\src\libInterpolate\interval_lib.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\CuInterpolation.h">
+    <ClInclude Include="..\src\libInterpolate\interval_device.cuh">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\cuInterval_kernel.cuh">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\TPOW.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\src\libInterpolate\BaseLag.inl">
+    <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu">
       <Filter>源文件</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\src\libInterpolate\cuInterpolate.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    </CudaCompile>
   </ItemGroup>
 </Project>

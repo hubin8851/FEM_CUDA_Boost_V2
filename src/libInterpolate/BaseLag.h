@@ -1,7 +1,8 @@
 #pragma once
 
 #include <HbxDefMacro.h>
-
+#include <HBXDefStruct.h>
+#include <HbxCudaDef\AeroTable.h>
 #include <HbxCudaDef\cuComponent.cuh>
 
 //避免命名空间的污染
@@ -15,7 +16,7 @@ namespace HBXDef
 	class CBaseLag
 	{
 	private:
-		typedef CBaseLag<T> _SameBaseLag;
+		typedef CBaseLag<T> _SameInterval;
 		enum 
 		{
 			VALUE = T
@@ -33,8 +34,8 @@ namespace HBXDef
 		HBXDef::UserCalPrec*	m_cordials;	//线性化后的每个维度上的插值节点数组
 		HBXDef::UserCalPrec*	m_data;
 	public:
-		__host__ CBaseLag( HBXDef::_AEROTABLE* _IptTable, size_t _blkId  );
-		__host__ CBaseLag( const _SameBaseLag& _rhs );
+		__host__ __device__ CBaseLag( HBXDef::_AEROTABLE* _IptTable, size_t _blkId  );
+		__host__ __device__ CBaseLag( const _SameInterval& _rhs );
 		~CBaseLag();
 
 		//@__blkId:待索引的block的ID,以0为起始索引
@@ -47,7 +48,9 @@ namespace HBXDef
 		HBXDef::UserCalPrec	ReadTableData( HBXDef::UserCalPrec * _ArrayIn );
 
 		//寻找待插值点所围成空间所构成的点
-		void	findcordi( unsigned int _tmp_position[TPOW2(T)], HBXDef::UserCalPrec _tmp_proper[T], HBXDef::UserCalPrec _vecIn[T] );
+		void	findcordi(	unsigned int _tmp_position[TPOW2(T)],
+							HBXDef::UserCalPrec _tmp_proper[T],
+							HBXDef::UserCalPrec _vecIn[T]);
 
 		//返回当前Table的总维度
 		__host__ size_t GetDemtion(){ return T; };
