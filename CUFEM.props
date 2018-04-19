@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2\src;C:\ProgramData\NVIDIA Corporation\CUDA Samples\v9.0\common\inc;$(IncludePath)</IncludePath>
+    <IncludePath>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile />

@@ -1,3 +1,7 @@
+#ifdef USESTDAFX
+#include "stdafx.h"
+#endif
+
 #include "EltPropReader.h"
 #include <SearchFile.h>
 namespace HBXFEMDef

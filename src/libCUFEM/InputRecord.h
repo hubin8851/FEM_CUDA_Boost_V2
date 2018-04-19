@@ -7,6 +7,7 @@
 #include <libCUFEM\BaseMaterial.h>
 #include <libCUFEM\BaseSection.h>
 #include <libCUFEM\BaseNode.h>
+#include <HbxXmlDef\AeroTable.h>
 
 namespace HBXFEMDef
 {
@@ -27,28 +28,29 @@ namespace HBXFEMDef
 
 		virtual InputRecord* GiveCopy() = 0;
 
-		virtual void SetField(int _item, InputFieldType _id) = 0;
+		virtual bool SetField(int _item, InputFieldType _id) = 0;
 
-		virtual void SetField(double &_input, InputFieldType _id) = 0;
+		virtual bool SetField(double &_input, InputFieldType _id) = 0;
 
-		virtual void SetField(std::vector<int> _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::vector<int> _item, InputFieldType _id) = 0;
 
-		virtual void SetField(HBXFEMDef::Node  _item, InputFieldType _id) = 0;
+		virtual bool SetField(HBXFEMDef::Node  _item, InputFieldType _id) = 0;
 
-		virtual void SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>>  _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>>  _item, InputFieldType _id) = 0;
 
-		virtual void SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id) = 0;
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::_Section<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::_Section<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::_Material<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::_Material<HBXDef::UserReadPrec> > _item, InputFieldType _id) = 0;
 
+		virtual bool SetField(std::shared_ptr< HBXDef::_AEROTABLE > _item, InputFieldType _id ) = 0;
 
 		virtual InputFileResult_t GiveField(double &answer, InputFieldType id) = 0;
 
-		 
+		virtual HBXDef::_AEROTABLE* GiveField( InputFieldType _id) = 0;
 	};
 
 

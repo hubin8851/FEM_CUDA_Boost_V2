@@ -1,3 +1,7 @@
+#ifdef USESTDAFX
+#include "stdafx.h"
+#endif
+
 #include <HBXPreDef.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\Set.h>

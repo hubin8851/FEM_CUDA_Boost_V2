@@ -71,6 +71,7 @@
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />

@@ -45,7 +45,7 @@ namespace HBXFEMDef
 		//拷贝构造函数
 		DynamicInputRecord(const DynamicInputRecord&);
 		DynamicInputRecord& operator = (const DynamicInputRecord&);
-		//从给定的组建中提取记录
+		//从给定的组件中提取记录
 		DynamicInputRecord(BaseComponent& _component);
 
 		//
@@ -54,25 +54,29 @@ namespace HBXFEMDef
 		//
 		virtual DynamicInputRecord* GiveCopy() {return new DynamicInputRecord(*this);	};
 
-		virtual void SetField(int _item, InputFieldType _id);
+		virtual bool SetField(int _item, InputFieldType _id);
 
-		virtual void SetField(double &_input, InputFieldType _id);
+		virtual bool SetField(double &_input, InputFieldType _id);
 
-		virtual void SetField(std::vector<int> _item, InputFieldType _id);
+		virtual bool SetField(std::vector<int> _item, InputFieldType _id);
 
-		virtual void SetField(HBXFEMDef::Node  _item, InputFieldType _id);
+		virtual bool SetField(HBXFEMDef::Node  _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>>  _item, InputFieldType _id);
+		virtual bool SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>>  _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id);
+		virtual bool SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
 
-		virtual void SetField(std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
+		virtual bool SetField(std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id);
+
+		virtual bool SetField(std::shared_ptr< HBXDef::_AEROTABLE > _item, InputFieldType _id);
 
 		virtual InputFileResult_t GiveField(double &answer, InputFieldType _id);
+
+		virtual HBXDef::_AEROTABLE* GiveField( InputFieldType _id);
 
 		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> >* GetNodeArray() { return &this->NodeArrayRecord; };
 		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> >* 

@@ -194,5 +194,8 @@
     <ClInclude Include="..\src\libCUFEM\NSortMat.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,7 +26,8 @@ namespace HBXFEMDef
 
 		int GetID() const { return m_MyID; };
 
-		virtual const char* GetClassName() const = 0;
+//自从有了typeid，妈妈再也不用担心获取classname的问题了
+//		virtual const char* GetClassName() const = 0;
 
 		BaseComponent( int _id = classType::FEMCOMPONENTCLASS):m_MyID(_id)
 		{

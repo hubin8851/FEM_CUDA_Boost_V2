@@ -30,7 +30,7 @@ namespace HBXFEMDef
 			_ele->ResetFreshFlag();
 
 			//通知其他组件，当前单元矩阵计算完成
-			_ele->GetEngng()->GetDispatcher()->DispatchMessage(SEND_MSG_IMMEDIATELY, _ele->GetID(), classType::NUMERICALMETHOD,
+			_ele->GetEngng()->GetDispatcher()->DispatchMes(SEND_MSG_IMMEDIATELY, _ele->GetID(), classType::NUMERICALMETHOD,
 				Msg_ElemtStiffReady, NO_ADDITIONAL_INFO);
 		}
 

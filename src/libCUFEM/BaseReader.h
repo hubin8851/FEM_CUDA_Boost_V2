@@ -51,7 +51,7 @@ namespace HBXFEMDef
 		//设置索引路径，会根据当前索引路径下所有文件夹索引，搜索到的第一个当前文件读入
 		virtual bool SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath);
 
-		//完成inp文件的导入，填充各容器并计算总刚矩阵的维度等参数
+		//完成inp\xml\PW文件的导入，填充各容器并计算总刚矩阵的维度等参数
 		virtual bool SetInputData() = 0;
 
 		//依据文件名称输出记录类

@@ -30,50 +30,64 @@ namespace HBXFEMDef
 	{
 	}
 
-	void DynamicInputRecord::SetField(int _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(int _item, InputFieldType _id)
 	{
 		this->intRecord[_id] = _item;
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(double & _input, InputFieldType _id)
+	bool DynamicInputRecord::SetField(double & _input, InputFieldType _id)
 	{
 		this->doubleRecord[_id] = _input;
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::vector<int> _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::vector<int> _item, InputFieldType _id)
 	{
 		this->intArrayRecord[_id] = std::move(_item);
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(HBXFEMDef::Node _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(HBXFEMDef::Node _item, InputFieldType _id)
 	{
 		this->NodeRecord[_id] = std::move(_item);
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>> _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>> _item, InputFieldType _id)
 	{
 		this->NodeArrayRecord[_id] = std::move(_item);
-
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::shared_ptr<HBXFEMDef::Set> _item, InputFieldType _id)
 	{
 		this->SetRecord.insert(std::make_pair(_id, _item));
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
 	{
 		this->CrossRecord[_id] = std::move(_item);
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
 	{
 		this->MatRecord.insert(std::make_pair(_id, _item));
+		return true;
 	}
 
-	void DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
+	bool DynamicInputRecord::SetField(std::shared_ptr< HBXDef::_AEROTABLE > _item, InputFieldType _id)
+	{
+		std::cout << "动态输入记录集内无该类型集合" << std::endl;
+		return false;
+	}
+
+	bool DynamicInputRecord::SetField(std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec> > _item, InputFieldType _id)
 	{
 		this->ElemtArrayRecord[_id] = std::move(_item);
+		return true;
 	}
 
 
@@ -85,6 +99,12 @@ namespace HBXFEMDef
 			return InputFileResult_t::IRRT_NOTFOUND;
 		}
 		return InputFileResult_t::IRRT_OK;
+	}
+
+	HBXDef::_AEROTABLE* DynamicInputRecord::GiveField( InputFieldType _id)
+	{
+		std::cout << "动态输入记录集内无该类型集合" << std::endl;
+		return nullptr;
 	}
 
 

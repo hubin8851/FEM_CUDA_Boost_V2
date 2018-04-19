@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libReader\AeroCoefReader.h" />
+    <ClInclude Include="..\src\libReader\AeroTableRecord.h" />
     <ClInclude Include="..\src\libReader\DynamicInputRecord.h" />
     <ClInclude Include="..\src\libReader\EltPropReader.h" />
     <ClInclude Include="..\src\libReader\InpDataReader.h" />
@@ -165,6 +166,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\libReader\AeroCoefReader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\libReader\AeroTableRecord.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\src\libReader\DynamicInputRecord.cpp">

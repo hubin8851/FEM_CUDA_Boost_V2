@@ -1,3 +1,7 @@
+#ifdef USESTDAFX
+#include "stdafx.h"
+#endif
+
 #include <HBXPreDef.h>
 #include "InpDataReader.h"
 #include <HBXFEMDefStruct.h>

@@ -6,6 +6,8 @@
 
 namespace HBXDef
 {
+
+	//目前仅适用于NVCC编译器编译
 	template< unsigned int T >
 	class cuTable
 	{
@@ -24,13 +26,36 @@ namespace HBXDef
 		unsigned int	m_lag_cordinate[T];	//插值坐标标位置
 
 	public:
-		__host__ __device__ cuTable(const _SameTable& _rhs) 
+		//CPU、GPU同类型拷贝版本
+		__host__ __device__ cuTable(const _SameTable& _rhs)
 		{
-			cudaMemcpy(m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int), cudaMemcpyHostToDevice);
-			cudaMemcpy(m_lag_cordinate, _rhs.m_lag_cordinate, T * sizeof(unsigned int), cudaMemcpyHostToDevice);
+			cudaMemcpy(m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(m_lag_cordinate, _rhs.m_lag_cordinate, T * sizeof(unsigned int), cudaMemcpyDeviceToDevice);
 			cudaMemcpy(&m_cordials, &_rhs.m_cordials, sizeof(void*), cudaMemcpyDeviceToDevice);
 			cudaMemcpy(&m_data, &_rhs.m_data, sizeof(void*), cudaMemcpyDeviceToDevice);
 		};
+
+		__host__ __device__ cuTable(	const unsigned int* _numperdim,
+										const HBXDef::UserCalPrec* _data,
+										const HBXDef::UserCalPrec* _cordials)
+		{
+			unsigned int tmpAdd = 0;
+			unsigned int tmpMulti = 1;
+			for (size_t i=0; i<VALUE; i++)//根据自身表属性获得数据和坐标数组的长度
+			{
+				tmpAdd += _numperdim[i];
+				tmpMulti *= _numperdim[i];
+			}
+			cudaMemcpy(m_numperdim, _numperdim, T * sizeof(unsigned int), cudaMemcpyDeviceToDevice);
+			cudaMemcpy(&m_cordials, _cordials, sizeof(HBXDef::UserCalPrec)*tmpAdd, cudaMemcpyDeviceToDevice);
+			cudaMemcpy(&m_data, _data, sizeof(HBXDef::UserCalPrec)*tmpMulti, cudaMemcpyDeviceToDevice);
+		};
+
+		__host__ void Initial(unsigned int dataLgth = 1, unsigned int cordLgth = 1)
+		{
+
+		}
+
 		__host__ __device__ int size() { return 0; };
 
 	};

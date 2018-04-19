@@ -3,7 +3,7 @@
 #endif
 
 #include "AeroCoefReader.h"
-
+#include <libReader\AeroTableRecord.h>
 
 namespace HBXFEMDef
 {
@@ -18,7 +18,7 @@ namespace HBXFEMDef
 
 		TiXmlDocument _tmpdoc(_tmppath.string().c_str());
 		TiXmlElement*	_tmpElmt = nullptr;
-		HBXDef::_AEROTABLE*	_tmpTable = new HBXDef::_AEROTABLE();
+		std::shared_ptr<HBXDef::_AEROTABLE> _tmpTable = std::make_shared<HBXDef::_AEROTABLE>();
 
 		bool	_loadOkey = _tmpdoc.LoadFile();
 		if (!_loadOkey)
@@ -30,9 +30,8 @@ namespace HBXFEMDef
 		_tmpElmt = _tmpdoc.RootElement();
 		std::string _tmpstr(_tmpElmt->FirstAttribute()->Value());
 		boost::to_lower(_tmpstr);
-		m_AeroTableInMap.insert(make_pair(_tmpstr, _tmpTable));
 
-		if (!ReadTableAttri(_tmpElmt, _tmpTable))
+		if (!ReadTableAttri(_tmpElmt, _tmpTable.get()))
 		{
 			std::cerr << "载入表头属性出错..." << std::endl;
 			return InputFileResult::IRRT_BAD_FORMAT;
@@ -53,6 +52,8 @@ namespace HBXFEMDef
 				}
 			}
 		}
+
+		m_Record->SetField(_tmpTable, _tmpstr.c_str());
 
 		return InputFileResult::IRRT_OK;
 	}
@@ -243,20 +244,18 @@ namespace HBXFEMDef
 	AeroCoefReader::AeroCoefReader(const std::string & _SourceFile, boost::filesystem::path _savepath)
 	{
 		this->SetSourceFilePath(_SourceFile, _savepath);
+
+		std::cout << "create AeroCoefReader!" << std::endl;
+
+		m_Record = new AeroTableRecord();
 	}
 
 	//获取气动数据表
-	HBXDef::_AEROTABLE& const AeroCoefReader::GetAeroTable(std::string _str)
+	HBXDef::_AEROTABLE* AeroCoefReader::GetAeroTable(const char* _str)
 	{
 		using namespace std;
-		_AeroTableMapIter _iter;
-		boost::to_lower(_str);
-		_iter = m_AeroTableInMap.find(_str);
-		if (_iter == m_AeroTableInMap.end())
-		{
-			cout << _str << "关联的气动数据表未找到" << endl;
-		}
-		return *_iter->second;
+
+		return m_Record->GiveField( _str);
 	}
 
 	bool AeroCoefReader::SetInputData()

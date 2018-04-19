@@ -9,15 +9,14 @@
 
 namespace HBXFEMDef
 {
-	class BOOST_SYMBOL_EXPORT AeroCoefReader :
-		public BaseReader
+	class InputRecord;
+
+
+	class BOOST_SYMBOL_EXPORT AeroCoefReader 
+		:public BaseReader
 	{
 	private:
-		//为了程序的拓展性，可从XML里读取每种单元对应的属性
-		typedef std::map< std::string, boost::shared_ptr<HBXDef::_AEROTABLE> > _AeroTableInMap;
-		typedef _AeroTableInMap::iterator _AeroTableMapIter;
-		//真正的成员
-		_AeroTableInMap	m_AeroTableInMap;
+		//m_record已经在基类里了。在初始化时将record转化成启动数据表记录集
 	protected:
 		//读取气动力参数表相关函数
 		InputFileResult	ReadAeroCoef();
@@ -40,7 +39,8 @@ namespace HBXFEMDef
 		AeroCoefReader(const std::string& _SourceFile = "EltProperty.xml",
 			boost::filesystem::path _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
 
-		HBXDef::_AEROTABLE&	GetAeroTable(std::string _str);	//获取气动数据表
+		//自身额外添加的函数，假装减少一次指针的指向
+		HBXDef::_AEROTABLE*	GetAeroTable(const char* _str);	//获取气动数据表
 
 		//通用接口
 		bool SetInputData();

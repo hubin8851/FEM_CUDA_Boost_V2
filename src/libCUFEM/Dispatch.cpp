@@ -22,7 +22,7 @@ namespace HBXFEMDef
 // 		return &instance;
 // 	}
 
-	void MessageDispatcher::DispatchMessage(double delay, int sender, int receiver, int msg, void * ExtraInfo)
+	void MessageDispatcher::DispatchMes(double delay, int sender, int receiver, int msg, void * ExtraInfo)
 	{
 		//获取接受者和发送者的指针
 		BaseComponent* pSender = this->GetEngng()->GetEntityFromID(sender);

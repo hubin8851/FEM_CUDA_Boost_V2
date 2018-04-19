@@ -37,6 +37,11 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+4/19/2018 4:41:37 PM 
+添加了插值cuda库
+完善了CUDA的回调
+添加索引八叉树、四叉树ING
+
 3/6/2018 9:08:14 PM 
 沿用boost——MPI的设计思路选用shared_ptr存放，均放在dynrecord类中。文本读取工作基本完成。
 
