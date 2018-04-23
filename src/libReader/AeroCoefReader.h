@@ -12,7 +12,7 @@ namespace HBXFEMDef
 	class InputRecord;
 
 
-	class BOOST_SYMBOL_EXPORT AeroCoefReader 
+	class CUFEM_API AeroCoefReader
 		:public BaseReader
 	{
 	private:
@@ -31,13 +31,14 @@ namespace HBXFEMDef
 		//@_outBlock：输出的_AeroBlock指针
 		//@_idx：_AeroBlock下的维度表的索引号
 		//返回值：当前维度下的插值点个数
-		size_t	ReadDemtion(TiXmlElement* _inputT, HBXDef::_AEROBLOCK* _outBlock, size_t _idx);
+		size_t	ReadDemtion(TiXmlElement* _inputT, HBXDef::_AEROBLOCK* _outBlock, size_t _idx,
+			std::vector<HBXDef::UserCalPrec>& vecOut);
 		//读取插值点数据
 		bool	ReadInterpolationData(TiXmlElement* _inputT, HBXDef::_AEROBLOCK* _outBlock, size_t _lgt);
 
 	public:
 		AeroCoefReader(const std::string& _SourceFile = "EltProperty.xml",
-			boost::filesystem::path _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
+			std::string _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
 
 		//自身额外添加的函数，假装减少一次指针的指向
 		HBXDef::_AEROTABLE*	GetAeroTable(const char* _str);	//获取气动数据表
@@ -50,7 +51,7 @@ namespace HBXFEMDef
 	};
 
 
-	CUFEM_EXPORT BaseReader* InstanceAeroCoefReader();
+	CUFEM_API BaseReader* InstanceAeroCoefReader();
 }
 
 

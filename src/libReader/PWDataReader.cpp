@@ -3,6 +3,7 @@
 #endif
 
 #include <HBXPreDef.h>
+#include <BoostPreDef.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\Set.h>
 #include <libCUFEM\BaseBoundary.h>
@@ -11,12 +12,7 @@
 
 namespace HBXFEMDef
 {
-// 	bool PWDataReader::SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath)
-// 	{
-// 		m_path = _savepath;
-// 		m_SrcFileName = _SourceFile;
-// 		return true;
-// 	}
+
 
 	InputFileResult PWDataReader::ReadpwFile()
 	{
@@ -38,7 +34,7 @@ namespace HBXFEMDef
 		xpressive::cregex	tmpreg = xpressive::cregex::compile("([-]?\\d[.]\\d{9})[E](.)(\\d{3})");	//在读取pw文件时，所需的正则表达式
 		xpressive::cmatch	what;
 
-		_tmpName = m_path.string() + "\\";
+		_tmpName = m_path.append("\\");
 		_tmpName.append(m_SrcFileName);
 		std::ifstream inFile;
 		inFile.open(_tmpName);
@@ -183,7 +179,7 @@ namespace HBXFEMDef
 		return sizeof(PWDataReader);
 	}
 
-	CUFEM_EXPORT  BaseReader* InstancePWReader()
+	CUFEM_API  BaseReader* InstancePWReader()
 	{
 		return (BaseReader*)new PWDataReader();
 	}

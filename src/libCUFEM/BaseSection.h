@@ -1,5 +1,5 @@
 #pragma once
-#include <boost/dll.hpp>
+//#include <boost/dll.hpp>
 #include <ExportDef.h>
 
 
@@ -7,7 +7,7 @@ namespace HBXFEMDef
 {
 	class Domain;
 
-	class BOOST_SYMBOL_EXPORT BaseSection
+	class CUFEM_API BaseSection
 	{
 	private:
 	public:

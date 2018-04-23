@@ -1,5 +1,5 @@
 #pragma once
-
+#include <ExportDef.h>
 #include "libCUFEM\EngngMod.h"
 #include "libCUFEM\ClassFactory.h"
 
@@ -10,7 +10,7 @@ namespace HBXFEMDef
 #define _EX_StructEngng_Name "StructProblem"
 
 	//Engng基类的拓展类，声明和实现结构计算中的常用函数和成员
-	class BOOST_SYMBOL_EXPORT StructEngng:
+	class CUFEM_API StructEngng:
 			public Engng
 	{
 	private:

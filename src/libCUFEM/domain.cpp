@@ -1,5 +1,5 @@
 #include "domain.h"
-
+#include <libCUFEM\NSortMat.h>
 
 namespace HBXFEMDef
 {

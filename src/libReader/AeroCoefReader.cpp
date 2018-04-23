@@ -13,10 +13,10 @@ namespace HBXFEMDef
 		using namespace boost;
 		using boost::property_tree::ptree;
 
-		boost::filesystem::path _tmppath;		//路径临时变量
+		std::string _tmppath;		//路径临时变量
 		_tmppath = m_path.append(m_SrcFileName);
 
-		TiXmlDocument _tmpdoc(_tmppath.string().c_str());
+		TiXmlDocument _tmpdoc(_tmppath.c_str());
 		TiXmlElement*	_tmpElmt = nullptr;
 		std::shared_ptr<HBXDef::_AEROTABLE> _tmpTable = std::make_shared<HBXDef::_AEROTABLE>();
 
@@ -72,7 +72,11 @@ namespace HBXFEMDef
 			std::string _name = _TmpAttri->Name();
 			if (iequals(_name, "name"))
 			{
-				strcmp(_outTable->_name, _TmpAttri->Value());
+#ifdef WIN32
+				strcpy_s(_outTable->_name, _TmpAttri->Value());
+#else
+				strcpy(_outTable->_name, _TmpAttri->Value());
+#endif // !WIN32
 			}
 			if (iequals(_name, "block"))
 			{
@@ -102,11 +106,15 @@ namespace HBXFEMDef
 		TiXmlElement* _tmpNode = _inputT->FirstChildElement();
 
 		size_t _tmpdataNum = 1;
+		size_t _tmpcordNum = 0;
+		std::vector<HBXDef::UserCalPrec> _dimVec;
 		if (iequals(_tmpNode->Value(), "demtion"))
 		{
 			for (size_t i = 0; i < _outBlock->_dim; i++)
 			{
-				_tmpdataNum *= ReadDemtion(_tmpNode, _outBlock, i);
+				size_t _tmpNum = ReadDemtion(_tmpNode, _outBlock, i, _dimVec);
+				_tmpdataNum *= _tmpNum;
+				_tmpcordNum += _tmpNum;
 				if (_tmpdataNum < 0)
 				{
 					std::cerr << "读入TinyXml的维度属性错误..." << std::endl;
@@ -114,6 +122,8 @@ namespace HBXFEMDef
 				}
 				_tmpNode = _tmpNode->NextSiblingElement();
 			}
+			_outBlock->_corddata = new HBXDef::UserCalPrec[_tmpcordNum];
+			memcpy(_outBlock->_corddata, _dimVec.data(), _dimVec.size() * sizeof(HBXDef::UserCalPrec));
 		}
 		//TiXmlNode*  _tmpNode = _tmpNode;
 		if (equals(_tmpNode->Value(), "Data"))
@@ -138,7 +148,11 @@ namespace HBXFEMDef
 			std::string _name = _TmpAttri->Name();
 			if (iequals(_name, "name"))
 			{
-				strcmp(_outBlock->_name, _TmpAttri->Value());
+#ifdef WIN32
+				strcpy_s(_outBlock->_name, _TmpAttri->Value());
+#else
+				strcpy(_outBlock->_name, _TmpAttri->Value());
+#endif // WIN32
 			}
 			if (iequals(_name, "demention"))
 			{
@@ -146,7 +160,7 @@ namespace HBXFEMDef
 				if (_outBlock->_dim > 0 && _outBlock->_dim < 100)	//这个参数范围合适么？...
 				{
 					_outBlock->_numperdim = new unsigned int[_outBlock->_dim];
-					_outBlock->_corddata = new HBXDef::UserCalPrec*[_outBlock->_dim];//对二维数组的外层维度分配空间
+//					_outBlock->_corddata = new HBXDef::UserCalPrec*[_outBlock->_dim];//对二维数组的外层维度分配空间
 					 //_outBlock->_beg = new unsigned int[_outBlock->_dim];
 				}
 				else
@@ -162,14 +176,16 @@ namespace HBXFEMDef
 	}
 
 
-	size_t AeroCoefReader::ReadDemtion(TiXmlElement * _inputT, HBXDef::_AEROBLOCK * _outBlock, size_t _idx)
+	size_t AeroCoefReader::ReadDemtion(TiXmlElement * _inputT, 
+									HBXDef::_AEROBLOCK * _outBlock, 
+									size_t _idx,
+									std::vector<HBXDef::UserCalPrec>& vecOut )
 	{
 		using namespace boost;
 		HBXDef::IFNULL(_inputT, "读入TinyXml的表指针错误...");
 
 		TiXmlAttribute* _TmpAttri = _inputT->FirstAttribute();
 		std::string _strText;	//最长4G，足够
-		std::vector<std::string> vstrText;
 
 		while (_TmpAttri)
 		{
@@ -181,10 +197,10 @@ namespace HBXFEMDef
 			{
 				_outBlock->_numperdim[_idx] = _TmpAttri->IntValue();
 				//为当前维度插值点数组分配内存
-#ifdef DEBUG
-				_outBlock->_corddata[_idx] = new HBXDef::UserCalPrec[_TmpAttri->IntValue()];
-#endif // DEBUG
-				_outBlock->_corddata[_idx] = new HBXDef::UserCalPrec[_TmpAttri->IntValue()];
+// #ifdef DEBUG
+// 				_outBlock->_corddata[_idx] = new HBXDef::UserCalPrec[_TmpAttri->IntValue()];
+// #endif // DEBUG
+// 				_outBlock->_corddata[_idx] = new HBXDef::UserCalPrec[_TmpAttri->IntValue()];
 			}
 			_TmpAttri = _TmpAttri->Next();
 		}
@@ -195,17 +211,17 @@ namespace HBXFEMDef
 		typedef boost::tokenizer<boost::char_separator<char> >  CustonTokenizer;
 		CustonTokenizer tok(_strText, sep);
 		// 输出分割结果
-		vstrText.clear();
 		size_t _idy = 0;
 		for (CustonTokenizer::iterator beg = tok.begin(); beg != tok.end(); ++beg, _idy++)
 		{
-			vstrText.push_back(*beg);	//验证用
-			_outBlock->_corddata[_idx][_idy] = lexical_cast<double>(*beg);
+			vecOut.push_back(lexical_cast<HBXDef::UserCalPrec>(*beg));	//验证用
+//			_outBlock->_corddata[_idx][_idy] = lexical_cast<double>(*beg);
 		}
-		if (vstrText.size() != _outBlock->_numperdim[_idx])//判断属性内的参数与实际数据个数是否相符
-		{
-			std::cerr << "维度内属性与插值点个数不相符..." << std::endl;
-		}
+// 		if (vecOut.size() != _outBlock->_numperdim[_idx])//判断属性内的参数与实际数据个数是否相符
+// 		{
+// 			std::cerr << "维度内属性与插值点个数不相符..." << std::endl;
+// 			return 0;
+// 		}
 
 		return _outBlock->_numperdim[_idx];
 	}
@@ -241,7 +257,7 @@ namespace HBXFEMDef
 		return true;
 	}
 
-	AeroCoefReader::AeroCoefReader(const std::string & _SourceFile, boost::filesystem::path _savepath)
+	AeroCoefReader::AeroCoefReader(const std::string & _SourceFile, std::string _savepath)
 	{
 		this->SetSourceFilePath(_SourceFile, _savepath);
 
@@ -278,7 +294,7 @@ namespace HBXFEMDef
 
 
 
-	CUFEM_EXPORT BaseReader * InstanceAeroCoefReader()
+	CUFEM_API BaseReader * InstanceAeroCoefReader()
 	{
 		return (BaseReader*)new AeroCoefReader();
 	}

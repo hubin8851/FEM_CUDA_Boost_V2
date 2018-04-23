@@ -1,6 +1,11 @@
 #pragma once
 
-#include <HBXPreDef.h>
+#include <vector>
+#include <map>
+
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
+
 #include <MyTimer.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\BaseSlnRecord.h>
@@ -28,7 +33,7 @@ namespace HBXFEMDef
 	class MessageDispatcher;
 	class HBXDef::MyTimer;	//暂定，自身创建的用于引擎的类，包括了总时间，计算时间，数据传输时间，内存拷贝时间等。如果有CUDA支持，可以使用cuda的高精度计时器。
 
-	class BOOST_SYMBOL_EXPORT EngngModelContext
+	class CUFEM_API EngngModelContext
 	{
 	protected:
 	public:
@@ -51,7 +56,7 @@ namespace HBXFEMDef
 	//对每个元步，引擎模块通过元步引擎属性刷新属性，以便切换不同的时间增量或不同的控制方程。
 	//如果元步未定义，引擎模块会定义一个统一的解算步。第一步通过initialFrom设定在计算中不被改变的属性
 	//第二部是updateAttributes函数更新时变的属性。若元步未定义，选用引擎模型中导入的默认属性。
-	class BOOST_SYMBOL_EXPORT Engng
+	class CUFEM_API Engng
 	{
 	public:
 		enum EngngCommuType { _Default, _nLocal };

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Dispatch.h"
+#include <Package.h>
 #include <libCUFEM\ClassFactory.h>
 #include <libCUFEM\BaseComponent.h>
 #include <libCUFEM\EngngMod.h>

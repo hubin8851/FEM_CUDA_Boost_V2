@@ -63,7 +63,7 @@ namespace HBXFEMDef
 		std::string _ElemtName, _SetName, _SectionName, _MatName, _SecShape;
 		std::string _Elset, _Nset;	//单元集合，节点集合
 		std::string _InstanceName, _partName;	//临时变量名，记录名称
-		boost::filesystem::path _tmppath;		//路径临时变量
+		std::string _tmppath;		//路径临时变量
 		std::regex	RegRule2("\\w+[=]?\\w+");
 		std::regex	IfNumRule("((\\s*\\d+(\\.\\d+)?)(\,|$)?)*");	//在读取pw文件时，所需的正则表达式
 		std::regex  IfNotNum("\\*+.*");	//正则表达式，以*起始的字符串
@@ -282,7 +282,7 @@ namespace HBXFEMDef
 	}
 
 	InpDataReader::InpDataReader(const std::string _SourceFile, 
-								boost::filesystem::path _savepath ):m_EltProp("EltProperty.xml", _savepath)
+								std::string _savepath ):m_EltProp("EltProperty.xml", _savepath)
 	{
 		std::cout << "create InpDataReader!" << std::endl;
 		m_EltProp.SetInputData();
@@ -307,7 +307,7 @@ namespace HBXFEMDef
 	{
 	}
 
-	CUFEM_EXPORT  BaseReader* InstanceInpReader()
+	CUFEM_API BaseReader* InstanceInpReader()
 	{
 		return (BaseReader*)new InpDataReader();
 	}

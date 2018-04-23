@@ -1,13 +1,13 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include <boost/dll.hpp>
+#include <ExportDef.h>
 #include <HbxDefMacro.h>
 
 namespace HBXFEMDef
 {
 
-	class BOOST_SYMBOL_EXPORT Set
+	class CUFEM_API Set
 	{
 	public:
 		std::vector<unsigned int>	_vSort;

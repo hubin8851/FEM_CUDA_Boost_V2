@@ -8,7 +8,7 @@ namespace HBXFEMDef
 		m_SlnRecord = new BaseSlnRecord;
 	}
 
- 	bool BaseReader::SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath)
+ 	bool BaseReader::SetSourceFilePath(const std::string _SourceFile, std::string _savepath)
  	{
  		m_path = _savepath;
  		m_SrcFileName = _SourceFile;

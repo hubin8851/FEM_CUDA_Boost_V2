@@ -1,6 +1,7 @@
 #pragma once
 
-#include <HBXPreDef.h>
+#include <ExportDef.h>
+#include <HbxDefMacro.h>
 #include <boost\dll.hpp>
 #include <libCUFEM\AttriRecord.h>
 
@@ -10,7 +11,7 @@ namespace HBXFEMDef
 	class BaseReader;
 	class AttriRecord;
 
-	class BOOST_SYMBOL_EXPORT MetaStep
+	class CUFEM_API MetaStep
 	{
 	private:
 	protected:

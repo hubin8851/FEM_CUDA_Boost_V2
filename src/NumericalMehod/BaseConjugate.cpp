@@ -5,7 +5,10 @@
 
 namespace HBXFEMDef
 {
-	void BaseConjugate::genTridiag(size_t _genRowNum, boost::filesystem::path _savepath, bool _bsave )
+	using namespace HBXDef;
+
+
+	void BaseConjugate::genTridiag(size_t _genRowNum, const char* _savepath, bool _bsave )
 	{
 		using namespace std;
 		srand((unsigned)time(NULL));//基于时间的伪随机数分配
@@ -22,7 +25,7 @@ namespace HBXFEMDef
 #pragma endregion
 	}
 
-	void BaseConjugate::genRhs(size_t _genRowNum, bool _bsave, boost::filesystem::path _savepath)
+	void BaseConjugate::genRhs(size_t _genRowNum, bool _bsave, const char* _savepath)
 	{
 	}
 
@@ -107,10 +110,10 @@ namespace HBXFEMDef
 		memset(h_rhs, 0, m_RowNum);
 	}
 
-	void BaseConjugate::ResetGraphMem(HBXDef::CudaMalloc_t _cuMac)
+	void BaseConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		using namespace HBXDef;
-		if (NORMAL == _cuMac)
+		if (HbxCuDef::NORMAL == _cuMac)
 		{
 #pragma region  裸指针时CSR格式矩阵的显存分配
 			//CSR非零值显存分配
@@ -229,14 +232,14 @@ namespace HBXFEMDef
 		else return HBXDef::DataAloc_t::INVALID;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMatFromMTX(const char * _mat_filename, const boost::filesystem::path & _dir)
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMatFromMTX(const char * _mat_filename, const char* _dir)
 	{
-		boost::filesystem::path _tmppath(_dir);
+		std::string _tmppath(_dir);
 		_tmppath.append(_mat_filename);
 		// 	char *TmpPath = new char[_tmppath.string().size()+1];
 		// 	memcpy( TmpPath, _tmppath.string().data(), _tmppath.string().size() );
 		// 	TmpPath[_tmppath.string().size()] = '\0';
-		if (HBXDef::loadMMSparseMat(_tmppath.string().c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
+		if (HBXDef::loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
 		{
 			fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
 			return HBXDef::DataAloc_t::INVALID;
@@ -299,7 +302,7 @@ namespace HBXFEMDef
 		return HBXDef::DataAloc_t::DATAINMEM;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(const char * _NoneZeroVal, const char * _ColSort, const char * _ValRowSort, const boost::filesystem::path & _dir)
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(const char * _NoneZeroVal, const char * _ColSort, const char * _ValRowSort, const char* _dir)
 	{
 		if (0 == HBXDef::_ImportCSRdataFromFile<double, int>(h_vNoneZeroVal, h_viColSort, h_viNonZeroRowSort, _NoneZeroVal, _ColSort, _ValRowSort, _dir))
 		{
@@ -343,7 +346,7 @@ namespace HBXFEMDef
 		}
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetLoadVec(const char * _FileName, const boost::filesystem::path & _dir)
+	HBXDef::DataAloc_t BaseConjugate::SetLoadVec(const char * _FileName, const char* _dir)
 	{
 		size_t _RowNum = HBXDef::ReadVecByRowFromFile(h_vRhs, _FileName, _dir);
 		if (0 == _RowNum)

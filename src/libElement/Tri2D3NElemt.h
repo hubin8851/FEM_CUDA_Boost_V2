@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include <HBXPreDef.h>
+#include <ExportDef.h>
 #include "libCUFEM\BaseNode.h"
 #include <libCUFEM\BaseElement.h.>
 #include <libCUFEM\EngngMod.h>
@@ -24,7 +24,7 @@ namespace HBXFEMDef
 	// 
 	// 	};
 
-	class BOOST_SYMBOL_EXPORT Tri2D3NElemt :public BaseElem
+	class CUFEM_API Tri2D3NElemt :public BaseElem
 	{
 	private:
 	protected:

@@ -190,17 +190,17 @@ UserStatusError_t BaseVtk::SetData(HBXFEMDef::InputRecord* _ir)
 	return UserStatusError_t::USER_STATUS_SUCCESS;
 }
 
-UserStatusError_t BaseVtk::SetData( const char * _FileName, boost::filesystem::path  _path)
+UserStatusError_t BaseVtk::SetData( const char * _FileName, std::string  _path)
 {
 
 	vtkSmartPointer<vtkSTLReader> _StlInstance = vtkSmartPointer<vtkSTLReader>::New();
 	vtkSmartPointer<vtkPolyData>_PolyCube = vtkSmartPointer<vtkPolyData>::New();		//即定义多边形数据集
 
-	boost::filesystem::path _tmppath(_path);
+	std::string _tmppath(_path);
 	_tmppath.append(_FileName);
 
 	_StlInstance->SetOutput(_StlInstance->GetOutput());
-	_StlInstance->SetFileName(_tmppath.string().c_str());
+	_StlInstance->SetFileName(_tmppath.c_str());
 	_StlInstance->Update();
 
 	m_SumNodeNum = _StlInstance->GetOutput()->GetPoints()->GetNumberOfPoints();

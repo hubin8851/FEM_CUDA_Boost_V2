@@ -1,4 +1,5 @@
 #include "BaseNumMethod.h"
+#include <libCUFEM\EngngMod.h>
 
 namespace HBXFEMDef
 {

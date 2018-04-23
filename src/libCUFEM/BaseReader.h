@@ -1,9 +1,12 @@
 #pragma once
-#include <HBXPreDef.h>
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
+#include <ExportDef.h>
 #include "libCUFEM\ElemtProp.h"
-#include "libCUFEM\domain.h"
-#include <libCUFEM\BaseSlnRecord.h>
-#include <libCUFEM\InputRecord.h>
+//#include "libCUFEM\domain.h"
+//#include <libCUFEM\BaseSlnRecord.h>
+//#include <libCUFEM\InputRecord.h>
+
 
 namespace HBXFEMDef
 {
@@ -14,12 +17,12 @@ namespace HBXFEMDef
 	//所有读入数据类的基类，派生类可能包括XML解析器以及INP文件读取器，PW文件读取器。
 	//输入记录的判别主要依据记录类型和组件数量。该类依赖boost。
 	//应包括至少一个输入记录，且对应相应的解算信息。
-	class BOOST_SYMBOL_EXPORT BaseReader
+	class CUFEM_API BaseReader
 	{
 	private:
 	protected:
 		std::string	m_SrcFileName;		//源文件名称
-		boost::filesystem::path	m_path;	//源文件路径
+		std::string	m_path;	//源文件路径
 		std::string	m_descriptor;
 
 		// 迭代器
@@ -49,7 +52,7 @@ namespace HBXFEMDef
 		virtual ~BaseReader() {};
 
 		//设置索引路径，会根据当前索引路径下所有文件夹索引，搜索到的第一个当前文件读入
-		virtual bool SetSourceFilePath(const std::string _SourceFile, boost::filesystem::path _savepath);
+		virtual bool SetSourceFilePath(const std::string _SourceFile, std::string _savepath);
 
 		//完成inp\xml\PW文件的导入，填充各容器并计算总刚矩阵的维度等参数
 		virtual bool SetInputData() = 0;
@@ -64,7 +67,7 @@ namespace HBXFEMDef
 		void InsertInputRecord(InputRecord* _record) { this->RecordList.emplace_back(_record); };
 
 		//获取输入文件路径
-		const char* GetSourcePath() const { return this->m_path.string().c_str(); };
+		const char* GetSourcePath() const { return this->m_path.c_str(); };
 		//获取源文件名称
 		const char* GetSourceName() const { return this->m_SrcFileName.c_str(); };
 //		virtual const char* GetSourceName() const = 0;

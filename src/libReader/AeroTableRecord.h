@@ -19,7 +19,7 @@ namespace HBXFEMDef
 
 	//该类的主要作用是添加新的记录集。输入记录可以经由任意方法实现，
 	//但最终由该类统一格式。
-	class BOOST_SYMBOL_EXPORT AeroTableRecord :public InputRecord
+	class CUFEM_API AeroTableRecord :public InputRecord
 	{
 	protected:
 		std::string RecordKeyWord;

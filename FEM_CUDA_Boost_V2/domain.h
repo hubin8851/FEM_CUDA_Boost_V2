@@ -1,6 +1,5 @@
 #pragma once
 
-#include <BoostPreDef.h>
 #include <HBXPreDef.h>
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
@@ -17,7 +16,6 @@ namespace HBXFEMDef
 
 
 	using namespace std;
-	using namespace boost;
 
 	template<typename _T>
 	class _Domain

@@ -1,5 +1,4 @@
 #pragma once
-#include <boost/dll.hpp>
 #include <ExportDef.h>
 
 
@@ -7,7 +6,7 @@ namespace HBXFEMDef
 {
 	class Domain;
 
-	class BOOST_SYMBOL_EXPORT BaseBoundary
+	class CUFEM_API BaseBoundary
 	{
 	public:
 		enum CoordSys

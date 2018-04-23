@@ -1,10 +1,10 @@
 #pragma once
 
-#include <HBXPreDef.h>
-#include <libCUFEM\BaseNode.h>
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
+#include <ExportDef.h>
 #include <libCUFEM\BaseComponent.h>
-#include <libCUFEM\EngngMod.h>
-#include <FSM\StateMachine.h>
+
 
 namespace HBXFEMDef
 {
@@ -21,6 +21,7 @@ namespace HBXFEMDef
 
 	class Domain;
 	class Engng;
+	class BaseComponent;
 // 	template<typename _T>
 // 	struct _BaseElem
 // 	{
@@ -29,7 +30,7 @@ namespace HBXFEMDef
 // 
 // 	};
 
-	class BOOST_SYMBOL_EXPORT BaseElem:public BaseComponent
+	class CUFEM_API BaseElem:public BaseComponent
 	{
 	private:
 	protected:

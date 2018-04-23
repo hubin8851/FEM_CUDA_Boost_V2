@@ -1,5 +1,6 @@
 #pragma once
-
+#include <classtype.h>
+#include <ExportDef.h>
 //组件的状态对象，提供了组件的状态形式。每个组件状态有
 //1.唯一标识id
 //2.进入状态回调
@@ -11,7 +12,7 @@ namespace HBXFEMDef
 	class Package;
 
 
-	class BaseComponent
+	class CUFEM_API BaseComponent
 	{
 	private:
 		void* _data;

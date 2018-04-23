@@ -16,7 +16,7 @@
 #define new DEBUG_NEW
 #endif
 
-
+extern "C" void InterpolateTest();
 
 
 // 唯一的应用程序对象

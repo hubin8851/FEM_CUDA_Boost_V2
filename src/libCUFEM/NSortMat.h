@@ -1,11 +1,16 @@
 #pragma once
 
-#include <HBXPreDef.h>
 #include <vector>
 #include <initializer_list>
+#include <ExportDef.h>
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
+#include <Package.h>
+#include <libCUFEM\AttriRecord.h>
 
 namespace HBXFEMDef
 {
+	//节点索引矩阵
 	//用以并行计算的矩阵形式存储的数据，主要便于单元节点号的记录
 	//便于合并访问，故将数据以列的形式存储，在初始化节点时仅需知道当前单元的节点数即可
 	//重载了push_back函数
@@ -123,7 +128,7 @@ namespace HBXFEMDef
 // 		};
 	};
 
-	template class BOOST_SYMBOL_EXPORT NSortMat<double>;
-	template class BOOST_SYMBOL_EXPORT NSortMat<float>;
+	template class CUFEM_API NSortMat<double>;
+	template class CUFEM_API NSortMat<float>;
 
 }

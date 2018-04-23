@@ -1,15 +1,17 @@
 #pragma once
 
 #include <map>
-#include <HBXPreDef.h>
-#include "libCUFEM\BaseNode.h"
-#include "libCUFEM\BaseElement.h"
-#include "libCUFEM\BaseSection.h"
-#include "libCUFEM\BaseMaterial.h"
-#include "libCUFEM\BaseBoundary.h"
-#include "libCUFEM\Set.h"
-#include "libCUFEM\NSortMat.h"
-#include "libCUFEM\InputRecord.h"
+#include <vector>
+#include <ExportDef.h>
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
+#include <libCUFEM\BaseNode.h>
+#include <libCUFEM\BaseElement.h>
+#include <libCUFEM\BaseSection.h>
+#include <libCUFEM\BaseMaterial.h>
+#include <libCUFEM\BaseBoundary.h>
+#include <libCUFEM\Set.h>
+#include <libCUFEM\InputRecord.h>
 
 namespace HBXFEMDef 
 {
@@ -22,10 +24,11 @@ namespace HBXFEMDef
 	class MetaStep;
 	class Engng;
 	class Set;
+	template<typename _T> class NSortMat;
 
 	//域信息，包括单元，节点，材料，截面等属性，简单理解为一个part的、除解算信息外的所有属性。
 	//其提供给解算器待计算的相关数据
-	class BOOST_SYMBOL_EXPORT Domain
+	class CUFEM_API Domain
 	{
 	public:
 		std::string _myName;

@@ -1,5 +1,6 @@
 #pragma once
 #include <HBXPreDef.h>
+#include <ExportDef.h>
 #include <tinyxml\tinyxml.h>
 #include <tinyxml\tinyxml2.h>
 #include <libCUFEM\BaseReader.h>
@@ -9,7 +10,7 @@
 
 namespace HBXFEMDef
 {
-	class BOOST_SYMBOL_EXPORT EltPropReader:
+	class CUFEM_API EltPropReader:
 		public BaseReader
 	{
 	private:
@@ -18,7 +19,7 @@ namespace HBXFEMDef
 		InputFileResult	ReadElemtProperty();		//获取所有的表号编码
 	public:
 		EltPropReader(const std::string& _SourceFile = "EltProperty.xml",
-							boost::filesystem::path _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
+							std::string _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
 
 		HBXFEMDef::_EltPtyInMap* const GetPtyMap();
 
@@ -29,5 +30,5 @@ namespace HBXFEMDef
 	};
 
 
-	CUFEM_EXPORT BaseReader* InstanceElemtPropReader();
+	CUFEM_API BaseReader* InstanceElemtPropReader();
 }

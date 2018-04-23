@@ -1,6 +1,6 @@
 #pragma once
-#include <HBXPreDef.h>
-#include <BoostPreDef.h>
+#include <ExportDef.h>
+#include <HbxDefMacro.h>
 #include <HBXFEMDefStruct.h>
 #include <libCUFEM\Set.h>
 #include <libCUFEM\NSortMat.h>
@@ -13,8 +13,11 @@ namespace HBXFEMDef
 {
 	typedef const char *InputFieldType;
 
+	class Set;
+	template<typename _T> class NSortMat;
 
-	class BOOST_SYMBOL_EXPORT InputRecord
+
+	class CUFEM_API InputRecord
 	{
 	public:
 		//默认构造函数

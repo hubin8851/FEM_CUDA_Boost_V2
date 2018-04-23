@@ -10,7 +10,7 @@ namespace HBXFEMDef
 	class BaseReader;
 	class BaseSlnRecord;
 
-	CUFEM_EXPORT Engng * HBXFEMDef::InstanceProblem( BaseReader* _ir, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
+	CUFEM_API Engng * HBXFEMDef::InstanceProblem( BaseReader* _ir, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
 	{
 		Engng* problem;
 

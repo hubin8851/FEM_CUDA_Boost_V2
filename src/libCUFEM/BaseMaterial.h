@@ -5,7 +5,7 @@ namespace HBXFEMDef
 {
 	class Domain;
 
-	class BOOST_SYMBOL_EXPORT BaseMaterial
+	class CUFEM_API BaseMaterial
 	{
 	private:
 	protected:

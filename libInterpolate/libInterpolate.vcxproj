@@ -160,12 +160,15 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\libInterpolate\Bound2D.h" />
     <ClInclude Include="..\src\libInterpolate\cuInterval_kernel.cuh" />
     <ClInclude Include="..\src\libInterpolate\InterPosStruct.h" />
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="..\src\libInterpolate\interval_device.cuh" />
     <ClInclude Include="..\src\libInterpolate\interval_lib.h" />
+    <ClInclude Include="..\src\libInterpolate\Quadtree2D.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\Points.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\TPOW.h" />
   </ItemGroup>
   <ItemGroup>

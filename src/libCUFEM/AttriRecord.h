@@ -1,11 +1,10 @@
 #pragma once
 #include <ExportDef.h>
-#include <BoostPreDef.h>
 
 namespace HBXFEMDef
 {
 	//每一个计算步的信息
-	class BOOST_SYMBOL_EXPORT AttriRecord
+	class CUFEM_API AttriRecord
 	{
 	private:
 	protected:

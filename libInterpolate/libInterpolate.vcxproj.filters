@@ -30,6 +30,15 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\TPOW.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\Points.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\Quadtree2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\Bound2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu">

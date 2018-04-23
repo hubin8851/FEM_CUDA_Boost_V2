@@ -1,5 +1,6 @@
 #pragma once
 
+#include <ExportDef.h>
 #include <HBXPreDef.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h>
@@ -23,7 +24,7 @@ namespace HBXFEMDef
 	class BaseElem;
 
 
-	class BOOST_SYMBOL_EXPORT InpDataReader :
+	class CUFEM_API InpDataReader :
 		public BaseReader
 	{
 	private:
@@ -39,8 +40,8 @@ namespace HBXFEMDef
 		InputFileResult ReadInpFile();	//读取pointwise到处的点集合，为VTX做准备
 	public:
 		//默认构造函数
-		InpDataReader(const std::string _SourceFile = "", 
-						boost::filesystem::path _savepath = "F:\\data from HBX_phd\\vs2015");
+		InpDataReader(	const std::string _SourceFile = "", 
+						std::string _savepath = "F:\\data from HBX_phd\\vs2015");
 		//拷贝构造函数
 		//		PWDataReader(const _SameClass&) {};
 		~InpDataReader() {};
@@ -56,7 +57,7 @@ namespace HBXFEMDef
 
 	};
 
-	CUFEM_EXPORT BaseReader* InstanceInpReader();
+	CUFEM_API BaseReader* InstanceInpReader();
 
 
 }

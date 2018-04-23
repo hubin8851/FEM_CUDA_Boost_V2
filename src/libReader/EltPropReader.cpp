@@ -7,7 +7,7 @@
 namespace HBXFEMDef
 {
 
-	EltPropReader::EltPropReader(const std::string & _SourceFile, boost::filesystem::path _savepath)
+	EltPropReader::EltPropReader(const std::string & _SourceFile, std::string _savepath)
 	{
 		this->SetSourceFilePath(_SourceFile, _savepath);
 	}
@@ -31,19 +31,9 @@ namespace HBXFEMDef
 		HBXFEMDef::ElemtProperty	_tmpElPro;	//单元属性结构体临时变量
 		string	_ElemtName;//单元名称，临时变量
 
-		boost::optional<boost::filesystem::path> r = HBXDef::find_file(m_path, m_SrcFileName);
-		if (!r)
-		{
-			std::cerr << "boost搜索当前路径" << m_path << "下无该文件" << std::endl;
-			return InputFileResult::IRRT_NOTFOUND;
-		}
-		else
-		{
-			m_path = *r;
-			std::cout << "当前文件所在路径" << *r << std::endl;
-		}
+		std::string m_root = m_path.append(m_SrcFileName);
 
-		TiXmlDocument myDoc( r->string().c_str() );
+		TiXmlDocument myDoc(m_root.c_str() );
 		bool loadOk = myDoc.LoadFile();
 		if ( !loadOk )
 		{
@@ -108,7 +98,7 @@ namespace HBXFEMDef
 	{
 	}
 
-	CUFEM_EXPORT BaseReader * InstanceElemtPropReader()
+	CUFEM_API BaseReader * InstanceElemtPropReader()
 	{
 		return (BaseReader*)new EltPropReader();
 	}

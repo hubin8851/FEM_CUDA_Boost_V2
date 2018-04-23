@@ -1,4 +1,5 @@
 #include "BiCGStab.h"
+#include <helper_cuda.h>
 #include "helper_hbx.h"
 
 namespace HBXFEMDef

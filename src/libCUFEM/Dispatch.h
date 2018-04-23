@@ -1,9 +1,9 @@
 #pragma once
 
 #include <set>
-#include <HBXPreDef.h>
-#include <libCUFEM\BaseComponent.h>
-#include <Package.h>
+#include <ExportDef.h>
+//#include <libCUFEM\BaseComponent.h>
+
 
 
 
@@ -11,6 +11,8 @@
 namespace HBXFEMDef
 {
 	class Engng;
+	class BaseComponent;
+	class Package;
 
 	class MessageDispatcher
 	{

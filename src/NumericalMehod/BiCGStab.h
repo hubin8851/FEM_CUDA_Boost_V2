@@ -1,14 +1,14 @@
 #pragma once	//2018-01£¬hbx, redef
 
 #include <NumericalMehod/BaseConjugate.h>
-#include <HBXPreDef.h>
+#include <ExportDef.h>
 #include <CudaPreDef.h>
 namespace HBXFEMDef
 {
 	class Domain;
 	class Engng;
 
-	class BOOST_SYMBOL_EXPORT BiCGStab :
+	class CUFEM_API BiCGStab :
 		public BaseConjugate
 	{
 	protected:

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <HBXPreDef.h>
+#include <ExportDef.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h.>
 #include <libCUFEM\EngngMod.h>
@@ -16,7 +16,7 @@ namespace HBXFEMDef
 
 	class Domain;
 
-	class BOOST_SYMBOL_EXPORT S4RElemt :public BaseElem
+	class CUFEM_API S4RElemt :public BaseElem
 	{
 	private:
 	protected:

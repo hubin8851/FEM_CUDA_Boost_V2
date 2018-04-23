@@ -1,9 +1,8 @@
 #pragma once
 
-#include <HBXPreDef.h>
-#include <libCUFEM\domain.h>
+//#include <libCUFEM\domain.h>
 #include <libCUFEM\AttriRecord.h>
-
+#include <ExportDef.h>
 
 namespace HBXFEMDef
 {
@@ -12,7 +11,7 @@ namespace HBXFEMDef
 
 	//解算器相关记录。包括解算类型，元步信息，积分方法等。
 	//也包含待计算的数据
-	class BOOST_SYMBOL_EXPORT BaseSlnRecord
+	class CUFEM_API BaseSlnRecord
 	{
 	public:
 		BaseSlnRecord();

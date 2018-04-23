@@ -1,6 +1,7 @@
 #pragma once
 
 #include <HBXPreDef.h>
+#include <ExportDef.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h>
 #include <libCUFEM\domain.h>
@@ -19,14 +20,11 @@ namespace HBXFEMDef
 // 	struct BaseElem;
 // 	class CSet;
 
-	class BOOST_SYMBOL_EXPORT PWDataReader:
+	class CUFEM_API PWDataReader:
 		public BaseReader
 	{
 	private:
 		typedef PWDataReader _SameClass;
-
-// 		std::string	m_SrcFileName;	//源文件名称
-// 		boost::filesystem::path	m_path;	//源文件路径
 
 	protected:
 		InputFileResult ReadpwFile();	//读取pointwise到处的点集合，为VTX做准备
@@ -55,7 +53,7 @@ namespace HBXFEMDef
 
 	};
 
-	CUFEM_EXPORT BaseReader* InstancePWReader();
+	CUFEM_API BaseReader* InstancePWReader();
 
 // 	extern "C" BOOST_SYMBOL_EXPORT PWDataReader PWReader;
 // 	PWDataReader PWReader;

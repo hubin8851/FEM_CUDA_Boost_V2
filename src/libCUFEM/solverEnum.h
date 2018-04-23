@@ -1,14 +1,15 @@
 #pragma once
+#include <ExportDef.h>
 #include <boost/dll.hpp>
 namespace HBXFEMDef
 {
-	typedef enum BOOST_SYMBOL_EXPORT problemScale {
+	typedef enum CUFEM_API problemScale {
 		macroScale,
 		microScale
 	}problemScale_t;
 
 
-	typedef enum BOOST_SYMBOL_EXPORT problemMode {
+	typedef enum CUFEM_API problemMode {
 		_processor,
 		_postProcessor
 	}problemMode_t;

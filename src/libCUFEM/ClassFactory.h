@@ -1,6 +1,7 @@
 #pragma once
-#include <HBXPreDef.h>
 
+#include <map>
+#include <ExportDef.h>
 
 
 namespace HBXFEMDef
@@ -26,7 +27,7 @@ namespace HBXFEMDef
 	//工厂模式中的第三种，参见
 	//http://blog.csdn.net/wuzhekai1985/article/details/6660462
 	//类工厂 class 存储所有的可能出现的产物，并可通过名字索引
-	class BOOST_SYMBOL_EXPORT ClassFactory
+	class CUFEM_API ClassFactory
 	{
 	private:
 		//单元种类列表，从xml里读取
@@ -88,7 +89,7 @@ namespace HBXFEMDef
 	extern ClassFactory& classFactory;
 
 	//没有弄懂为什么不放在类里面作为一个静态成员...
-	BOOST_SYMBOL_EXPORT ClassFactory& GetClassFactory();
+	CUFEM_API ClassFactory& GetClassFactory();
 
 }
 

@@ -1,13 +1,13 @@
 #pragma once
 
-#include <HBXPreDef.h>
 #include <map>
 #include <string>
+#include <ExportDef.h>
 
 namespace HBXFEMDef
 {
 	//单元属性结构体，包括单元编号，平面（三维）应力、应变问题，便于程序修改
-	struct BOOST_SYMBOL_EXPORT ElemtProperty
+	struct CUFEM_API ElemtProperty
 	{
 		char	_Name[64];			//对应的单元类名称
 		char	_ClassName[64];

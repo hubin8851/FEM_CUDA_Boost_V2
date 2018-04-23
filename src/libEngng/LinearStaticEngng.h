@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hbxpredef.h>
+#include <ExportDef.h>
 #include <libEngng\StructEngng.h>
 #include <libCUFEM\BaseNumMethod.h>
 
@@ -17,7 +17,7 @@ namespace HBXFEMDef
 	//该类实现线性的静态分析，实则就是计算Ax=b的问题
 	//在多载荷下仅考虑线性弹性段，而不考虑加载历史等
 	//（在非线性条件下夹在历史可能导致在下一步中的加载项数值增加导致实际应变与应力不满足胡克定律）；
-	class BOOST_SYMBOL_EXPORT LinearStaticEngng:
+	class CUFEM_API LinearStaticEngng:
 			public StructEngng
 	{
 	private:

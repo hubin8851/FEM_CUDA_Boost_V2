@@ -1,5 +1,7 @@
 #pragma once
-#include <HBXPreDef.h>
+#include <ExportDef.h>
+#include <HbxDefMacro.h>
+#include <HBXDefStruct.h>
 #include <CuDefMacro.h>
 
 #include <libCUFEM\BaseNumMethod.h>
@@ -7,13 +9,15 @@
 
 namespace HBXFEMDef
 {
+	using namespace HBXDef;
+
 	class Domain;
 	class Engng;
 	class BaseNumMethod;
 
 
 	//参考于FEMCal_CUDA_mpi_Boost下的BaseXConjugate基类，略作修改
-	class BOOST_SYMBOL_EXPORT BaseConjugate:
+	class CUFEM_API BaseConjugate:
 		public BaseNumMethod
 	{
 	protected:
@@ -46,7 +50,7 @@ namespace HBXFEMDef
 
 		//CSR格式矩阵相关参数,除中间变量的裸指针均放在结构体中
 		//	HBXDef::_CSRInput<double>	m_CSRInput;	//存在问题，结构体内存连续可能导致赋值错误
-		boost::filesystem::path	m_SavePath;
+		std::string	m_SavePath;
 		//主机端buffer
 		int			*h_iColSort, *h_iNonZeroRowSort;
 		HBXDef::UserCalPrec		*h_NoneZeroVal;
@@ -65,15 +69,15 @@ namespace HBXFEMDef
 		std::vector<double>	h_vRhs;
 	protected:
 		//生成随机的三对角对称阵
-		void	genTridiag(size_t _genRowNum, boost::filesystem::path _savepath = "", bool _bsave = false);
+		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
 		//生成随机的等式右端向量
-		void	genRhs(size_t _genRowNum, bool _bsave = false, boost::filesystem::path _savepath = "..\\data\\check");
+		void	genRhs(size_t _genRowNum, bool _bsave = false, const char* _savepath = "..\\data\\check");
 	public:
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();
 
 		virtual void	ResetMem();									//重置内存
-		virtual void	ResetGraphMem(HBXDef::CudaMalloc_t _cuMac = HBXDef::CudaMalloc_t::NORMAL);		//在GPU上重置显存
+		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);		//在GPU上重置显存
 
 		//设备和主机端的内存拷贝
 		virtual	HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
@@ -83,7 +87,7 @@ namespace HBXFEMDef
 		/************************************************************************/
 
 		//从Mtx格式的文件读取三元数的稀疏矩阵信息
-		HBXDef::DataAloc_t		SetStiffMatFromMTX(const char* _mat_filename = "gr_900_900_crg.mtx", const boost::filesystem::path& _dir = "..\\data\\check");
+		HBXDef::DataAloc_t		SetStiffMatFromMTX(const char* _mat_filename = "gr_900_900_crg.mtx", const const char* _dir = "..\\data\\check");
 
 		//从外部获取三个数组指针及其长度得到刚度矩阵的CSR格式
 		HBXDef::DataAloc_t	SetStiffMat(const void *const _srcVal, const void *const _srcCol, const void *const _srcRow,
@@ -92,10 +96,10 @@ namespace HBXFEMDef
 		HBXDef::DataAloc_t		SetStiffMat(const char* _NoneZeroVal = "NoneZeroVal.data",
 			const char*	_ColSort = "ColSort.data",
 			const char*	_ValRowSort = "NoneZeroRowSort.data",
-			const boost::filesystem::path& _dir = "..\\data\\source");
+			const const char* _dir = "..\\data\\source");
 
 		//从文件中读取载荷向量
-		virtual HBXDef::DataAloc_t SetLoadVec(const char* _FileName = "LoadVec.data", const boost::filesystem::path& _dir = "..\\data\\source");
+		virtual HBXDef::DataAloc_t SetLoadVec(const char* _FileName = "LoadVec.data", const const char* _dir = "..\\data\\source");
 		//从类外部获得载荷数组指针
 		HBXDef::DataAloc_t	SetLoadVec(const void* _LoadVec, size_t _RowNum);
 

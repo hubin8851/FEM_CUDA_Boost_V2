@@ -1,5 +1,6 @@
 #pragma once
 #include <HBXPreDef.h>
+#include <ExportDef.h>
 #include <VtkPreDef.h>
 #include <libCUFEM\InputRecord.h>
 #include <libReader\DynamicInputRecord.h>
@@ -7,7 +8,7 @@
 
 
 
-class BOOST_SYMBOL_EXPORT BaseVtk
+class CUFEM_API BaseVtk
 {
 	typedef	std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> >::iterator _ElmtIter;
 	typedef std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> >::iterator _NodeIter;
@@ -73,7 +74,7 @@ public:
 	//导入模型数据
 	virtual UserStatusError_t SetData( HBXFEMDef::InputRecord* _ir );
 	//通过stl文本导入模型数据
-	virtual UserStatusError_t SetData( const char* _FileName, boost::filesystem::path  _path);
+	virtual UserStatusError_t SetData( const char* _FileName, std::string  _path);
 
 	//设置颜色表,必须在setdata函数后使用
 	void SetColorTable();
