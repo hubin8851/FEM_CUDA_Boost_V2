@@ -39,9 +39,18 @@
     <ClInclude Include="..\src\libInterpolate\Bound2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\QuadParam.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\Quadtree_kernel.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu">
+      <Filter>源文件</Filter>
+    </CudaCompile>
+    <CudaCompile Include="ModuleCheck.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
   </ItemGroup>

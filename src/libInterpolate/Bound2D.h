@@ -1,5 +1,5 @@
 #pragma once
-#include <vector_functions.h>
+#include <cuda_runtime.h>
 
 namespace HBXDef
 {

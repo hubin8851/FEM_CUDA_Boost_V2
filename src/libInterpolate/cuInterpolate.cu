@@ -7,7 +7,7 @@
 //@M：表示malloc的方式
 template< unsigned int T>
 float cuInterpolate(HBXDef::cuTable<T>* _table,
-					HBXDef::cuInterval<T>* _posIn,
+					HBXDef::cuLocation<T>* _posIn,
 					HBXDef::UserCalPrec* _DataOut)
 {
 	using namespace  HBXDef;
@@ -43,8 +43,8 @@ float cuInterpolate(HBXDef::cuTable<T>* _table,
 	//核函数，important
 	cuInter_kernel<T> << < GRIDSIZE, BLOCKSIZE, MAX_SHARED, 0 >> > (_table, _posIn, _DataOut);
 
-	cudaEventRecord(stop, 0);//计时结束
-	cudaThreadSynchronize();
+	cudaEventRecord(stop, 0);	//计时结束
+	cudaThreadSynchronize();	//线程同步
 	cudaEventSynchronize(start);
 	cudaEventSynchronize(stop);
 	cudaEventElapsedTime(&elapsedTime, start, stop);//获取用时

@@ -166,13 +166,20 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="..\src\libInterpolate\interval_device.cuh" />
     <ClInclude Include="..\src\libInterpolate\interval_lib.h" />
+    <ClInclude Include="..\src\libInterpolate\QuadParam.h" />
     <ClInclude Include="..\src\libInterpolate\Quadtree2D.h" />
+    <ClInclude Include="..\src\libInterpolate\Quadtree_kernel.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\Points.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\TPOW.h" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="ModuleCheck.cu">
+      <FileType>Document</FileType>
+    </CudaCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

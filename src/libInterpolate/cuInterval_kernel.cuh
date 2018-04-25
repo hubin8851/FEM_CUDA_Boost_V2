@@ -2,6 +2,7 @@
 #include <CuDefMacro.h>
 #include <libInterpolate\interval_lib.h>
 #include <libInterpolate\interval_device.cuh>
+#include <HbxXmlDef\AeroTable.h>
 
 //核函数
 //@_TabelIn:	传入的表结构体
@@ -9,7 +10,7 @@
 //@_outData:	输出的数据
 template<unsigned int T>
 __global__	void cuInter_kernel(HBXDef::cuTable<T>* _TabelIn,
-								HBXDef::cuInterval<T>* _ArrayIn,
+								HBXDef::cuLocation<T>* _ArrayIn,
 								HBXDef::UserCalPrec* _outData)
 {
 	using namespace HBXDef;
@@ -33,3 +34,5 @@ __global__	void cuInter_kernel(HBXDef::cuTable<T>* _TabelIn,
 	}
 	__syncthreads();
 }
+
+

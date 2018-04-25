@@ -11,4 +11,4 @@
 #include <thrust\device_vector.h>
 
 extern "C" void InterpolateTest();
-
+extern "C" void QuadTree_Test();

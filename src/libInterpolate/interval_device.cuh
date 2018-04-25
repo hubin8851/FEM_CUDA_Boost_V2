@@ -102,7 +102,7 @@ template __declspec(dllexport)  __host__  __device__ void	findcordi(HBXDef::cuTa
 //@_ArrayIn:传入的带插值的坐标向量
 template<unsigned int T>
 __host__ __device__ HBXDef::UserCalPrec	ReadTableData(	HBXDef::cuTable<T>* _tableIn,
-												HBXDef::cuInterval<T>* _ArrayIn,
+												HBXDef::cuLocation<T>* _ArrayIn,
 												HBXDef::UserCalPrec* _Output)
 {
 	unsigned int _tmp_position[HBXDef::TPOW2(T)];	//递归临时数组

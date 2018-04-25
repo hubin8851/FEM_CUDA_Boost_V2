@@ -7,7 +7,7 @@ namespace HBXDef
 {
 	class Boundary2D;
 
-	class Quadtree2D
+	class Quadtree2D_node
 	{
 	private:
 		int m_id;
@@ -19,7 +19,7 @@ namespace HBXDef
 		int m_begin, m_end;
 
 	public:
-		__host__ __device__ Quadtree2D() : m_id(0), m_begin(0), m_end(0) {};
+		__host__ __device__ Quadtree2D_node() : m_id(0), m_begin(0), m_end(0) {};
 		
 		//
 		__host__ __device__ int GetId() const
@@ -36,7 +36,7 @@ namespace HBXDef
 		//获取边界条件
 		__host__ __device__ __forceinline__ void SetBound(float min_x, float min_y, float max_x, float max_y)
 		{
-			m_bound.set(min_x, min_y, max_x, max_y);
+			m_bound.Set(min_x, min_y, max_x, max_y);
 		}
 
 		// The number of points in the tree.
