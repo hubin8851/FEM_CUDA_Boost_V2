@@ -36,3 +36,33 @@ __global__	void cuInter_kernel(HBXDef::cuTable<T>* _TabelIn,
 }
 
 
+template<unsigned int T>
+__global__	void cuInter_TEST(HBXDef::cuTable<T>* _TabelIn,
+	HBXDef::cuLocation<T>* _ArrayIn,
+	HBXDef::UserCalPrec* _outData
+)
+{
+	using namespace HBXDef;
+	unsigned int idx = blockIdx.x*blockDim.x + threadIdx.x;
+
+	printf("the blockID is: %d, the threadId is: %d \n", blockIdx.x, threadIdx.x);
+
+	while (idx < MAX_GPUITER)
+	{
+#ifdef USERDEFSHARED//为了控制共享内存大小
+
+#else // USERDEFSHARED//为了控制共享内存大小
+
+#endif  //USERDEFSHARED
+
+		for (size_t i = 0; i < SLICE; i++)
+		{
+			//		_outData[idx] = ReadTableData<T>(_TabelIn, &_ArrayIn[idx], &_outData[idx] );
+		}
+
+		idx += gridDim.x*blockDim.x;
+	}
+	__syncthreads();
+}
+
+

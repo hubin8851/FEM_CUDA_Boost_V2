@@ -12,9 +12,6 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\libInterpolate\InterPosStruct.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -47,10 +44,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu">
+    <CudaCompile Include="ModuleCheck.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
-    <CudaCompile Include="ModuleCheck.cu">
+    <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
   </ItemGroup>

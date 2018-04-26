@@ -168,6 +168,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="CBaseMat.h" />
     <ClInclude Include="domain.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />

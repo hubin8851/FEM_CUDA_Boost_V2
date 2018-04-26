@@ -113,7 +113,7 @@ __host__ __device__ HBXDef::UserCalPrec	ReadTableData(	HBXDef::cuTable<T>* _tabl
 
 	findcordi(_tableIn, _tmp_position, _tmp_proper, _ArrayIn->m_Loc);
 	//迭代递归算法
-	unsigned int _tmpidx = HBXDef::TPOW2(T) / 2;
+	unsigned int _tmpidx = HBXDef::TPOW2(T-1);
 	for (unsigned int idx = 0; idx < HBXDef::TPOW2(T); idx++)//在临时数组中
 	{
 		_tmp_reducdata[idx] = _tableIn->m_data[ _tmp_position[idx] ];

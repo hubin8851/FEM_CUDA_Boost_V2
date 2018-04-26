@@ -163,7 +163,6 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\libInterpolate\Bound2D.h" />
     <ClInclude Include="..\src\libInterpolate\cuInterval_kernel.cuh" />
     <ClInclude Include="..\src\libInterpolate\InterPosStruct.h" />
-    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h" />
     <ClInclude Include="..\src\libInterpolate\interval_device.cuh" />
     <ClInclude Include="..\src\libInterpolate\interval_lib.h" />
     <ClInclude Include="..\src\libInterpolate\QuadParam.h" />
@@ -175,8 +174,6 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libInterpolate\cuInterpolate.cu" />
-  </ItemGroup>
-  <ItemGroup>
     <CudaCompile Include="ModuleCheck.cu">
       <FileType>Document</FileType>
     </CudaCompile>

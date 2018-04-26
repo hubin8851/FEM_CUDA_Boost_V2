@@ -1,12 +1,14 @@
 #pragma once
 #ifndef INTERVAL_LIB
 #define INTERVAL_LIB
+#include <vector>
+#include <algorithm>
 #include <cuda_runtime.h>
 #include <HbxDefMacro.h>
 #include <helper_cuda.h>
 #include <HbxXmlDef\AeroTable.h>
 #include <thrust\random.h>
-
+//thrust的某些库不能加，否则出现编译错误
 
 namespace HBXDef
 {
@@ -40,6 +42,7 @@ namespace HBXDef
 				tmpAdd += m_numperdim[i];
 				tmpMulti *= m_numperdim[i];
 			}
+			this->InitMem(tmpMulti, tmpAdd);
 			cudaMemcpy(m_numperdim, _rhs.m_numperdim, T * sizeof(unsigned int), cudaMemcpyDeviceToDevice);
 			cudaMemcpy(m_lag_cordinate, _rhs.m_lag_cordinate, T * sizeof(unsigned int), cudaMemcpyDeviceToDevice);
 			cudaMemcpy(&m_cordials, &_rhs.m_cordials, tmpAdd * sizeof(HBXDef::UserCalPrec), cudaMemcpyDeviceToDevice);
@@ -71,22 +74,68 @@ namespace HBXDef
  			{
  				tmpAdd += _rhs._numperdim[i];
  				tmpMulti *= _rhs._numperdim[i];
+				m_numperdim[i] = _rhs._numperdim[i];
  			}
-			checkCudaErrors(cudaMemcpy(m_numperdim, _rhs._numperdim, 
-									T * sizeof(unsigned int), 
-									cudaMemcpyDeviceToDevice));
+
  			m_cordials = _rhs._corddata;
  			m_data = _rhs._data;
   		}
 
- 		__host__ void InitMem(unsigned int dataLgth = 1, unsigned int cordLgth = 1)
+		__host__ __device__ void GetDataFromTable(HBXDef::_AEROBLOCK& _rhs)
+		{
+			unsigned int tmpAdd = 0;
+			unsigned int tmpMulti = 1;
+			for (unsigned int i = 0; i < this->VALUE; i++)
+			{
+				tmpAdd += _rhs._numperdim[i];
+				tmpMulti *= _rhs._numperdim[i];
+				m_numperdim[i] = _rhs._numperdim[i];
+			}
+			m_cordials = _rhs._corddata;
+			m_data = _rhs._data;
+		}
+
+ 		__host__ __device__ void InitMem(unsigned int dataLgth = 1, unsigned int cordLgth = 1)
  		{
+
  			m_data = new HBXDef::UserCalPrec[dataLgth];
  			m_cordials = new HBXDef::UserCalPrec[cordLgth];
  		}
 
 		__host__ __device__ int size() { return 0; };
 
+		__host__ HBXDef::UserCalPrec GetMinInDim( unsigned int _dim )
+		{
+			unsigned int _offset = 1;
+			if (0 == _dim)
+			{
+				_offset = 0;
+			}
+			for (unsigned int i=0; i<_dim; i++)
+			{
+				_offset *= m_numperdim[i];
+			}
+			HBXDef::UserCalPrec* _start = m_cordials + _offset;
+			std::vector<HBXDef::UserCalPrec> _vTmp(_start, _start+ m_numperdim[_dim]);
+			std::vector<HBXDef::UserCalPrec>::iterator _iter = min_element(_vTmp.begin(), _vTmp.end());
+			return *_iter;
+		}
+		__host__ HBXDef::UserCalPrec GetMaxInDim( unsigned int _dim )
+		{
+			unsigned int _offset = 1;
+			if (0 == _dim)
+			{
+				_offset = 0;
+			}
+			for (unsigned int i = 0; i < _dim; i++)//获取当前dim之前的偏移总量
+			{
+				_offset *= m_numperdim[i];
+			}
+			HBXDef::UserCalPrec* _start = m_cordials + _offset;//获取起始位置
+			std::vector<HBXDef::UserCalPrec> _vTmp(_start, _start + m_numperdim[_dim]);
+			std::vector<HBXDef::UserCalPrec>::iterator _iter = max_element(_vTmp.begin(), _vTmp.end());
+			return *_iter;
+		}
 	};
 
 	template __declspec(dllexport) class  cuTable<2>;
@@ -99,10 +148,10 @@ namespace HBXDef
 	{
 	private:
 		typedef cuLocation<T> _SameLocation;
-// 		enum
-// 		{
-// 			VALUE = T
-// 		};
+		enum
+		{
+			VALUE = T
+		};
 
 	public:
 		HBXDef::UserCalPrec	m_Loc[T];	//插值坐标标位置

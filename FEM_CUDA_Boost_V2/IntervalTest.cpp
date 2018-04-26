@@ -26,7 +26,7 @@ void InterpolateTest()
 	checkCudaErrors(cudaSetDevice(0));
 
 	const unsigned int g_T = 2;//表的维度
-	unsigned int g_zhandian = 2000;
+	unsigned int g_zhandian = MAX_GPUITER;
 	
 
 	thrust::host_vector<HBXDef::UserCalPrec> h_Localx(g_zhandian);
@@ -37,21 +37,37 @@ void InterpolateTest()
 	thrust::host_vector<HBXDef::UserCalPrec> h_OutData(g_zhandian);
 	thrust::device_vector<HBXDef::UserCalPrec> d_OutData(g_zhandian);
 
-	//生成随机点
-	UserCalPrec	g_min[g_T] = { -2.0, 0.4 };
-	UserCalPrec g_max[g_T] = { 32, 6.97 };
-	h_Local[0].Rnd_Generat(g_min, g_max);
+	HBXDef::cuLocation<g_T>* d_Location;
+	checkCudaErrors( cudaMalloc((void**)&d_Location, g_zhandian*sizeof(HBXDef::cuLocation<g_T>)) );
 
-	std::cout << sizeof(d_Local) << std::endl;
+	std::cout << sizeof(h_Local[0]) << std::endl;
 	std::cout << sizeof(d_OutData) << std::endl;
 
 //	checkCudaErrors( cudaMalloc(&d_Local, g_zhandian * sizeof(d_OutData)) );
 
-	HBXDef::cuTable<g_T> g_cuTable( g_Aerotable->_blocks[0] );	
+	HBXDef::cuTable<g_T>* g_cuTable;
+//	g_cuTable = new HBXDef::cuTable<g_T>(g_Aerotable->_blocks[0]);
+	checkCudaErrors( cudaMallocManaged(&g_cuTable, sizeof(HBXDef::cuTable<g_T>)) );//统一地址分配内存
+	g_cuTable->GetDataFromTable(g_Aerotable->_blocks[0]);//从气动数据表内拷贝相关数据值待插值表
+	//获取表各维度的上下界
+	UserCalPrec	g_min[g_T], g_max[g_T];
+	for (size_t i = 0; i < g_T; i++)
+	{
+		g_min[i] = g_cuTable->GetMinInDim(i);
+		g_max[i] = g_cuTable->GetMaxInDim(i);
+	}
 
-	cuInterpolate<g_T>(	&g_cuTable, 
-						thrust::raw_pointer_cast(&d_Local[0]), 
-						thrust::raw_pointer_cast(&d_OutData[0]) );
+	for (unsigned int i = 0; i < g_zhandian; i++)
+	{
+		//生成随机点
+		h_Local[i].Rnd_Generat(g_min, g_max);
+	}
+	d_Local = h_Local;
+
+	float timeuserd = cuInterpolate<g_T>(	g_cuTable, 
+										thrust::raw_pointer_cast(&d_Local[0]), 
+										thrust::raw_pointer_cast(&d_OutData[0]) );
+
 }
 
 extern "C"
