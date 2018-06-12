@@ -34,6 +34,7 @@
     <ClCompile Include="..\src\libCUFEM\MetaStep.cpp" />
     <ClCompile Include="..\src\libCUFEM\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp" />
@@ -72,6 +73,8 @@
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\HbxCuDefStruct.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />
@@ -87,7 +90,7 @@
     <ProjectGuid>{5BAE6F46-B05E-4185-AD05-168C7CB54274}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>libFEMWithCUDA</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -106,15 +109,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -130,17 +133,22 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
-    <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_debug_x64.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
     <Import Project="..\CUFEM.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_gd_MDD.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\CUFEM.props" />
+    <Import Project="E:\SDK\hbxdef\dllexport.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
+    <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <TargetExt>.dll</TargetExt>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -197,7 +205,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>

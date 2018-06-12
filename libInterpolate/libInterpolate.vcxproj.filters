@@ -42,6 +42,15 @@
     <ClInclude Include="..\src\libInterpolate\Quadtree_kernel.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libInterpolate\spBaseLag.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\SharedMem.cuh">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="ModuleCheck.cu">

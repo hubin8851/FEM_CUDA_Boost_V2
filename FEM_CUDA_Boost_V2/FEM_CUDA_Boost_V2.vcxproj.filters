@@ -78,7 +78,7 @@
     <ClInclude Include="IntervalTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libInterpolate\cuInterpolate.h">
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -91,6 +91,12 @@
     </ClCompile>
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp">
       <Filter>头文件\HBXDEF</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxXmlDef\AeroTable.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

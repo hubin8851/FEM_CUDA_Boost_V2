@@ -32,13 +32,13 @@ __host__  __device__ void	findcordi(HBXDef::cuTable<T>* _tableIn,
 
 			//判断当前插值点在上一步的左方亦或右方
 			if (_vecIn[idx1] > _cordials[_cordial])
-			{
+			{//当前点在上一步点的右方
 				for (int idx2 = _cordial; idx2 < _length; idx2++)
 				{
 					if ((_length - 1) == idx2)	//判断是否在右边界
 					{
 						_tmp_proper[idx1] = 0;	//递归因子置0
-						_tableIn->m_lag_cordinate[idx1] = _length - 1;
+						_tableIn->m_lag_cordinate[idx1] = _length - 1;//将此记录存入old记录
 					}
 					else
 					{
@@ -109,9 +109,9 @@ __host__ __device__ HBXDef::UserCalPrec	ReadTableData(	HBXDef::cuTable<T>* _tabl
 	HBXDef::UserCalPrec	_tmp_reducdata[HBXDef::TPOW2(T)];	//递归数据临时数组
 	HBXDef::UserCalPrec	_tmp_proper[T];	//递归比例系数
 
-	memset((void*)&_tmp_position, 0, HBXDef::TPOW2(T) * sizeof(unsigned int));
+	memset(_tmp_position, 0, HBXDef::TPOW2(T) * sizeof(unsigned int));
 
-	findcordi(_tableIn, _tmp_position, _tmp_proper, _ArrayIn->m_Loc);
+	findcordi<T>(_tableIn, _tmp_position, _tmp_proper, _ArrayIn->m_Loc);
 	//迭代递归算法
 	unsigned int _tmpidx = HBXDef::TPOW2(T-1);
 	for (unsigned int idx = 0; idx < HBXDef::TPOW2(T); idx++)//在临时数组中
@@ -127,6 +127,7 @@ __host__ __device__ HBXDef::UserCalPrec	ReadTableData(	HBXDef::cuTable<T>* _tabl
 		_tmpidx = _tmpidx >> 1;//通过左移操作对另一维度的数据进行插值
 	}//在此没有将最后一步放入循环中，便于未优化情况下提高速度
 	return _tmp_reducdata[1] - _tmp_proper[0] * (_tmp_reducdata[1] - _tmp_reducdata[0]);
+
 };
 
 

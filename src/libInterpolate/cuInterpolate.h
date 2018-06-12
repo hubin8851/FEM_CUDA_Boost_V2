@@ -2,11 +2,11 @@
 #include <HbxDefMacro.h>
 #include <CuDefMacro.h>
 
+
 namespace HBXDef
 {
 	template<unsigned int T> class cuTable;
 	template<unsigned int T> class cuLocation;
-
 }
 
 
@@ -16,8 +16,15 @@ namespace HBXDef
 template< unsigned int T>
 float cuInterpolate(HBXDef::cuTable<T>* _table,
 	HBXDef::cuLocation<T>* _posIn,
-	HBXDef::UserCalPrec* _DataOut);
+	HBXDef::UserCalPrec* _DataOut,
+	unsigned int N = MAX_GPUITER);
 
+//CUDA插值计算校验程序
+template< unsigned int T>
+float Interpolate_cpu(HBXDef::cuTable<T>* _table,
+	HBXDef::cuLocation<T>* h_loc,
+	HBXDef::UserCalPrec* h_result,
+	unsigned int _num);
 
 #ifdef __cplusplus
 
@@ -32,8 +39,22 @@ float cuInterpolate(HBXDef::cuTable<T>* _table,
 //函数模板在调用时后，有了具体的实现，这个时候才有了地址。
 template __declspec(dllexport) float cuInterpolate(HBXDef::cuTable<2>* _table,
 	HBXDef::cuLocation<2>* _posIn,
-	HBXDef::UserCalPrec* _DataOut);
+	HBXDef::UserCalPrec* _DataOut,
+	unsigned int N);
 
 template __declspec(dllexport) float cuInterpolate(HBXDef::cuTable<3>* _table,
 	HBXDef::cuLocation<3>* _posIn,
-  	HBXDef::UserCalPrec* _DataOut);
+	HBXDef::UserCalPrec* _DataOut,
+	unsigned int N);
+
+
+template __declspec(dllexport) float Interpolate_cpu(HBXDef::cuTable<2>* _table,
+	HBXDef::cuLocation<2>* h_loc,
+	HBXDef::UserCalPrec* h_result,
+	unsigned int _num);
+
+
+template __declspec(dllexport) float Interpolate_cpu(HBXDef::cuTable<3>* _table,
+	HBXDef::cuLocation<3>* h_loc,
+	HBXDef::UserCalPrec* h_result,
+	unsigned int _num);

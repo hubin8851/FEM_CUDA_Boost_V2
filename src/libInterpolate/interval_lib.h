@@ -32,6 +32,12 @@ namespace HBXDef
 		unsigned int	m_lag_cordinate[T];	//插值坐标标位置
 
 	public:
+		__host__ __device__ cuTable()
+		{
+			m_cordials = nullptr;
+			m_data = nullptr;
+		}
+
 		//CPU、GPU同类型拷贝版本
 		__host__ __device__ cuTable(const _SameTable& _rhs)
 		{
@@ -81,8 +87,24 @@ namespace HBXDef
  			m_data = _rhs._data;
   		}
 
-		__host__ __device__ void GetDataFromTable(HBXDef::_AEROBLOCK& _rhs)
+		__host__ ~cuTable()
 		{
+			// 保证所有的内存操作均已完成
+			checkCudaErrors(cudaDeviceSynchronize());
+			if (nullptr != m_data)
+			{
+				checkCudaErrors( cudaFree(m_data) );		
+			}
+			if (nullptr != m_cordials)
+			{
+				checkCudaErrors( cudaFree(m_cordials) );
+			}
+			printf("当前气动数据表已经被析构...");
+		}
+
+		__host__ __device__ cudaError_t GetDataFromTable(HBXDef::_AEROBLOCK& _rhs)
+		{
+			cudaError_t _err;
 			unsigned int tmpAdd = 0;
 			unsigned int tmpMulti = 1;
 			for (unsigned int i = 0; i < this->VALUE; i++)
@@ -91,18 +113,26 @@ namespace HBXDef
 				tmpMulti *= _rhs._numperdim[i];
 				m_numperdim[i] = _rhs._numperdim[i];
 			}
-			m_cordials = _rhs._corddata;
-			m_data = _rhs._data;
+			InitMem(tmpMulti, tmpAdd);
+
+			_err = cudaMemcpy( m_cordials, _rhs._corddata, tmpAdd* sizeof(HBXDef::UserCalPrec), cudaMemcpyHostToDevice );
+			_err = cudaMemcpy( m_data, _rhs._data, tmpMulti * sizeof(HBXDef::UserCalPrec), cudaMemcpyHostToDevice );
+//			m_cordials = _rhs._corddata;
+//			m_data = _rhs._data;
+			return _err;
 		}
 
- 		__host__ __device__ void InitMem(unsigned int dataLgth = 1, unsigned int cordLgth = 1)
+ 		__host__ __device__ cudaError_t InitMem(unsigned int dataLgth = 1, unsigned int cordLgth = 1)
  		{
-
- 			m_data = new HBXDef::UserCalPrec[dataLgth];
- 			m_cordials = new HBXDef::UserCalPrec[cordLgth];
+			cudaError_t _err;
+			_err = cudaMallocManaged( &m_data, dataLgth *sizeof(HBXDef::UserCalPrec) );
+			_err = cudaMallocManaged( &m_cordials, cordLgth * sizeof(HBXDef::UserCalPrec));
+			return _err;
  		}
 
 		__host__ __device__ int size() { return 0; };
+
+		__host__ __device__ int GetDim() { return this->VALUE; };
 
 		__host__ HBXDef::UserCalPrec GetMinInDim( unsigned int _dim )
 		{
