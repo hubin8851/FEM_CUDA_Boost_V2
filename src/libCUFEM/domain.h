@@ -26,24 +26,35 @@ namespace HBXFEMDef
 	class Set;
 	template<typename _T> class NSortMat;
 
+#define _IF_Domain_Type "domain"
+#define _IF_Domain_nnode "nnode"
+#define _IF_Domain_nelt "nelt"
+#define _IF_Domain_nsect "nsect"
+#define _IF_Domain_nmat "nmat"
+#define _IF_Domain_nset "nset"
+
 	//域信息，包括单元，节点，材料，截面等属性，简单理解为一个part的、除解算信息外的所有属性。
 	//其提供给解算器待计算的相关数据
 	class CUFEM_API Domain
 	{
 	public:
 		std::string _myName;
-		std::string _myType;
+		AnylsType _myType;
+
+		///空间自由度
+		int _nsd;
+		bool _Axisymm;
 
 		//std::vector<FemComponent<_T>>* p_vFemCmpnn;
 		std::vector<Node>		_vNode;
 		//单元内节点数组容器
 		std::vector<NSortMat<HBXDef::UserCalPrec>>	_vNSortArray;
 		//单元向量容器
-		std::vector<BaseElem > _vElmt;
+		std::vector< std::unique_ptr<BaseElem> > _vElmt;
 		//材料向量容器
-		std::vector<BaseMaterial> _vMat;
+		std::vector<std::unique_ptr<BaseMaterial> > _vMat;
 		//截面向量容器
-		std::vector<BaseSection> _vSection;
+		std::vector<std::unique_ptr<BaseSection> > _vSection;
 		//载荷向量容器
 		std::vector<BaseBoundary> _vLoad;
 		//集合容器
@@ -62,6 +73,9 @@ namespace HBXFEMDef
 		Engng* _myEngng;
 
 	protected:
+
+	private:
+		void GetDomainDofsDefaults( const char* );
 	public:
 		Domain() {};
 		//@：_name:当前域名称
@@ -78,7 +92,7 @@ namespace HBXFEMDef
 		};
 		~Domain() {};
 
-		UserStatusError_t InstanceSelf(InputRecord* _ir);
+		InputFileResult_t InstanceSelf(InputRecord* _dr);
 
 		//设置当前域计算类型
 // 		void ResetType(std::string _type)

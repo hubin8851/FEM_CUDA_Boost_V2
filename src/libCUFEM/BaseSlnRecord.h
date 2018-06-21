@@ -15,6 +15,9 @@ namespace HBXFEMDef
 	{
 	public:
 		BaseSlnRecord();
+		BaseSlnRecord(const BaseSlnRecord& _rhs) :keyword(_rhs.keyword) 
+		{
+		};
 		virtual ~BaseSlnRecord();
 
 		//计算类型
@@ -28,6 +31,11 @@ namespace HBXFEMDef
 
 	public:
 		void InsertNode(Domain* _dm, int _id);
+
+		//拷贝操作，输出指针需手动delete
+		BaseSlnRecord* GiveCopy() {
+			return new BaseSlnRecord(*this);
+		};
 	};
 
 	struct RecordLess

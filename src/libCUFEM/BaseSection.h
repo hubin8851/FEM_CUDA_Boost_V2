@@ -1,7 +1,8 @@
 #pragma once
 //#include <boost/dll.hpp>
 #include <ExportDef.h>
-
+#include <HbxDefMacro.h>
+#include <libCUFEM\InputRecord.h>
 
 namespace HBXFEMDef
 {
@@ -15,7 +16,7 @@ namespace HBXFEMDef
 		BaseSection(Domain* _dm, int _id) {};
 		~BaseSection();
 
-
+		virtual InputFileResult_t InitFrom( InputRecord* _dr );
 
 	};
 

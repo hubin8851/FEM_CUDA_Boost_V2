@@ -19,7 +19,7 @@ namespace HBXFEMDef
 		InputFileResult	ReadElemtProperty();		//获取所有的表号编码
 	public:
 		EltPropReader(const std::string& _SourceFile = "EltProperty.xml",
-							std::string _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
+							std::string _savepath = "..\\");	//构造函数,默认路径为根目录
 
 		HBXFEMDef::_EltPtyInMap* const GetPtyMap();
 

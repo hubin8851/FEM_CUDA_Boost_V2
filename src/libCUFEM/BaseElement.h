@@ -3,6 +3,7 @@
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
 #include <ExportDef.h>
+#include <libCUFEM\InputRecord.h>
 #include <libCUFEM\BaseComponent.h>
 
 
@@ -30,6 +31,7 @@ namespace HBXFEMDef
 // 
 // 	};
 
+	//单元基类实现接口，派生类完成各种单元特征矩阵的算法填充。
 	class CUFEM_API BaseElem:public BaseComponent
 	{
 	private:
@@ -40,6 +42,7 @@ namespace HBXFEMDef
 
 		Domain*	MyDomain;
 		Engng*	MyEngng;
+
 	public:
 
 		size_t* _iNode;	//单元内节点编号，在继承后根据类别完成内存分配
@@ -53,6 +56,9 @@ namespace HBXFEMDef
 
 
 		virtual ~BaseElem();
+
+		//初始化输入数据，获取材料的相关属性
+		virtual InputFileResult_t InitFrom(InputRecord * _dr);
 
 		//此函数用以刷新当前单元的状态
 		virtual void Update();

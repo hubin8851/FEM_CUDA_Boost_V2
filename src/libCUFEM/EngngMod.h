@@ -110,7 +110,7 @@ namespace HBXFEMDef
 		HBXFEMDef::problemScale_t eScale;
 		
 		//并行计算标志位
-		bool bParralel;
+		HBXFEMDef::prallelMode bParralel;
 
 		Engng* _MyMaster;
 
@@ -124,6 +124,9 @@ namespace HBXFEMDef
 		EntityMap	m_EntityMap;
 		//组件映射表。各种派生类由其基类类型索引
 		ComponentMap	m_ComponentMap;
+
+		int gpuInfo[8];//假定一个节点上只有至多8个GPU单元
+		int m_nGPUs, m_MaxGPUs = 0;
 	public:
 		//默认构造函数
 //		Engng();
@@ -148,6 +151,8 @@ namespace HBXFEMDef
 
 		virtual ~Engng();
 #pragma region 前处理相关
+		void InitGPUs();
+
 		//设置当前计算域模型
 		void SetProblemMode(HBXFEMDef::problemMode_t _Mode) { this->eMode = _Mode; };
 
@@ -155,7 +160,22 @@ namespace HBXFEMDef
 		void SetProblemScale(HBXFEMDef::problemScale_t _scale) { this->eScale = _scale; };
 
 		//设置当前并行模式
-		void SetParrallelMode(bool _ParallelFlag) { this->bParralel = _ParallelFlag; };
+		void SetParrallelMode(bool _ParallelFlag) 
+		{ 
+			if (false == _ParallelFlag)
+			{
+				this->bParralel = _serial;
+				return;
+			}
+			if (0 == m_nGPUs)
+			{
+				this->bParralel = _openMP;
+			}
+			else
+			{
+				this->bParralel = _cuda;
+			}
+		};
 
 		//设置重构建等式标志位为真
 		virtual void SetRenumFlag() { this->bReNum = true; };
@@ -192,7 +212,7 @@ namespace HBXFEMDef
 
 		//根据问题描述初始化整个解算器,为初始化两步走的第一步。
 		//完成输出文件流的打开，实例化其他模块的接收器等
-		UserStatusError_t InstanceSelf( BaseReader* _dr, const char *_outputFileName);
+		UserStatusError_t InstanceSelf( BaseReader* _dr, BaseSlnRecord* _sln, const char *_outputFileName);
 
 		//清理domain列表并重置
 		void Instance_init();
@@ -217,8 +237,13 @@ namespace HBXFEMDef
 		//计算,最主要的函数
 		virtual void Solve();
 
-		//计算当前步
-		virtual void SolveAt( TimeStep* _ts );
+		//初始化时步的预制参数，比如需要GPU时的显存重新分配等操作
+		//在该步之后完成solveAt函数,开始当前步的正式解算
+		virtual void InitAt(TimeStep* _ts) {};
+
+		//计算当前步,完成特征矩阵和向量的构建和组装。
+		//如果需要，使用近似数值解，该函数完成后配合update**函数完成单元内部参数的变更
+		virtual void SolveAt(TimeStep* _ts) {};
 
 		//刷新传入的元步内的所有属性
 		virtual void UpdateMStepAttr(MetaStep* _MStep);
@@ -226,7 +251,8 @@ namespace HBXFEMDef
 		//强制重构等式
 		virtual int RenumEquation() { return 0; };
 
-		//在完成计算步后完成内部数据的更新（例如所有的数据在之前的解算中需要更新）。单元内的积分点和材料属性同样需要更新。
+		//在完成计算步SolveAt后完成内部数据的更新（例如所有的数据在之前的解算中需要更新）。
+		//单元内的积分点和材料属性需要更新也在此函数内执行。
 		virtual void UpdataSelf(TimeStep* _ts);
 
 		//结束时间步。默认情况下调用print函数输出至给定的流

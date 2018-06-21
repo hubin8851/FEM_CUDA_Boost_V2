@@ -84,6 +84,9 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\BaseMaterial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h">

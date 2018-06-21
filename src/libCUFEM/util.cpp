@@ -10,20 +10,19 @@ namespace HBXFEMDef
 	class BaseReader;
 	class BaseSlnRecord;
 
-	CUFEM_API Engng * HBXFEMDef::InstanceProblem( BaseReader* _ir, problemMode_t& _mode, int& contextFlag, Engng* _Master, bool parallelFlag )
+	CUFEM_API Engng * HBXFEMDef::InstanceProblem( BaseReader* _ir, BaseSlnRecord* _sln, problemMode_t _mode, int contextFlag, Engng* _Master, bool parallelFlag )
 	{
 		Engng* problem;
 
 		std::string SourceFileName = _ir->GetSourceName();
-		BaseSlnRecord* ModeRec = _ir->GetSlnRecord();
+		BaseSlnRecord* ModeSln = _ir->GetSlnRecord()->GiveCopy();
 
-		problem = classFactory.CreateEngng( ModeRec->keyword.c_str(), _Master, 1);
+		problem = classFactory.CreateEngng(ModeSln->keyword.c_str(), _Master, 1);
 		if (!problem)
 		{
 			std::cerr << "创建引擎类失败...,或未定义解算类型" << std::endl;
 			return nullptr;
 		}
-
 
 		//在此拷贝输入文件。因为传入的输入文件会跟随e-mode组件的读取而发生变化，而需要在整个e-mode实例中全程记录
 
@@ -35,7 +34,7 @@ namespace HBXFEMDef
 			problem->SetContextOutputMode(HBXFEMDef::ContextOutputMode_t::ALWAYS);
 		}
 
-		problem->InstanceSelf(_ir, "");
+		problem->InstanceSelf(_ir, _sln, "");
 		problem->postInit();
 
 		return problem;

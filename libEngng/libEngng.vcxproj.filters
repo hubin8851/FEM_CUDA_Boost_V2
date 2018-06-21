@@ -30,6 +30,9 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\libEngng\Fluid\2DFluidEngng.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

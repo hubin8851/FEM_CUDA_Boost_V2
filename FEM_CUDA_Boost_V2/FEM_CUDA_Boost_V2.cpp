@@ -5,13 +5,10 @@
 
 #include "FEM_CUDA_Boost_V2.h"
 #include <HBXPreDef.h>
-#include <libCUFEM\util.h>
-#include <libReader\PWDataReader.h>
-#include <libReader\InpDataReader.h>
-#include <libEngng\LinearStaticEngng.h>
 #include "vtktest.h"
 #include "regextest.h"
 #include "IntervalTest.h"
+#include "EngngTest.h"
 
 
 #ifdef _DEBUG
@@ -21,7 +18,7 @@
 extern "C" CUT_THREADPROC InterpolateTest(void* void_arg);
 CUT_THREADPROC AsynInterpolateTest(void* void_arg);
 extern "C" float MultiInterpolateTest(void* void_arg);
-
+extern "C" void EngngTest(void* void_arg);
 // 唯一的应用程序对象
 
 
@@ -29,7 +26,7 @@ using namespace std;
 
 int main()
 {
-	if (1)
+	if (0)
 	{
 //		InterpolateTest();	
 		MultiInterpolateTest();
@@ -40,17 +37,11 @@ int main()
 		vtktest();
 	}
 
-//
-//	HBXFEMDef::BaseReader* xxx = HBXFEMDef::InstanceInpReader();
-//	if (0)
-//	{
-//		using namespace HBXFEMDef;
-//		xxx->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");
-////		xxx->SetSourceFilePath("beam.inp", "D:\\AbaqusTemp"); 
-//		xxx->SetInputData();
-//		
-////		HBXFEMDef::Engng* em = HBXFEMDef::InstanceProblem(xxx, problemMode_t::_processor, 0);
-//	}
+	if (1)
+	{
+		EngngTest();
+	}
+
 //
 //	BaseVtk g_VTK;
 //	g_VTK.Initial();

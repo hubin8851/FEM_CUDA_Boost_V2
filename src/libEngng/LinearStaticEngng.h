@@ -28,7 +28,7 @@ namespace HBXFEMDef
 		//数值算法
 		std::unique_ptr< BaseNumMethod >  Method;
 	public:
-		LinearStaticEngng( Engng* _master = nullptr, int _n = classType::ENGNG );
+		LinearStaticEngng( Engng* _master = nullptr, int _n = classType::ENGNG, int _threadNum = 4);
 		virtual ~LinearStaticEngng();
 
 		//初始化
@@ -39,7 +39,7 @@ namespace HBXFEMDef
 		//计算,最主要的函数
 		virtual void Solve();
 		//计算当前步
-		virtual void SolveAt( TimeStep* _ts );
+		virtual void SolveAt(TimeStep* _ts);
 
 		//在完成计算步后完成内部数据的更新（例如所有的数据在之前的解算中需要更新）。单元内的积分点和材料属性同样需要更新。
 		virtual void UpdataSelf(TimeStep* _ts);

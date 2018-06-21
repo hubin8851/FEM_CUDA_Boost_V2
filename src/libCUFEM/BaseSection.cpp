@@ -1,9 +1,25 @@
 #include "BaseSection.h"
 
-HBXFEMDef::BaseSection::BaseSection()
+
+namespace HBXFEMDef
 {
+	BaseSection::BaseSection()
+	{
+	}
+
+	BaseSection::~BaseSection()
+	{
+	}
+
+
+	InputFileResult_t BaseSection::InitFrom(InputRecord* _dr)
+	{
+
+
+		return InputFileResult_t::IRRT_OK;
+	}
+
+
 }
 
-HBXFEMDef::BaseSection::~BaseSection()
-{
-}
+

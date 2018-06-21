@@ -21,16 +21,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libElement\S4R.h">
+    <ClInclude Include="..\src\libFluid2D\cuFluid.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\libElement\Tri2D3NElemtOwnedStates.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\libElement\Tri2D3NElemt.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ElementStiffCal.h">
+    <ClInclude Include="..\src\libFluid2D\Fluid_kernel.cuh">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,24 +32,18 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="libElement.cpp">
+    <ClCompile Include="libFluid2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\libElement\Tri2D3NElemtOwnedStates.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\libElement\Tri2D3NElemt.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\libElement\S4R.cpp">
+    <ClCompile Include="..\src\libFluid2D\cuFluid.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="ElementStiffCal.cpp">
+    <CudaCompile Include="..\src\libFluid2D\Fluid_kernel.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
   </ItemGroup>

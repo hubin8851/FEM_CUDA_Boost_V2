@@ -4,7 +4,7 @@
 namespace HBXFEMDef
 {
 
-	LinearStaticEngng::LinearStaticEngng(Engng* _master, int _n ):StructEngng(_master, _n)
+	LinearStaticEngng::LinearStaticEngng(Engng* _master, int _n, int _threadNum):StructEngng(_master, _n, _threadNum)
 	{
 		bInit = false;
 		solverType = HBXDef::SolveMethod_t::QR_Mtd;

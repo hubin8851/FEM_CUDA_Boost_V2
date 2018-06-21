@@ -14,5 +14,11 @@ namespace HBXFEMDef
 		_postProcessor
 	}problemMode_t;
 
+
+	typedef enum CUFEM_API prallelMode {
+		_serial,
+		_openMP,
+		_cuda,
+	}prallelMode_t;
 }
 

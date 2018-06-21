@@ -23,6 +23,7 @@
     <ClCompile Include="..\src\libCUFEM\AttriRecord.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseComponent.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseElement.cpp" />
+    <ClCompile Include="..\src\libCUFEM\BaseMaterial.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseNumMethod.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseReader.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseSection.cpp" />

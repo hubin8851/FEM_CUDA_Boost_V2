@@ -31,9 +31,9 @@ namespace HBXFEMDef
 		HBXFEMDef::ElemtProperty	_tmpElPro;	//单元属性结构体临时变量
 		string	_ElemtName;//单元名称，临时变量
 
-		std::string m_root = m_path.append(m_SrcFileName);
+		boost::filesystem::path m_root = m_path + "\\" + m_SrcFileName;
 
-		TiXmlDocument myDoc(m_root.c_str() );
+		TiXmlDocument myDoc( m_root.string().c_str() );
 		bool loadOk = myDoc.LoadFile();
 		if ( !loadOk )
 		{

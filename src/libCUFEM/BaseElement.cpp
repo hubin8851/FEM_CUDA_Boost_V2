@@ -35,6 +35,14 @@ namespace HBXFEMDef
 		MyEngng->RemoveEntity(this);
 	}
 
+	//初始化输入数据，获取材料的相关属性
+	InputFileResult_t BaseElem::InitFrom(InputRecord * _dr)
+	{
+
+
+		return InputFileResult_t::IRRT_OK;
+	}
+
 	void BaseElem::Update()
 	{
 	//	m_pStateMachine->Update();

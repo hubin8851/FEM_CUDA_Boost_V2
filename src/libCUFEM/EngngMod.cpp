@@ -1,4 +1,5 @@
 #include "EngngMod.h"
+#include <helper_cuda.h>
 
 namespace HBXFEMDef
 {
@@ -42,6 +43,35 @@ namespace HBXFEMDef
 		}
 		
 	}
+
+	void Engng::InitGPUs()
+	{
+		checkCudaErrors(cudaGetDeviceCount(&m_nGPUs));
+		printf("Found %d CUDA capable GPUs\n", m_nGPUs);
+
+		if (m_nGPUs > 32)
+		{
+			printf("simpleCallback only supports 32 GPU(s)\n");
+		}
+
+		for (int devid = 0; devid < m_nGPUs; devid++)
+		{
+			int SMversion;
+			cudaDeviceProp deviceProp;
+			cudaSetDevice(devid);
+			cudaGetDeviceProperties(&deviceProp, devid);
+			SMversion = deviceProp.major << 4 + deviceProp.minor;
+			printf("GPU[%d] %s supports SM %d.%d", devid, deviceProp.name, deviceProp.major, deviceProp.minor);
+			printf(", %s GPU Callback Functions\n", (SMversion >= 0x11) ? "capable" : "NOT capable");
+
+			if (SMversion >= 0x11)
+			{
+				gpuInfo[m_MaxGPUs++] = devid;
+			}
+		}
+		printf("%d GPUs available to run Callback Functions\n", m_MaxGPUs);
+	}
+
 
 	Domain* Engng::GetDomain(unsigned int _nDomain)
 	{
@@ -105,7 +135,7 @@ namespace HBXFEMDef
 		m_EntityMap.erase(m_EntityMap.find(pEntity->GetID()));
 	}
 
-	UserStatusError_t Engng::InstanceSelf( BaseReader* _dr, const char *_outputFileName )
+	UserStatusError_t Engng::InstanceSelf( BaseReader* _dr, BaseSlnRecord* _sln, const char *_outputFileName )
 	{
 		bool _bFinish = true;
 
@@ -120,9 +150,14 @@ namespace HBXFEMDef
 		}
 
 		this->Instance_init();
-
+		
+		this->InstanceFrom(_sln);
+		//初始化数据
+		this->InstanceDomains(_dr);
+		
+		//初始化解算信息
 		this->InstanceFrom(_dr->GetSlnRecord());
-
+		//控制metastep
 		if ( 0 == this->nMetaStep )
 		{
 			this->InstanceDefaultMetaStep();
@@ -132,7 +167,6 @@ namespace HBXFEMDef
 			this->InstanceMetaStep(_dr);
 		}
 
-		this->InstanceDomains(_dr);
 		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
@@ -150,9 +184,15 @@ namespace HBXFEMDef
 
 	void Engng::InstanceDomains( BaseReader* _dr )
 	{
-
+		for ( auto &domain: domainList )
+		{
+			domain->InstanceSelf(_dr->GetInputRecord());
+		}
+		this->postInit();
+		return;
 	}
 
+	//处理输入文件,获取解算信息
 	void Engng::InstanceFrom( BaseSlnRecord* _Slnr )
 	{
 
@@ -192,7 +232,10 @@ namespace HBXFEMDef
 	void Engng::postInit()
 	{
 		// to be continue;
-
+		int istep = this->giveNumberOfFirstStep(true);
+		for (auto &metaStep : _metaStepList) {
+			istep = metaStep.setStepBounds(istep);
+		}
 
 	}
 
@@ -222,7 +265,7 @@ namespace HBXFEMDef
 					std::cout << "等式重定义大小" << std::endl;
 				}
 
-//				this->SetCurrentStep(currStp);
+				this->InitAt(this->GetCurrentStep());
 				this->SolveAt(this->GetCurrentStep());
 				this->UpdataSelf(this->GetCurrentStep());
 			}
@@ -231,9 +274,7 @@ namespace HBXFEMDef
 		return;
 	}
 
-	void Engng::SolveAt(TimeStep* _ts)
-	{
-	}
+
 
 	void Engng::UpdateMStepAttr(MetaStep* _MStep)
 	{

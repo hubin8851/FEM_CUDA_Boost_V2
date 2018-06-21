@@ -48,6 +48,8 @@ namespace HBXFEMDef
 
 		virtual bool SetField(int _item, InputFieldType _id);
 
+		virtual bool SetField(float _item, InputFieldType _id);
+
 		virtual bool SetField(double &_input, InputFieldType _id);
 
 		virtual bool SetField(std::vector<int> _item, InputFieldType _id);
@@ -66,7 +68,23 @@ namespace HBXFEMDef
 
 		virtual bool SetField(std::shared_ptr< HBXDef::_AEROTABLE > _item, InputFieldType _id);
 
-		virtual InputFileResult_t GiveField(double &answer, InputFieldType _id);
+		InputFileResult_t GiveField(int &answer, InputFieldType _id) {};
+
+		InputFileResult_t GiveField(float &answer, InputFieldType _id) {};
+
+		InputFileResult_t GiveField(double &answer, InputFieldType _id) {};
+
+		InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>>* answer, InputFieldType _id) { std::cout << "气动数据表内无节点数据" << std::endl; };
+
+		InputFileResult_t GiveField(std::shared_ptr< HBXFEMDef::NSortMat<HBXDef::UserCalPrec> >* answer, InputFieldType _id) { std::cout << "气动数据表内无单元" << std::endl; };
+
+		InputFileResult_t GiveField(std::shared_ptr< HBXFEMDef::_Section<HBXDef::UserCalPrec> > answer, InputFieldType _id) { std::cout << "气动数据表内无截面数据" << std::endl; };
+
+		InputFileResult_t GiveField(std::shared_ptr< HBXFEMDef::_Material<HBXDef::UserCalPrec> > answer, InputFieldType _id) { std::cout << "气动数据表内无材料数据" << std::endl; };
+
+		InputFileResult_t GiveField(std::shared_ptr<HBXFEMDef::Set> answer, InputFieldType _id) { std::cout << "气动数据表内无集合数据" << std::endl; };
+
+		InputFileResult_t GiveField(double &answer, InputFieldType _id);
 
 		virtual HBXDef::_AEROTABLE* GiveField( InputFieldType _id);
 

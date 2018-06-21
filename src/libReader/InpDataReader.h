@@ -57,7 +57,8 @@ namespace HBXFEMDef
 
 	};
 
-	CUFEM_API BaseReader* InstanceInpReader();
+	CUFEM_API BaseReader* InstanceInpReader(const std::string _SourceFile = "",
+											std::string _savepath = "F:\\data from HBX_phd\\vs2015");
 
 
 }

@@ -15,7 +15,8 @@ namespace HBXFEMDef
 
 	AeroTableRecord::AeroTableRecord(const AeroTableRecord &_src) : InputRecord(_src),
 		RecordKeyWord(_src.RecordKeyWord),
-		RecordNum(_src.RecordNum)
+		RecordNum(_src.RecordNum),
+		m_AeroTableInMap(_src.m_AeroTableInMap)
 	{
 
 	}
@@ -36,6 +37,12 @@ namespace HBXFEMDef
 		return false;
 	}
 
+	bool AeroTableRecord::SetField(float _item, InputFieldType _id)
+	{
+		std::cout << "气动数据表内无float类型集合" << std::endl;
+		return false;
+	}
+
 	bool AeroTableRecord::SetField(double & _input, InputFieldType _id)
 	{
 		std::cout << "气动数据表内无double类型集合" << std::endl;
@@ -50,13 +57,13 @@ namespace HBXFEMDef
 
 	bool AeroTableRecord::SetField(HBXFEMDef::Node _item, InputFieldType _id)
 	{
-		std::cout << "气动数据表内无该类型集合" << std::endl;
+		std::cout << "气动数据表内无节点集合" << std::endl;
 		return false;
 	}
 
 	bool AeroTableRecord::SetField(std::shared_ptr<std::vector<HBXFEMDef::Node>> _item, InputFieldType _id)
 	{
-		std::cout << "气动数据表内无该类型集合" << std::endl;
+		std::cout << "气动数据表内无节点向量类型集合" << std::endl;
 		return false;
 	}
 

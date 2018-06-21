@@ -37,6 +37,10 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+6/19/2018 6:22:50 PM 
+修改libreader里的小bug
+完善structengng
+
 4/27/2018 10:32:14 PM 
 完成与CPU版本性能测试对比
 
