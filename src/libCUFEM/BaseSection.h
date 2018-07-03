@@ -7,14 +7,14 @@
 namespace HBXFEMDef
 {
 	class Domain;
+	class InputRecord;
 
 	class CUFEM_API BaseSection
 	{
 	private:
 	public:
-		BaseSection();
 		BaseSection(Domain* _dm, int _id) {};
-		~BaseSection();
+		~BaseSection() {};
 
 		virtual InputFileResult_t InitFrom( InputRecord* _dr );
 

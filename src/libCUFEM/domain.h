@@ -41,27 +41,28 @@ namespace HBXFEMDef
 		std::string _myName;
 		AnylsType _myType;
 
-		///空间自由度
+		//空间维度
 		int _nsd;
+		//每个节点默认的自由度
+		int numberOfDefaultDofsPerNode;
+		//对称标志位
 		bool _Axisymm;
 
 		//std::vector<FemComponent<_T>>* p_vFemCmpnn;
-		std::vector<Node>		_vNode;
+		//每个域内节点只有一组
+		std::shared_ptr< std::vector<Node> >	_pNode;
 		//单元内节点数组容器
-		std::vector<NSortMat<HBXDef::UserCalPrec>>	_vNSortArray;
+		std::map< BaseElem, HBXFEMDef::NSortMat<HBXDef::UserReadPrec>* >*	_pNSortArray;
 		//单元向量容器
-		std::vector< std::unique_ptr<BaseElem> > _vElmt;
+		std::vector< BaseElem > _vElmt;
 		//材料向量容器
-		std::vector<std::unique_ptr<BaseMaterial> > _vMat;
+		std::vector<BaseMaterial > _vMat;
 		//截面向量容器
-		std::vector<std::unique_ptr<BaseSection> > _vSection;
+		std::vector<BaseSection > _vSection;
 		//载荷向量容器
 		std::vector<BaseBoundary> _vLoad;
 		//集合容器
 		std::vector<Set>	_vSet;
-
-		//每个节点默认的自由度
-		int numberOfDefaultDofsPerNode;
 
 		// Domain number
 		int iMyNum;
@@ -75,6 +76,7 @@ namespace HBXFEMDef
 	protected:
 
 	private:
+		//依据单元名称解析默认的自由度
 		void GetDomainDofsDefaults( const char* );
 	public:
 		Domain() {};
@@ -104,6 +106,22 @@ namespace HBXFEMDef
 		void ResetNum(int _n) { this->iMyNum = _n; };
 		//返回当前domaian的编号
 		int GetNum(int _sn) { return this->iMySerialNumber = _sn; };
+		//获取单元向量指针
+		std::vector<BaseElem>& GetElem() 
+		{
+			return this->_vElmt;
+		}
+
+		//返回域中的单元数量
+		int GetNumOfElem() const 
+		{
+			return this->_vElmt.size();
+		};
+		//获取当前域的方程维度，维度公式为 dofpernode * nodenum
+		int GetNumOfEquations() const {
+			return this->_pNode->size()*_nsd;
+		}
+
 		//重新设置当前domian的自适应计算序列号
 		void  ResetSerialNum(int _n) { this->iMyNum; };
 

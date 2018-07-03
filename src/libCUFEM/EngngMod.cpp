@@ -1,5 +1,7 @@
 #include "EngngMod.h"
 #include <helper_cuda.h>
+#include <libCUFEM\ExportModuleManager.h>
+#include <libCUFEM\timestep.h>
 
 namespace HBXFEMDef
 {
@@ -10,6 +12,7 @@ namespace HBXFEMDef
 
 	Engng::Engng(Engng * _master, int _id) :iMyID(_id), MyDispatcher(new MessageDispatcher(_master))
 	{
+		InitFlag = false;
 		NumOfEq = 0;
 		NumOfStep = 0;
 		NumOfPrescribedEq = 0;
@@ -24,6 +27,8 @@ namespace HBXFEMDef
 		{
 			this->MyContext = new EngngModelContext();
 		}
+
+		_myExportModule = new ExportModuleManager(this);
 	}
 
 // 	Engng::Engng(int _i, const char * _fileIn, Engng * _master)
@@ -82,6 +87,11 @@ namespace HBXFEMDef
 			std::cerr<<"Undefined domain"<<std::endl;
 		}
 		return nullptr;
+	}
+
+	int Engng::GetNumOfDomainEquations(int _id)
+	{
+		return this->domainList[_id]->GetNumOfEquations();
 	}
 
 	FILE * Engng::GetOutStream()
@@ -157,6 +167,7 @@ namespace HBXFEMDef
 		
 		//初始化解算信息
 		this->InstanceFrom(_dr->GetSlnRecord());
+
 		//控制metastep
 		if ( 0 == this->nMetaStep )
 		{
@@ -188,7 +199,9 @@ namespace HBXFEMDef
 		{
 			domain->InstanceSelf(_dr->GetInputRecord());
 		}
+
 		this->postInit();
+
 		return;
 	}
 
@@ -231,21 +244,44 @@ namespace HBXFEMDef
 
 	void Engng::postInit()
 	{
-		// to be continue;
-		int istep = this->giveNumberOfFirstStep(true);
+		// 设置metasetp的边界
+		int istep = this->GetNumberOfFirstStep(true);
 		for (auto &metaStep : _metaStepList) {
-			istep = metaStep.setStepBounds(istep);
+			istep = metaStep.SetStepBounds(istep);
 		}
+	}
 
+	UserStatusError_t Engng::Assemble(SparseMat& answer, TimeStep* _tstep, Domain* _dm)
+	{
+		int _nElem = _dm->GetNumOfElem();
+		this->_timer.resumeTimer(EngngTimer::EMT_ASSEMBLE);
+
+
+		this->_timer.pauseTimer(EngngTimer::EMT_ASSEMBLE);
+	}
+
+	int Engng::GetNumberOfFirstStep(bool _hasReciver)
+	{
+		if ( _MyMaster && (!_hasReciver) )
+		{
+			return _MyMaster->GetNumberOfFirstStep(true);
+		}
+		else
+		{
+			return 1;
+		}
 	}
 
 	void Engng::Solve()
 	{
-		unsigned int iStMeta = 1, iStStep = 1;	//起始元步和子步总数
 		//初始化操作
+		unsigned int iStMeta = 1, iStStep = 1;	//起始元步和子步总数
+		
+		//若给定步数
 		if (this->_CurtStep)
 		{
-
+			iStMeta = this->_CurtStep->GetMetaStepNumber();
+			iStStep = this->GetMetaStep(iStMeta)->GetRelativeStepNum( this->_CurtStep->GetMetaStepNumber() );
 		}
 
 		for (unsigned int iCurrMeta = iStMeta; iCurrMeta <= nMetaStep; iCurrMeta++, iStStep++ )	//元步循环
@@ -258,6 +294,9 @@ namespace HBXFEMDef
 			unsigned int iTermStep = currMStep->GetNumOfSteps();
 			for (unsigned int currStp = iStStep; currStp <= iTermStep; currStp++)
 			{
+				//开始计时
+				this->_timer.startTimer(EngngTimer::EMT_SOLUTION);
+
 				//判断当前子步是否有流-固模块之间耦合计算的需求，如果有需刷新当前子步内的数据
 				if ( this->RequiresRenum() )
 				{
@@ -268,6 +307,9 @@ namespace HBXFEMDef
 				this->InitAt(this->GetCurrentStep());
 				this->SolveAt(this->GetCurrentStep());
 				this->UpdataSelf(this->GetCurrentStep());
+
+
+				this->_timer.stopTimer(EngngTimer::EMT_SOLUTION);
 			}
 		}
 

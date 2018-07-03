@@ -1,6 +1,6 @@
 #include "StructEngng.h"
 #include <boost\bind.hpp>
-#include "..\libElement\ElementStiffCal.h"
+#include <libCUFEM\timestep.h>
 
 //2018-6-15，胡斌星，修改
 namespace HBXFEMDef
@@ -44,26 +44,19 @@ namespace HBXFEMDef
 		}
 	}
 
-	void StructEngng::SolveAt(TimeStep * _ts)
-	{
 
-		if (_serial != bParralel)
-		{
-			//并行算法
-			for (int i = 0; i < N_workloads; ++i)
-			{
-				m_threadpool->schedule(boost::bind(EletStiffCal, &workloads[i]));
-			}
-			m_threadpool->wait();
-			cutWaitForBarrier(&thread_barrier);
-			printf("所有%d种单元刚度矩阵并行计算完成 :\n", N_workloads);
-		}
+
+	void StructEngng::GetInternalForces(int _id, TimeStep * _stp)
+	{
+		Domain* _tmpDomain = this->GetDomain(_id);
+		_stp->GetNum();
+		//...
 
 	}
 
 	void StructEngng::UpdateInternalState(TimeStep * _ts)
 	{
-		//遍历所有part
+		//遍历所有part,即域
 		for (auto &MyDom: domainList)
 		{
 			

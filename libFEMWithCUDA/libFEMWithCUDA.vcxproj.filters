@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\HBXDef">
+      <UniqueIdentifier>{130aaa97-84ff-4a9e-b797-13eb52cd30c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\libCUFEM\ClassFactory.cpp">
@@ -85,6 +88,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\src\libCUFEM\BaseMaterial.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\ExportModule.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\ExportModuleManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libCUFEM\timestep.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSCSpMatrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -207,6 +222,33 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\BaseModuleManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\ExportModule.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\ExportModuleManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\timestep.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\libCUFEM\TimerManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="e:\SDK\hbxdef\HBXDEF\SpMatrix.h">
+      <Filter>头文件\HBXDef</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SpMatrixType.h">
+      <Filter>头文件\HBXDef</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SolverType.h">
+      <Filter>头文件\HBXDef</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSCSpMatrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

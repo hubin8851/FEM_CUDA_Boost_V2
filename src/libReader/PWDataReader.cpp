@@ -46,7 +46,7 @@ namespace HBXFEMDef
 
 		ipControlMark = RESET;
 		std::unique_ptr< Domain >	_tmpZone;
-		std::unique_ptr< Node >	_tmpNode;
+		std::vector< Node >	_tmpvNode;
 		std::unique_ptr< BaseElem > _tmpElem;
 
 		while (!inFile.eof())
@@ -113,11 +113,9 @@ namespace HBXFEMDef
 								//vstrLine.push_back(*beg);
 								vPrecLine.emplace_back(lexical_cast<UserCalPrec>(*beg));
 							}
-							_tmpNode = std::make_unique<Node>();
-							_tmpNode->_X = lexical_cast<UserCalPrec>(vstrLine[0]);
-							_tmpNode->_Y = lexical_cast<UserCalPrec>(vstrLine[1]);
-							_tmpNode->_Z = lexical_cast<UserCalPrec>(vstrLine[2]);
-							_tmpZone->_vNode.push_back(std::move(*_tmpNode));
+							_tmpvNode.emplace_back(Node(lexical_cast<UserCalPrec>(vstrLine[0]),
+								lexical_cast<UserCalPrec>(vstrLine[1]),
+								lexical_cast<UserCalPrec>(vstrLine[2])) );
 							getline(inFile, stringLine);
 						}
 						for (size_t i = 0; i < _ElmtNum; i++)

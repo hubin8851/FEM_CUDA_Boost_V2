@@ -37,6 +37,13 @@ namespace HBXFEMDef
 		virtual void Reset();
 
 		virtual void ResetDomain(Domain* _dm) { MyDomain = _dm; };
+
+		virtual const char* GetClassName()const { return typeid(BaseNumMethod).name(); };
+
+		virtual UserStatusError_t Solve( SparseMat& _A, HBXDef::UserCalPrec& b, HBXDef::UserCalPrec& _x ) = 0;
 	};
+
+	template<typename T> BaseNumMethod* NumerialSolverCreator() { return new T(); };
+	template<typename T> BaseNumMethod* NumerialSolverCreator(Domain *_dm, Engng* _eg) { return new T(_dm, _eg); };
 
 }

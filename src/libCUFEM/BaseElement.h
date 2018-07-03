@@ -74,7 +74,7 @@ namespace HBXFEMDef
 		void ResetEngng(Engng* _engng) { this->MyEngng = _engng; };
 		Engng* GetEngng()const { return this->MyEngng; };
 
-		const char* GetClassName() const { return "BaseElement"; };
+		const char* GetClassName() const { return typeid(BaseElem).name(); };
 
 		void SetFreshFlag() { m_bFresh = true; };//重置需要更新标志位为true
 

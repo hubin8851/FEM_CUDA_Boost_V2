@@ -91,11 +91,33 @@ namespace HBXFEMDef
 		return false;
 	}
 
+	InputFileResult_t AeroTableRecord::GiveField(void * answer, DataType _id)
+	{
+		std::cout << "气动数据表内无该类型集合" << std::endl;
+		return InputFileResult_t::IRRT_NOTFOUND;
+	}
+
+	InputFileResult_t AeroTableRecord::GiveField(int & answer, InputFieldType _id)
+	{
+		std::cout << "气动数据表内无该类型集合" << std::endl;
+		return InputFileResult_t::IRRT_NOTFOUND;
+	}
+	InputFileResult_t AeroTableRecord::GiveField(float & answer, InputFieldType _id)
+	{
+		std::cout << "气动数据表内无该类型集合" << std::endl;
+		return InputFileResult_t::IRRT_NOTFOUND;
+	}
 	InputFileResult_t AeroTableRecord::GiveField(double & answer, InputFieldType _id)
 	{
 		std::cout << "气动数据表内无该类型集合" << std::endl;
 		return InputFileResult_t::IRRT_NOTFOUND;
 	}
+	InputFileResult_t AeroTableRecord::GiveField(std::string & answer, InputFieldType _id)
+	{
+		std::cout << "气动数据表内无该类型集合" << std::endl;
+		return InputFileResult_t::IRRT_NOTFOUND;
+	}
+
 
 	HBXDef::_AEROTABLE* AeroTableRecord::GiveField( InputFieldType _id)
 	{

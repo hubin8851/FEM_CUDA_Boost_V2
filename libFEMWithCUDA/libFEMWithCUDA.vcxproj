@@ -23,6 +23,7 @@
     <ClCompile Include="..\src\libCUFEM\AttriRecord.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseComponent.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseElement.cpp" />
+    <ClCompile Include="..\src\libCUFEM\ExportModule.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseMaterial.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseNumMethod.cpp" />
     <ClCompile Include="..\src\libCUFEM\BaseReader.cpp" />
@@ -32,9 +33,12 @@
     <ClCompile Include="..\src\libCUFEM\Dispatch.cpp" />
     <ClCompile Include="..\src\libCUFEM\domain.cpp" />
     <ClCompile Include="..\src\libCUFEM\EngngMod.cpp" />
+    <ClCompile Include="..\src\libCUFEM\ExportModuleManager.cpp" />
     <ClCompile Include="..\src\libCUFEM\MetaStep.cpp" />
+    <ClCompile Include="..\src\libCUFEM\timestep.cpp" />
     <ClCompile Include="..\src\libCUFEM\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSCSpMatrix.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp" />
@@ -53,6 +57,7 @@
     <ClInclude Include="..\src\libCUFEM\BaseComponent.h" />
     <ClInclude Include="..\src\libCUFEM\BaseElement.h" />
     <ClInclude Include="..\src\libCUFEM\BaseMaterial.h" />
+    <ClInclude Include="..\src\libCUFEM\BaseModuleManager.h" />
     <ClInclude Include="..\src\libCUFEM\BaseNode.h" />
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h" />
     <ClInclude Include="..\src\libCUFEM\BaseReader.h" />
@@ -65,14 +70,19 @@
     <ClInclude Include="..\src\libCUFEM\domain.h" />
     <ClInclude Include="..\src\libCUFEM\ElemtProp.h" />
     <ClInclude Include="..\src\libCUFEM\EngngMod.h" />
+    <ClInclude Include="..\src\libCUFEM\ExportModule.h" />
+    <ClInclude Include="..\src\libCUFEM\ExportModuleManager.h" />
     <ClInclude Include="..\src\libCUFEM\HBXFEMEngng.h" />
     <ClInclude Include="..\src\libCUFEM\InputRecord.h" />
     <ClInclude Include="..\src\libCUFEM\NSortMat.h" />
     <ClInclude Include="..\src\libCUFEM\MetaStep.h" />
     <ClInclude Include="..\src\libCUFEM\Set.h" />
     <ClInclude Include="..\src\libCUFEM\solverEnum.h" />
+    <ClInclude Include="..\src\libCUFEM\TimerManager.h" />
+    <ClInclude Include="..\src\libCUFEM\timestep.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSCSpMatrix.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\HbxCuDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h" />
@@ -83,6 +93,9 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\MyTimer.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\Package.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SearchFile.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SolverType.h" />
+    <ClInclude Include="e:\SDK\hbxdef\HBXDEF\SpMatrix.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SpMatrixType.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

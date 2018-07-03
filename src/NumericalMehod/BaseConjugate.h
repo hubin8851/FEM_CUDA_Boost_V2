@@ -103,7 +103,7 @@ namespace HBXFEMDef
 		//从类外部获得载荷数组指针
 		HBXDef::DataAloc_t	SetLoadVec(const void* _LoadVec, size_t _RowNum);
 
-		virtual const char* GetClassName() const { return "BaseConjugate"; };
+		virtual const char* GetClassName() const { return typeid(BaseConjugate).name(); };
 
 		/************************************************************************/
 		/*                CUDA计算模块                                          */

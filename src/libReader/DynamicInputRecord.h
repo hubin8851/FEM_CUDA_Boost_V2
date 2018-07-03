@@ -33,6 +33,7 @@ namespace HBXFEMDef
  		std::map< std::string, std::string > stringRecord;
 		std::map< std::string, std::vector< std::string > > stringListRecord;
  		std::map< std::string, std::vector<int> > intArrayRecord;
+		std::map< std::string, std::vector<HBXFEMDef::UserReadPrec> > CalDataArraRecord;	//计算数据
  		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> > NodeArrayRecord;//节点向量，在考虑使用散列表
 		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> > ElemtArrayRecord;//单元
 		std::map< std::string, std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> >  MatRecord;//材料,可能重名
@@ -88,7 +89,9 @@ namespace HBXFEMDef
 
 		virtual InputFileResult_t GiveField(std::string &answer, InputFieldType _id);
 
-		virtual InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>>* answer, InputFieldType _id);
+		virtual InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>> answer, InputFieldType _id);
+
+		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::UserReadPrec>* answer, InputFieldType _id);
 
 		virtual InputFileResult_t GiveField(std::shared_ptr<HBXFEMDef::NSortMat<HBXDef::UserCalPrec>>* answer, InputFieldType _id);
 

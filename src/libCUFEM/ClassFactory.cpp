@@ -132,14 +132,36 @@ namespace HBXFEMDef
 		CF_STORE(EngngList);
 	}
 
-	BaseNumMethod * ClassFactory::CreateNumMethod(const char * _name, Domain * _dm, Engng * _master, int _id)
+	ExportModule * ClassFactory::CreateExportModule(const char * _name, Engng * _master, int _id)
 	{
-		CF_CREATE(NumericalMethodList, _dm, _master, _id);
+		CF_CREATE(ModuleList, _master, _id);
 	}
 
-	bool ClassFactory::RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *, int))
+	bool ClassFactory::RegistExportModule(const char * _name, ExportModule *(*creator)(Engng *, int))
 	{
-		CF_STORE(NumericalMethodList);
+		CF_STORE( ModuleList );
+	}
+
+	HBXDef::SparseMat * ClassFactory::CreatSparseMatrix(HBXDef::SpMatrixType_t _type)
+	{
+		return (1 == SpMatrixList.count(_type))?SpMatrixList[_type]():nullptr;
+	}
+
+	bool ClassFactory::RegistSparseMatrix(HBXDef::SpMatrixType_t _type, HBXDef::SparseMat *(*creator)())
+	{
+		SpMatrixList[_type] = creator;
+		return true;
+	}
+
+	BaseNumMethod * ClassFactory::CreateNumMethod(HBXDef::SolveMethod_t _name, Domain * _dm, Engng * _master, int _id)
+	{
+		return (1 == NumericalMethodList.count(_name)) ? NumericalMethodList[_name](_dm, _master,_id) : nullptr;
+	}
+
+	bool ClassFactory::RegistNumMethod(HBXDef::SolveMethod_t _name, BaseNumMethod *(*creator)(Domain *, Engng *, int))
+	{
+		NumericalMethodList[_name] = creator;
+		return true;
 	}
 
 

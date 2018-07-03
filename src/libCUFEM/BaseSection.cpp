@@ -3,13 +3,7 @@
 
 namespace HBXFEMDef
 {
-	BaseSection::BaseSection()
-	{
-	}
 
-	BaseSection::~BaseSection()
-	{
-	}
 
 
 	InputFileResult_t BaseSection::InitFrom(InputRecord* _dr)

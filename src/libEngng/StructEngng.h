@@ -18,7 +18,7 @@ namespace HBXFEMDef
 			public Engng
 	{
 	private:
-		
+
 	protected:
 
 		boost::threadpool::pool* m_threadpool;	//boost线程池指针
@@ -38,8 +38,10 @@ namespace HBXFEMDef
 		//结构解算器在每一步初始化时，若用到GPU，则需要针对不同的单元
 		virtual void InitAt(TimeStep* _ts);
 
-		//计算当前步
-		virtual void SolveAt(TimeStep* _ts);
+		//获取节点内立
+		//_id:domain的id
+		//_stp:所取的时间步
+		virtual void GetInternalForces( int _id, TimeStep* _stp );
 
 		//计算节点状态变化
 		void UpdateInternalState(TimeStep* _ts);
@@ -55,7 +57,7 @@ namespace HBXFEMDef
 #pragma endregion 计算相关函数
 
 		//获得当前类名
-		virtual const char* GetClassName() const { return "StructEngng"; };
+		virtual const char* GetClassName() const { return typeid(StructEngng).name(); };
 
 	};
 

@@ -29,7 +29,7 @@ namespace HBXFEMDef
 		void ResetNumber(int _n) { this->number = _n; };
 		void ResetDomain(Domain* _dm) { this->MyDomain = _dm; };
 
-		virtual const char* GetClassName() const = 0;
+//		virtual const char* GetClassName() const = 0;
 		
 		virtual Domain* GetDomain() const { return this->MyDomain; };
 

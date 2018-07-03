@@ -2,7 +2,9 @@
 
 #include <map>
 #include <ExportDef.h>
-
+#include <SpMatrixType.h>
+#include <SpMatrix.h>
+#include <SolverType.h>
 
 namespace HBXFEMDef
 {
@@ -16,6 +18,7 @@ namespace HBXFEMDef
 	class StructEngng;
 	class BaseNumMethod;
 	class BaseComponent;
+	class ExportModule;
 
 	typedef void* (*AnyCreator)(int, Domain);
 
@@ -24,6 +27,10 @@ namespace HBXFEMDef
 
 #define REGIST_ENGNG(class) static bool __dummy_ ## class = GetClassFactory().RegistEngng( _EX_ ## class ## _Name, EngngCreator<class> );
 #define REGIST_ELEMT(class) static bool __dummy_ ## class = GetClassFactory().RegistElem( _EX_ ## class ## _Name, ElemtCreator<class> );
+#define REGIST_MATERIAL(class) static bool __dummy_ ## class = GetClassFactory().RegistMaterial( _EX_ ## class ## _Name, MaterialCreator<class> );
+#define REGIST_EXPORTMODULE(class) static bool __dummy_ ## class = GetClassFactory().RegistExportModule( _EX_ ## class ## _Name, ExportModuleCreator<class> );
+#define REGIST_SPARSEMAT(class) static bool __dummy__ ## class = GetClassFactory().RegistSparseMatrix( _EX_ ## class ## _Name, SparseMatCreator<class> );
+#define REGIST_SOLVER(class) static bool __dummy__ ## class = GetClassFactory().RegistNumMethod(type, NumerialSolverCreator<class>);
 	//工厂模式中的第三种，参见
 	//http://blog.csdn.net/wuzhekai1985/article/details/6660462
 	//类工厂 class 存储所有的可能出现的产物，并可通过名字索引
@@ -40,9 +47,12 @@ namespace HBXFEMDef
 		std::map<std::string, BaseBoundary*(*)(Domain*, int)>	LoadList;
 		//引擎种类列表
 		std::map<std::string, Engng*(*)(Engng*, int)>	EngngList;
+		//稀疏矩阵种类列表
+		std::map<HBXDef::SpMatrixType_t, HBXDef::SparseMat*(*)()> SpMatrixList;
 		//算法种类列表
-		std::map<std::string, BaseNumMethod*(*)(Domain*, Engng*, int)>	NumericalMethodList;
-
+		std::map<HBXDef::SolveMethod_t, BaseNumMethod*(*)(Domain*, Engng*, int)>	NumericalMethodList;
+		//
+		std::map<std::string, ExportModule*(*)( Engng*, int )> ModuleList;
 	protected:
 	public:
 		ClassFactory();
@@ -77,10 +87,19 @@ namespace HBXFEMDef
 		//注册一个新引擎，传入名称和构造函数对象
 		bool RegistEngng(const char* _name, Engng*(*creator)(Engng*, int));
 
+		//创建输出/输入模块
+		ExportModule* CreateExportModule( const char* _name, Engng* _master, int _id );
+		//注册输出/输入模块
+		bool RegistExportModule( const char* _name, ExportModule*(*creator)(Engng*, int) );
+
+		HBXDef::SparseMat* CreatSparseMatrix( HBXDef::SpMatrixType_t _type);
+
+		bool RegistSparseMatrix( HBXDef::SpMatrixType_t _type, HBXDef::SparseMat*(*creator)() );
+
 		//创建一个新算法
-		BaseNumMethod* CreateNumMethod(const char * _name, Domain * _dm, Engng * _master, int _id);
+		BaseNumMethod* CreateNumMethod(HBXDef::SolveMethod_t _name, Domain * _dm, Engng * _master, int _id);
 		//注册一个新引擎，传入名称和构造函数对象
-		bool RegistNumMethod(const char * _name, BaseNumMethod *(*creator)(Domain *, Engng *, int));
+		bool RegistNumMethod(HBXDef::SolveMethod_t _name, BaseNumMethod *(*creator)(Domain *, Engng *, int));
 
 #pragma endregion 工厂函数
 

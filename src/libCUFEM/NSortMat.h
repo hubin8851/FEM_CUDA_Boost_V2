@@ -25,11 +25,11 @@ namespace HBXFEMDef
 	protected:
 
 	public:
+
 		NSortMat(unsigned int _dim) :m_dim(_dim)
 		{ 
 			_MyData.resize(m_dim); 
 		};
-		~NSortMat() {};
 
 		size_t GetRowNum()
 		{
@@ -70,7 +70,7 @@ namespace HBXFEMDef
 			return this->_MyData[_jNum][_iSort];
 		}
 
-		void push_back(std::vector<_T>& _DataIn)
+		void push_back(const std::vector<_T>& _DataIn)
 		{
 			Assert(m_dim == _DataIn.size());//判断两者维度是否相等
 			for (auto i = 0; i < m_dim; i++)

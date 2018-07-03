@@ -35,7 +35,7 @@ namespace HBXFEMDef
 		//运行时类型检查,
 		virtual classType getClassID() const { return classType::FEMCOMPONENTCLASS };
 		//运行时类型检查, 可以是用typeid——可用boost完成...20171019
-		//virtual std::string getClassName() const { return ** };
+		virtual const char* getClassName() const { return typeid(FemComponent).name(); };
 
 		//设置当前域
 		virtual void SetDomain(std::shared_ptr<_Domain<_T>> _din) { this->_myDomain = _din; };

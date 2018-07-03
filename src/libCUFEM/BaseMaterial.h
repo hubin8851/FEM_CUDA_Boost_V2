@@ -7,6 +7,7 @@
 namespace HBXFEMDef
 {
 	class Domain;
+	class InputRecord;
 
 	//该类主要实现材料相关的算法
 	class CUFEM_API BaseMaterial
@@ -18,9 +19,11 @@ namespace HBXFEMDef
 
 
 		BaseMaterial(Domain* _dm, int _id) {};
+		BaseMaterial(const BaseMaterial&) {};
 
 		virtual ~BaseMaterial() {};
 
+		//可能内含时间历程信息
 		virtual InputFileResult_t InitFrom(InputRecord * _dr);
 	};
 

@@ -46,11 +46,11 @@ namespace HBXFEMDef
 		GetDomainDofsDefaults(this->_myName.c_str());
 
 		//获取节点数、单元数、材料数、截面数等信息
-//		GET_FIELD_FROM_IR(_dr, nnode, _IF_Domain_nnode);
-//		GET_FIELD_FROM_IR(_dr, nelemt, _IF_Domain_nelt);
-//		GET_FIELD_FROM_IR(_dr, nsection, _IF_Domain_nsect);
-//		GET_FIELD_FROM_IR(_dr, nmat, _IF_Domain_nmat);
-//		GET_FIELD_FROM_IR(_dr, nset, _IF_Domain_nset);
+		GET_FIELD_FROM_IR(_dr, nnode, _IF_Domain_nnode);
+		GET_FIELD_FROM_IR(_dr, nelemt, _IF_Domain_nelt);
+		GET_FIELD_FROM_IR(_dr, nsection, _IF_Domain_nsect);
+		GET_FIELD_FROM_IR(_dr, nmat, _IF_Domain_nmat);
+		GET_FIELD_FROM_IR(_dr, nset, _IF_Domain_nset);
 		if (_myType == _1dTrussMode) {
 			_nsd = 1;
 		}
@@ -66,23 +66,13 @@ namespace HBXFEMDef
 		}
 
 		//读取节点数据
-		_vNode.clear();
-		_vNode.resize( nnode );
-		std::map< std::string, std::vector<Node>>* _NodeMap = nullptr;
-		_dr->GiveField((void*)_NodeMap, InputRecord::DataType::ALL_NODE );
-		auto _iterN = _NodeMap->begin();
-		while (_iterN != _NodeMap->end())
-		{
+		_dr->GiveField(_pNode, this->_myName.c_str() );
 
-		}
-		delete _NodeMap;
 		//关于单元在全局刚度阵、节点在全局刚度阵中的位置等映射关系待定
 
 
 		//读取单元数据
-		_vNSortArray.clear();
-		_vNSortArray.resize(nelemt);
-		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXFEMDef::UserReadPrec>> >* _elemtMap = nullptr;
+		std::map< std::string, std::shared_ptr< HBXFEMDef::NSortMat<HBXDef::UserReadPrec>> >* _elemtMap;
 		_dr->GiveField((void*)_elemtMap, InputRecord::DataType::ALL_ELEMENT);
 		auto _iterE = _elemtMap->begin();
 		sortNum = 0;
@@ -94,13 +84,12 @@ namespace HBXFEMDef
 				std::cerr << "创建" << _iterE->first.c_str() << "单元失败" << std::endl;
 			}
 			result = _tElemt->InitFrom(_dr);
-			_vElmt[sortNum] = std::move(_tElemt);
+			_vElmt.emplace_back(*_tElemt);
 			sortNum++;
 		}
 
 		//生成材料解算器，材料随温度、湿度等外部环境影响性质不一
 		_vMat.clear();
-		_vMat.resize(nmat);
 		std::map< std::string, std::shared_ptr< HBXFEMDef::_Material<HBXFEMDef::UserReadPrec>> >* _matMap = nullptr;
 		_dr->GiveField((void*)_matMap, InputRecord::DataType::ALL_MATERIAL);
 		auto _iterMat = _matMap->begin();
@@ -113,13 +102,12 @@ namespace HBXFEMDef
 				std::cerr << "创建" << _iterMat->first.c_str() << "单元失败" << std::endl;
 			}
 			result = _tMat->InitFrom(_dr);
-			_vMat[sortNum] = std::move(_tMat);
+			_vMat.emplace_back(*_tMat);
 			sortNum++;
 		}
 
 		//截面解算器便于解算时变参数
 		_vSection.clear();
-		_vSection.resize(nmat);
 		std::map< std::string, std::shared_ptr< HBXFEMDef::_Section<HBXFEMDef::UserReadPrec>> >* _secMap = nullptr;
 		_dr->GiveField((void*)_secMap, InputRecord::DataType::ALL_SECTION);
 		auto _iterSec = _secMap->begin();
@@ -132,7 +120,7 @@ namespace HBXFEMDef
 				std::cerr << "创建" << _iterSec->first.c_str() << "单元失败" << std::endl;
 			}
 			result = _tSec->InitFrom(_dr);
-			_vSection[sortNum] = std::move(_tSec);
+			_vSection.emplace_back(*_tSec);
 			sortNum++;
 		}
 

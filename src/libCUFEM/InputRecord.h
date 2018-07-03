@@ -80,7 +80,9 @@ CheckUserDefErrors(result);
 
 		virtual InputFileResult_t GiveField(std::string &answer, InputFieldType _id) = 0;
 
-		virtual InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>>* answer, InputFieldType _id) = 0;
+		virtual InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>> answer, InputFieldType _id) = 0;
+
+		virtual InputFileResult_t GiveField( std::vector<HBXDef::UserReadPrec>* answer, InputFieldType _id) = 0;
 
 		virtual InputFileResult_t GiveField(std::shared_ptr< HBXFEMDef::NSortMat<HBXDef::UserCalPrec> >* answer, InputFieldType _id) = 0;
 

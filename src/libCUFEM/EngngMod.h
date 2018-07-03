@@ -1,11 +1,11 @@
 #pragma once
-
+#include <iostream>
 #include <vector>
 #include <map>
 
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
-
+#include <SpMatrix.h>
 #include <MyTimer.h>
 #include <libCUFEM\domain.h>
 #include <libCUFEM\BaseSlnRecord.h>
@@ -14,14 +14,17 @@
 #include <libCUFEM\solverEnum.h>
 #include <libCUFEM\ContextOutputMode.h>
 #include <libCUFEM\Dispatch.h>
-
+#include <libCUFEM\TimerManager.h>
+#include <libCUFEM\ExportModuleManager.h>
 #include <boost\bimap.hpp>
 #include <boost\bimap\multiset_of.hpp>
+
 
 namespace HBXFEMDef
 {
 //	using namespace HBXDef;
 
+	class ExportModuleManager;
 	class MetaStep;	//拓展时间步，用以流固耦合的交互，控制系统等
 	class TimeStep;	//时间步
 	class BaseReader;
@@ -31,6 +34,7 @@ namespace HBXFEMDef
 	class EngngModelContext;//Engng的上下文用于两个Engng之间的数据交互
 	class Domain;
 	class MessageDispatcher;
+	class ExportModuleManager;
 	class HBXDef::MyTimer;	//暂定，自身创建的用于引擎的类，包括了总时间，计算时间，数据传输时间，内存拷贝时间等。如果有CUDA支持，可以使用cuda的高精度计时器。
 
 	class CUFEM_API EngngModelContext
@@ -66,6 +70,10 @@ namespace HBXFEMDef
 		int iMyID;
 		//该类下域的数量
 		size_t ndomains;
+
+		//初始化标志位
+		bool InitFlag;
+
 		//域的列表，域内只放相关数据
 		std::vector< std::unique_ptr<Domain> > domainList;
 		//解算所用的时间步
@@ -86,7 +94,7 @@ namespace HBXFEMDef
 		std::shared_ptr<TimeStep> _PreviousStep;
 
 		//计时器
-		HBXDef::MyTimer _timer;
+		HBXFEMDef::EngngTimer _timer;
 
 		//模块内交互的消息管理器
 		MessageDispatcher* MyDispatcher;
@@ -98,7 +106,7 @@ namespace HBXFEMDef
 		HBXFEMDef::ContextOutputMode_t eContextMode;
 
 		//输出模块管理器
-
+		ExportModuleManager* _myExportModule;
 
 		//初始化模块管理器
 
@@ -193,6 +201,9 @@ namespace HBXFEMDef
 		//返回当前所有域的数量
 		size_t GetNumOfDomain() { return ndomains; };
 
+		//返回指定ID域的等式维度
+		int GetNumOfDomainEquations(int _id);
+
 		//获取消息管理器的指针
 		MessageDispatcher* GetDispatcher() { return MyDispatcher; };
 
@@ -208,8 +219,10 @@ namespace HBXFEMDef
 
 		//返回当前计算规模
 		HBXFEMDef::problemScale_t GetProblemScale() { return eScale; };
+
 #pragma endregion 前处理相关
 
+#pragma region	解算相关前处理
 		//根据问题描述初始化整个解算器,为初始化两步走的第一步。
 		//完成输出文件流的打开，实例化其他模块的接收器等
 		UserStatusError_t InstanceSelf( BaseReader* _dr, BaseSlnRecord* _sln, const char *_outputFileName);
@@ -232,7 +245,16 @@ namespace HBXFEMDef
 		//对所有的域过初始化，即初始化的第二步
 		void postInit();
 
+		//返回Engng的第一个时步数，如果有其他的Engng输入，选用master的参数
+		//@force:
+		virtual int GetNumberOfFirstStep(bool _hasReciver = false);
+
+#pragma endregion	解算相关前处理
+
 #pragma region 计算相关函数
+		//组装特征矩阵至给定的稀疏矩阵
+		//@
+		virtual UserStatusError_t Assemble( SparseMat& answer, TimeStep* _tstep, Domain* _dm );
 
 		//计算,最主要的函数
 		virtual void Solve();
@@ -269,6 +291,7 @@ namespace HBXFEMDef
 
 #pragma endregion 计算相关函数
 
+#pragma  region 相关辅助函数
 		//确定是否使用并行算法，布尔值
 		bool isParallel() const { return ( false != bParralel ); }
 
@@ -299,11 +322,11 @@ namespace HBXFEMDef
 		//@_domain: 给定的域
 
 		//获得当前类名
-		virtual const char* GetClassName() const { return "Engng"; };
+		virtual const char* GetClassName() const { return typeid(Engng).name(); };
 
 		//获取当前类ID
 		virtual classType GetClassId() const { return classType::ENGNG; };
-
+#pragma endregion 相关辅助函数
 	};
 
 	

@@ -3,12 +3,14 @@
 #include <ExportDef.h>
 #include <libEngng\StructEngng.h>
 #include <libCUFEM\BaseNumMethod.h>
-
-
+#include <libCUFEM\ClassFactory.h>
+#include <SpMatrix.h>
+#include <SpMatrixType.h>
+#include <SolverType.h>
 
 namespace HBXFEMDef
 {
-
+	using namespace HBXDef;
 
 //	class LinearSystemNM;	//线性系统数值计算方法
 	class BaseNumMethod;	//数值算法的基类
@@ -21,12 +23,19 @@ namespace HBXFEMDef
 			public StructEngng
 	{
 	private:
+		std::unique_ptr<HBXDef::SparseMat> _StiffMtx;			//按当前解算器使用稀疏矩阵
+		HBXDef::UserCalPrec*	_LoadArray;	//载荷向量
+		HBXDef::UserCalPrec*	_DisplayArray;//位移向量
+
 	protected:
 		bool bInit;	//初始化标志位
 
-		HBXDef::SolveMethod_t solverType;	//
+		//解算器类型枚举
+		HBXDef::SolveMethod_t solverType;
+		//稀疏矩阵存储类型
+		HBXDef::SpMatrixType_t spMatType;
 		//数值算法
-		std::unique_ptr< BaseNumMethod >  Method;
+		std::unique_ptr< BaseNumMethod >  _MyMethod;
 	public:
 		LinearStaticEngng( Engng* _master = nullptr, int _n = classType::ENGNG, int _threadNum = 4);
 		virtual ~LinearStaticEngng();
@@ -56,7 +65,7 @@ namespace HBXFEMDef
 
 		virtual BaseNumMethod* GetNumericalMethod( MetaStep* _mstp );
 
-		virtual const char *giveClassName() const { return "LinearStatic"; }
+		virtual const char* GetClassName() const { return "LinearStatic"; }
 	};
 
 #define _EX_LinearStaticEngng_Name "LinearStaticProblem"

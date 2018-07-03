@@ -155,7 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\libEngng\Fluid\2DFluidEngng.h" />
+    <ClInclude Include="..\src\libEngng\2DFluidEngng.h" />
     <ClInclude Include="..\src\libEngng\LinearStaticEngng.h" />
     <ClInclude Include="..\src\libEngng\StructEngng.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h" />

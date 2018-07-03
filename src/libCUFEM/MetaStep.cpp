@@ -24,6 +24,13 @@ namespace HBXFEMDef
 
 	MetaStep::~MetaStep()
 	{
+
+	}
+
+	int MetaStep::SetStepBounds(int _StartStepNum)
+	{
+		StartIdx = _StartStepNum;
+		return StartIdx + NumOfSteps;
 	}
 
 	void MetaStep::SetNumOfSteps(HBXDef::MyCounter _newNum)
