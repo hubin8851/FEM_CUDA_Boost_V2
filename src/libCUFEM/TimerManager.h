@@ -36,8 +36,7 @@ namespace HBXFEMDef
 		void resumeTimer(EngngTimerType_t t) { timers[t].Resume(); }
 		
 		//获取某一计时器的指针
-		const HBXDef::MyTimer *getTimer(EngngTimerType_t t) { return timers + t; }
-
+		HBXDef::MyTimer *getTimer(EngngTimerType_t t) { return timers + t; }
 
 	};
 

@@ -47,7 +47,8 @@ namespace HBXFEMDef
 
 		//计算,最主要的函数
 		virtual void Solve();
-		//计算当前步
+
+		//计算当前步；线性静力学问题没有材料变化，故么有重载InitAt函数
 		virtual void SolveAt(TimeStep* _ts);
 
 		//在完成计算步后完成内部数据的更新（例如所有的数据在之前的解算中需要更新）。单元内的积分点和材料属性同样需要更新。

@@ -18,7 +18,7 @@
 #include <libCUFEM\ExportModuleManager.h>
 #include <boost\bimap.hpp>
 #include <boost\bimap\multiset_of.hpp>
-
+#include <boost\threadpool.hpp>
 
 namespace HBXFEMDef
 {
@@ -66,30 +66,47 @@ namespace HBXFEMDef
 		enum EngngCommuType { _Default, _nLocal };
 		
 	protected:
+		//boost线程池指针
+		boost::threadpool::pool* m_threadpool;	
+
 		//receiver的ID
 		int iMyID;
 		//该类下域的数量
-		size_t ndomains;
+		int ndomains;
 
 		//初始化标志位
 		bool InitFlag;
 
+		//是否需要刷新当前系统方程，跟解算器类型有关
+		//例如线性静力学肯定是不用的，在动力学计算中跟实际需求有关
+		//重置number标志位
+		bool bReNum;
+
 		//域的列表，域内只放相关数据
 		std::vector< std::unique_ptr<Domain> > domainList;
+
 		//解算所用的时间步
 		size_t NumOfStep;
+
 		//当前时间步下的等式数量
 		size_t NumOfEq;
 		//当前时间步或特定时间步的方程数量
 		size_t NumOfPrescribedEq;
-		//重置number标志位
-		bool bReNum;
+
+		//每个域中的等式数目
+		std::vector<int> _DoaminNeqs;
+		//每个域给定等式的数目
+		std::vector<int> _DoaminPrescribedNeqs;
+
 		//metastep的数量
 		size_t nMetaStep;
+
 		//metastep的列表
 		std::vector< MetaStep > _metaStepList;
+
 		//当前时间步
 		std::shared_ptr<TimeStep> _CurtStep;
+
 		//之前的时间步
 		std::shared_ptr<TimeStep> _PreviousStep;
 
@@ -123,7 +140,7 @@ namespace HBXFEMDef
 		Engng* _MyMaster;
 
 		//上下文，用以两个Engng之间的数据交互
-		EngngModelContext*	MyContext;
+		EngngModelContext*	_MyContext;
 
 		//非线性模型的计算模式（全程或刷新模式）
 //		nlinearFormul_t nlinearFormulation;
@@ -195,11 +212,11 @@ namespace HBXFEMDef
 		//设置后处理
 		void SetContextOutputMode(ContextOutputMode_t _context) { this->eContextMode = _context; };
 
-		//返回给定的域
+		//返回给定的域，计数从1开始
 		Domain* GetDomain( unsigned int _nDomain );
 
 		//返回当前所有域的数量
-		size_t GetNumOfDomain() { return ndomains; };
+		int GetNumOfDomain() { return ndomains; };
 
 		//返回指定ID域的等式维度
 		int GetNumOfDomainEquations(int _id);
@@ -212,7 +229,7 @@ namespace HBXFEMDef
 		//重置当前所有的位移、速度、加速度信息，重置单元应力、应变和材料历史加载项
 		virtual bool RestoreContext();
 		//获的当前Engng的上下文
-		virtual EngngModelContext* GetContext() { return this->MyContext; };
+		virtual EngngModelContext* GetContext() { return this->_MyContext; };
 
 		//返回当前计算域模型
 		HBXFEMDef::problemMode_t GetProblemMode() { return eMode; };
@@ -260,6 +277,7 @@ namespace HBXFEMDef
 		virtual void Solve();
 
 		//初始化时步的预制参数，比如需要GPU时的显存重新分配等操作
+		//初始化单元内的部分状态变量
 		//在该步之后完成solveAt函数,开始当前步的正式解算
 		virtual void InitAt(TimeStep* _ts) {};
 
@@ -270,8 +288,12 @@ namespace HBXFEMDef
 		//刷新传入的元步内的所有属性
 		virtual void UpdateMStepAttr(MetaStep* _MStep);
 
-		//强制重构等式
-		virtual int RenumEquation() { return 0; };
+		//强制重构该引擎下所有域的等式
+		//在计算初始强制设定等式维度，在计算中结构发生变化也可能用到
+		virtual int RenumEquation();
+		//强制重构某个域的等式
+		//在计算过程中某部件发生变化即针对该部件（域domain）调用该函数
+		virtual int RenumEquation(int _id);
 
 		//在完成计算步SolveAt后完成内部数据的更新（例如所有的数据在之前的解算中需要更新）。
 		//单元内的积分点和材料属性需要更新也在此函数内执行。
@@ -293,7 +315,7 @@ namespace HBXFEMDef
 
 #pragma  region 相关辅助函数
 		//确定是否使用并行算法，布尔值
-		bool isParallel() const { return ( false != bParralel ); }
+		bool isParallel() const { return (_serial != bParralel); };
 
 		//保存特定步的上下文
 		void SaveStepContext( TimeStep* _ts );

@@ -21,11 +21,11 @@ namespace HBXFEMDef
 		ndomains = 0;
 		if (_master)
 		{
-			this->MyContext = _master->GetContext();
+			this->_MyContext = _master->GetContext();
 		}
 		else
 		{
-			this->MyContext = new EngngModelContext();
+			this->_MyContext = new EngngModelContext();
 		}
 
 		_myExportModule = new ExportModuleManager(this);
@@ -38,9 +38,9 @@ namespace HBXFEMDef
 
 	Engng::~Engng()
 	{
-		if ( nullptr != MyContext )
+		if ( nullptr != _MyContext )
 		{
-			delete MyContext;
+			delete _MyContext;
 		}
 		if ( nullptr != MyOutStream )
 		{
@@ -85,8 +85,9 @@ namespace HBXFEMDef
 		}
 		else {
 			std::cerr<<"Undefined domain"<<std::endl;
+			return nullptr;
 		}
-		return nullptr;
+
 	}
 
 	int Engng::GetNumOfDomainEquations(int _id)
@@ -280,8 +281,8 @@ namespace HBXFEMDef
 		//若给定步数
 		if (this->_CurtStep)
 		{
-			iStMeta = this->_CurtStep->GetMetaStepNumber();
-			iStStep = this->GetMetaStep(iStMeta)->GetRelativeStepNum( this->_CurtStep->GetMetaStepNumber() );
+			iStMeta = this->_CurtStep->GetMetaStepNum();
+			iStStep = this->GetMetaStep(iStMeta)->GetRelativeStepNum( this->_CurtStep->GetMetaStepNum() );
 		}
 
 		for (unsigned int iCurrMeta = iStMeta; iCurrMeta <= nMetaStep; iCurrMeta++, iStStep++ )	//元步循环
@@ -310,6 +311,11 @@ namespace HBXFEMDef
 
 
 				this->_timer.stopTimer(EngngTimer::EMT_SOLUTION);
+
+#ifdef _DEBUG
+				double _stepT = this->_timer.getTimer(EngngTimer::EMT_SOLUTION)->GetTime();
+				std::cout << "当前步计算时间" << _stepT << std::endl;
+#endif
 			}
 		}
 
@@ -329,6 +335,37 @@ namespace HBXFEMDef
 		}
 	}
 
+	int Engng::RenumEquation()
+	{
+		this->NumOfEq = 0;
+		this->NumOfPrescribedEq = 0;
+
+		for (int i=0;i<this->ndomains;i++)
+		{
+			_DoaminNeqs[i] = 0;
+			this->NumOfEq += this->RenumEquation(i);
+		}
+
+		for (int i = 0; i < ndomains; i++) {
+			this->NumOfPrescribedEq += _DoaminPrescribedNeqs[i];
+		}
+
+		return this->NumOfEq;
+	}
+
+	int Engng::RenumEquation(int _id)
+	{
+		Domain *domain = this->GetDomain(_id);
+		TimeStep *currStep = this->GetCurrentStep();
+
+		this->_DoaminNeqs[_id] = 0;
+		this->_DoaminPrescribedNeqs[_id] = 0;
+
+		//未完待续，2018-7-9
+
+		return _DoaminNeqs[_id];
+	}
+
 	void Engng::Terminate(TimeStep *)
 	{
 	}
@@ -339,11 +376,12 @@ namespace HBXFEMDef
 
 	void Engng::UpdataSelf(TimeStep* _ts)
 	{
+
 		//对当前引擎下每个域循环遍历
 		for ( auto &domain:domainList )
 		{
 			//刷新每个域下的属性,to be continue
-			for ( auto &dman: domain->GetBoundry())
+			for ( auto &elt: domain->GetElem())
 			{
 
 			}

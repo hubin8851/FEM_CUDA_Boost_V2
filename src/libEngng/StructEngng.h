@@ -2,7 +2,6 @@
 #include <ExportDef.h>
 #include <HbxCudaDef\HbxCuDefStruct.h>
 #include <HbxCudaDef\multithreading.h>
-#include <boost\threadpool.hpp>
 #include "libCUFEM\EngngMod.h"
 #include "libCUFEM\ClassFactory.h"
 
@@ -21,7 +20,6 @@ namespace HBXFEMDef
 
 	protected:
 
-		boost::threadpool::pool* m_threadpool;	//boost线程池指针
 		CUTBarrier thread_barrier;	//线程栅格，负责回调和获取线程ID
 		int N_workloads;			//工作负载分块，理论上应根据传输/计算占比动态调整
 		HbxCuDef::EltMatCalworkload* workloads;	//单元计算负载指针,一个负载对应一种单元

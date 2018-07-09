@@ -29,8 +29,8 @@ namespace HBXFEMDef
 #define REGIST_ELEMT(class) static bool __dummy_ ## class = GetClassFactory().RegistElem( _EX_ ## class ## _Name, ElemtCreator<class> );
 #define REGIST_MATERIAL(class) static bool __dummy_ ## class = GetClassFactory().RegistMaterial( _EX_ ## class ## _Name, MaterialCreator<class> );
 #define REGIST_EXPORTMODULE(class) static bool __dummy_ ## class = GetClassFactory().RegistExportModule( _EX_ ## class ## _Name, ExportModuleCreator<class> );
-#define REGIST_SPARSEMAT(class) static bool __dummy__ ## class = GetClassFactory().RegistSparseMatrix( _EX_ ## class ## _Name, SparseMatCreator<class> );
-#define REGIST_SOLVER(class) static bool __dummy__ ## class = GetClassFactory().RegistNumMethod(type, NumerialSolverCreator<class>);
+#define REGIST_SPARSEMAT(class, _type) static bool __dummy__ ## class = GetClassFactory().RegistSparseMatrix(_type, SpMatCreator<class> );
+#define REGIST_SOLVER(class, _type) static bool __dummy__ ## class = GetClassFactory().RegistNumMethod(_type, NumerialSolverCreator<class>);
 	//工厂模式中的第三种，参见
 	//http://blog.csdn.net/wuzhekai1985/article/details/6660462
 	//类工厂 class 存储所有的可能出现的产物，并可通过名字索引

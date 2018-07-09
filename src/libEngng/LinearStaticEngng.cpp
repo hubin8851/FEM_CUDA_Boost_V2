@@ -44,20 +44,22 @@ namespace HBXFEMDef
 
 			_StiffMtx->BuildInternalParam(this, 1);
 
+			this->Assemble( *_StiffMtx, _ts, this->GetDomain(1) );
+
 			if (_serial != bParralel)
 			{
 				//并行算法计算单元刚度矩阵
 				for (int i = 0; i < N_workloads; ++i)
 				{
-					m_threadpool->schedule(boost::bind(EletStiffCal, &workloads[i]));
+					this->m_threadpool->schedule(boost::bind(EletStiffCal, &workloads[i]));
 				}
-				m_threadpool->wait();
+				this->m_threadpool->wait();
 				cutWaitForBarrier(&thread_barrier);
 				printf("所有%d种单元刚度矩阵并行计算完成 :\n", N_workloads);
 
 			}
 
-			this->Assemble( *_StiffMtx, _ts, this->GetDomain(1) );
+			InitFlag = true;
 		}
 #ifdef _DEBUG
 		std::cout << "系统刚度矩阵组装完成" << std::endl;
@@ -81,6 +83,7 @@ namespace HBXFEMDef
 
 	void LinearStaticEngng::UpdataSelf(TimeStep * _ts)
 	{
+
 	}
 
 	void LinearStaticEngng::Terminate(TimeStep * _ts)
