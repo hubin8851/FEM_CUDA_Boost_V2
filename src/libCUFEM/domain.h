@@ -52,7 +52,7 @@ namespace HBXFEMDef
 		//每个域内节点只有一组
 		std::shared_ptr< std::vector<Node> >	_pNode;
 		//单元内节点数组容器
-		std::map< BaseElem, HBXFEMDef::NSortMat<HBXDef::UserReadPrec>* >*	_pNSortArray;
+//		std::map< BaseElem, HBXFEMDef::NSortMat<HBXDef::UserReadPrec>* >*	_pNSortArray;
 		//单元向量容器
 		std::vector< BaseElem > _vElmt;
 		//材料向量容器
@@ -79,7 +79,6 @@ namespace HBXFEMDef
 		//依据单元名称解析默认的自由度
 		void GetDomainDofsDefaults( const char* );
 	public:
-		Domain() {};
 		//@：_name:当前域名称
 		Domain(std::string _name) :_myName(_name)
 		{
@@ -92,6 +91,10 @@ namespace HBXFEMDef
 		{
 			_vSet.clear();
 		};
+
+		Domain(const Domain& src) ;
+		Domain &operator = (const Domain &src) ;
+
 		~Domain() {};
 
 		InputFileResult_t InstanceSelf(InputRecord* _dr);
@@ -107,9 +110,14 @@ namespace HBXFEMDef
 		//返回当前domaian的编号
 		int GetNum(int _sn) { return this->iMySerialNumber = _sn; };
 		//获取单元向量指针
-		std::vector<BaseElem>& GetElem() 
+		std::vector< BaseElem >& GetElemList()
 		{
 			return this->_vElmt;
+		}
+
+		BaseElem* GetElem(int _n)
+		{
+			return &this->_vElmt[_n];
 		}
 
 		//返回域中的单元数量

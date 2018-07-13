@@ -9,6 +9,7 @@ namespace HBXFEMDef
 	class Engng;
 	class Domain;
 	class BaseComponent;
+	class SparseMat;
 
 	//数值计算方法的基类。
 	//针对特定的实例会选用一系列不同的数值方法。派生类会针对不同的问题派生不同的函数体。

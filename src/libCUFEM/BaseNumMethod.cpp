@@ -1,8 +1,9 @@
-#include "BaseNumMethod.h"
+#include <libCUFEM\BaseNumMethod.h>
 #include <libCUFEM\EngngMod.h>
 
 namespace HBXFEMDef
 {
+
 	BaseNumMethod::BaseNumMethod(Domain * _dm, Engng * _eng, int _id) :BaseComponent(_id),
 		MyDomain(_dm), MyEngng(_eng)
 	{

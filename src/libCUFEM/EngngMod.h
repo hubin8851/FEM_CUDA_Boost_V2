@@ -33,9 +33,9 @@ namespace HBXFEMDef
 	class BaseNumMethod;//数值计算方法基类
 	class EngngModelContext;//Engng的上下文用于两个Engng之间的数据交互
 	class Domain;
+	class SparseMat;
 	class MessageDispatcher;
 	class ExportModuleManager;
-	class HBXDef::MyTimer;	//暂定，自身创建的用于引擎的类，包括了总时间，计算时间，数据传输时间，内存拷贝时间等。如果有CUDA支持，可以使用cuda的高精度计时器。
 
 	class CUFEM_API EngngModelContext
 	{
@@ -83,7 +83,9 @@ namespace HBXFEMDef
 		bool bReNum;
 
 		//域的列表，域内只放相关数据
-		std::vector< std::unique_ptr<Domain> > domainList;
+		std::vector< Domain > domainList;
+
+//		std::vector< std::unique_ptr<Domain> > _DomainList;
 
 		//解算所用的时间步
 		size_t NumOfStep;
@@ -163,11 +165,11 @@ namespace HBXFEMDef
 
 		//拷贝构造函数
 		//@_rhsEngng:拷贝原型
-		Engng( const Engng& _rhsEngng ) = delete;
+		Engng( const Engng& _rhsEngng ) = default;
 
 		//重载等于
 		//@_rhsEngng:拷贝原型
-		Engng &operator=( const Engng& _rhsEngng ) = delete;
+		Engng &operator=( const Engng& _rhsEngng ) = default;
 
 		//@i:驱动i...
 		//@_fileIn:输入的文件名，是否在Engng内内置xml解析器？！
@@ -271,7 +273,7 @@ namespace HBXFEMDef
 #pragma region 计算相关函数
 		//组装特征矩阵至给定的稀疏矩阵
 		//@
-		virtual UserStatusError_t Assemble( SparseMat& answer, TimeStep* _tstep, Domain* _dm );
+		virtual UserStatusError_t Assemble(HBXFEMDef::SparseMat& answer, TimeStep* _tstep, Domain* _dm );
 
 		//计算,最主要的函数
 		virtual void Solve();

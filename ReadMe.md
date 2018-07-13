@@ -37,6 +37,10 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+7/13/2018 9:19:51 PM 
+添加着色类，尚未完成。
+完成有限元模型的无向图模型，通过着色实现并行装配
+
 6/19/2018 6:22:50 PM 
 修改libreader里的小bug
 完善structengng

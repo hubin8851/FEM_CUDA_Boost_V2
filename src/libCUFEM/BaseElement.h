@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
 #include <ExportDef.h>
@@ -44,6 +44,7 @@ namespace HBXFEMDef
 		Engng*	MyEngng;
 
 	public:
+		int _MyColor;//当前单元的颜色
 
 		size_t* _iNode;	//单元内节点编号，在继承后根据类别完成内存分配
 		size_t _iMat;	//单元材料索引
@@ -52,6 +53,8 @@ namespace HBXFEMDef
 		//单元类所在的域必须有，数据可以没有，单元类型有默认值
 		BaseElem(Engng* _engng, Domain* _dm, int _id = classType::ELEMT);
 
+//		BaseElem(const BaseElem& src) = delete;
+//		BaseElem &operator = (const BaseElem &src) = delete;
 //		BaseElem(HBXDef::UserCalPrec* _begin, size_t _lgth, int _id);
 
 
@@ -85,4 +88,16 @@ namespace HBXFEMDef
 
 	//用以在classfactory中注册
 	template<typename T> BaseElem* ElemtCreator(Engng * _master, Domain* _dm, int _id) { return (new T(_master, _dm, _id)); }
+
+	//放入map之类容器的比较函数
+
+	bool Smaller(BaseElem& _lhs, BaseElem& _rhs)
+	{
+		return _lhs._MyColor < _rhs._MyColor;
+	};
+
+	bool Bigger(BaseElem& _lhs, BaseElem& _rhs)
+	{
+		return _lhs._MyColor > _rhs._MyColor;
+	};
 }

@@ -48,7 +48,7 @@ namespace HBXFEMDef
 		//引擎种类列表
 		std::map<std::string, Engng*(*)(Engng*, int)>	EngngList;
 		//稀疏矩阵种类列表
-		std::map<HBXDef::SpMatrixType_t, HBXDef::SparseMat*(*)()> SpMatrixList;
+		std::map<HBXDef::SpMatrixType_t, HBXFEMDef::SparseMat*(*)()> SpMatrixList;
 		//算法种类列表
 		std::map<HBXDef::SolveMethod_t, BaseNumMethod*(*)(Domain*, Engng*, int)>	NumericalMethodList;
 		//
@@ -92,9 +92,9 @@ namespace HBXFEMDef
 		//注册输出/输入模块
 		bool RegistExportModule( const char* _name, ExportModule*(*creator)(Engng*, int) );
 
-		HBXDef::SparseMat* CreatSparseMatrix( HBXDef::SpMatrixType_t _type);
+		HBXFEMDef::SparseMat* CreatSparseMatrix( HBXDef::SpMatrixType_t _type);
 
-		bool RegistSparseMatrix( HBXDef::SpMatrixType_t _type, HBXDef::SparseMat*(*creator)() );
+		bool RegistSparseMatrix( HBXDef::SpMatrixType_t _type, HBXFEMDef::SparseMat*(*creator)() );
 
 		//创建一个新算法
 		BaseNumMethod* CreateNumMethod(HBXDef::SolveMethod_t _name, Domain * _dm, Engng * _master, int _id);

@@ -66,10 +66,10 @@ namespace HBXFEMDef
 			}
 
 			//遍历每个单元进行运算
-			for (auto &elem : MyDom->_vElmt)
-			{
-				
-			}
+// 			for (auto &elem : MyDom->_vElmt)
+// 			{
+// 				
+// 			}
 
 		}
 		

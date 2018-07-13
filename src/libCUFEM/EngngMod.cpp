@@ -81,7 +81,7 @@ namespace HBXFEMDef
 	Domain* Engng::GetDomain(unsigned int _nDomain)
 	{
 		if ((_nDomain > 0) && (_nDomain <= this->domainList.size())) {
-			return this->domainList[_nDomain - 1].get();
+			return &this->domainList[_nDomain - 1];
 		}
 		else {
 			std::cerr<<"Undefined domain"<<std::endl;
@@ -92,7 +92,7 @@ namespace HBXFEMDef
 
 	int Engng::GetNumOfDomainEquations(int _id)
 	{
-		return this->domainList[_id]->GetNumOfEquations();
+		return this->domainList[_id].GetNumOfEquations();
 	}
 
 	FILE * Engng::GetOutStream()
@@ -187,9 +187,11 @@ namespace HBXFEMDef
 #pragma region	清理domainlist相关 		
 		domainList.clear();
 		domainList.reserve(ndomains);//清理后将vector的尺寸重置为ndomains个大小，减少内存使用量
+//		_DomainList.clear();
+//		_DomainList.reserve(ndomains);
 		for (size_t i = 0; 1 < ndomains; i++)
 		{
-			domainList.emplace_back(new Domain(i, 0, this));
+			domainList[i] = std::move(Domain(i, 0, this));
 		}
 #pragma region	清理domainlist相关
 	}
@@ -198,7 +200,7 @@ namespace HBXFEMDef
 	{
 		for ( auto &domain: domainList )
 		{
-			domain->InstanceSelf(_dr->GetInputRecord());
+			domain.InstanceSelf(_dr->GetInputRecord());
 		}
 
 		this->postInit();
@@ -257,8 +259,15 @@ namespace HBXFEMDef
 		int _nElem = _dm->GetNumOfElem();
 		this->_timer.resumeTimer(EngngTimer::EMT_ASSEMBLE);
 
+		int _nElt = _dm->GetNumOfElem();
+		for (int i=0; i<_nElem;i++)
+		{
+			BaseElem* _tElemt = _dm->GetElem(i);
+		}
 
 		this->_timer.pauseTimer(EngngTimer::EMT_ASSEMBLE);
+
+		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
 	int Engng::GetNumberOfFirstStep(bool _hasReciver)
@@ -381,7 +390,7 @@ namespace HBXFEMDef
 		for ( auto &domain:domainList )
 		{
 			//刷新每个域下的属性,to be continue
-			for ( auto &elt: domain->GetElem())
+			for ( auto &elt: domain.GetElemList())
 			{
 
 			}

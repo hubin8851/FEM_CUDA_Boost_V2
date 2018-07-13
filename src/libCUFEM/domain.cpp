@@ -32,6 +32,18 @@ namespace HBXFEMDef
 
 	}
 
+	Domain::Domain(const Domain & src)
+	{
+
+	}
+
+	Domain & Domain::operator=(const Domain & src)
+	{
+		// TODO: 在此处插入 return 语句
+		this->iMyNum = src.iMyNum;
+		return *this;
+	}
+
 	InputFileResult_t Domain::InstanceSelf(InputRecord * _dr)
 	{
 		InputFileResult_t result;
@@ -84,7 +96,7 @@ namespace HBXFEMDef
 				std::cerr << "创建" << _iterE->first.c_str() << "单元失败" << std::endl;
 			}
 			result = _tElemt->InitFrom(_dr);
-			_vElmt.emplace_back(*_tElemt);
+//			_vElmt.emplace_back(std::move(_tElemt));
 			sortNum++;
 		}
 

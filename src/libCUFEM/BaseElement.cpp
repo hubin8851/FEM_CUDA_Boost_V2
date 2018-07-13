@@ -1,7 +1,9 @@
+#include <memory.h>
 #include "BaseElement.h"
 #include <libCUFEM\EngngMod.h>
 #include <FSM\StateMachine.h>
 #include "FSM\BaseElementOwnedStates.h"
+
 
 namespace HBXFEMDef
 {

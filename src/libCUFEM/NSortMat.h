@@ -117,15 +117,15 @@ namespace HBXFEMDef
 // 		//转移赋值，C11新特性
 //		//移动赋值运算符，但未显式声明赋值赋值运算符。参见下链接。
 //		//https://docs.microsoft.com/zh-cn/cpp/error-messages/compiler-errors-1/compiler-error-c2280?f1url=https%3A%2F%2Fmsdn.microsoft.com%2Fquery%2Fdev15.query%3FappId%3DDev15IDEF1%26l%3DZH-CN%26k%3Dk(C2280)%26rd%3Dtrue#example-movable-deletes-implicit-copy
-// 		_SameClass& operator = (const _SameClass&& _rhs)
-// 		{
-// 			Assert(m_dim == _rhs.GetDim());
-// 			for (int i = 0; i < _MyData.size(); i++)
-// 			{
-// 				this->_MyData[i] = _rhs._MyData[i];
-// 			}
-// 			return *this;
-// 		};
+		_SameClass& operator = (const _SameClass&& _rhs)
+		{
+			Assert(m_dim == _rhs.GetDim());
+			for (int i = 0; i < _MyData.size(); i++)
+			{
+				this->_MyData[i] = _rhs._MyData[i];
+			}
+			return *this;
+		};
 	};
 
 	template class CUFEM_API NSortMat<double>;

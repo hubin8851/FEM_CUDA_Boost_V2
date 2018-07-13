@@ -142,12 +142,12 @@ namespace HBXFEMDef
 		CF_STORE( ModuleList );
 	}
 
-	HBXDef::SparseMat * ClassFactory::CreatSparseMatrix(HBXDef::SpMatrixType_t _type)
+	HBXFEMDef::SparseMat * ClassFactory::CreatSparseMatrix(HBXDef::SpMatrixType_t _type)
 	{
 		return (1 == SpMatrixList.count(_type))?SpMatrixList[_type]():nullptr;
 	}
 
-	bool ClassFactory::RegistSparseMatrix(HBXDef::SpMatrixType_t _type, HBXDef::SparseMat *(*creator)())
+	bool ClassFactory::RegistSparseMatrix(HBXDef::SpMatrixType_t _type, HBXFEMDef::SparseMat *(*creator)())
 	{
 		SpMatrixList[_type] = creator;
 		return true;
