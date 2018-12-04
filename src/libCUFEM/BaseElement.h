@@ -89,15 +89,4 @@ namespace HBXFEMDef
 	//用以在classfactory中注册
 	template<typename T> BaseElem* ElemtCreator(Engng * _master, Domain* _dm, int _id) { return (new T(_master, _dm, _id)); }
 
-	//放入map之类容器的比较函数
-
-	bool Smaller(BaseElem& _lhs, BaseElem& _rhs)
-	{
-		return _lhs._MyColor < _rhs._MyColor;
-	};
-
-	bool Bigger(BaseElem& _lhs, BaseElem& _rhs)
-	{
-		return _lhs._MyColor > _rhs._MyColor;
-	};
 }

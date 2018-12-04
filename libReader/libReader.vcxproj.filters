@@ -42,6 +42,9 @@
     <ClInclude Include="..\src\libReader\AeroTableRecord.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\libReader\UFgetMatReader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +75,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\src\libReader\AeroTableRecord.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\libReader\UFgetMatReader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

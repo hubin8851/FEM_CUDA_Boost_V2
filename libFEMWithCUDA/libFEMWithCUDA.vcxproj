@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -38,7 +38,7 @@
     <ClCompile Include="..\src\libCUFEM\timestep.cpp" />
     <ClCompile Include="..\src\libCUFEM\util.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSCSpMatrix.cpp" />
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSRSpMatrix.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp" />
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.cpp" />
@@ -83,7 +83,7 @@
     <ClInclude Include="..\src\libCUFEM\timestep.h" />
     <ClInclude Include="..\src\libCUFEM\util.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\classtype.h" />
-    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSCSpMatrix.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSRSpMatrix.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\HbxCuDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h" />

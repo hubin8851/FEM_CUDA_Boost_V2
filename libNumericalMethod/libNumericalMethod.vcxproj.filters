@@ -27,6 +27,9 @@
     <ClInclude Include="..\src\NumericalMehod\BaseConjugate.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NumericalMethodTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -42,6 +45,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\src\NumericalMehod\BaseConjugate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NumericalMethodTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

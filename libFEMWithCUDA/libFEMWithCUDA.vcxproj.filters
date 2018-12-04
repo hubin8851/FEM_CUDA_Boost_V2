@@ -99,10 +99,10 @@
     <ClCompile Include="..\src\libCUFEM\timestep.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSCSpMatrix.cpp">
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.cpp">
+    <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSRSpMatrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -251,10 +251,10 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SolverType.h">
       <Filter>头文件\HBXDef</Filter>
     </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSCSpMatrix.h">
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.h">
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSRSpMatrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

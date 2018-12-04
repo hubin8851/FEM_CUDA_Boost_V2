@@ -21,15 +21,15 @@ namespace HBXFEMDef
 		public BaseNumMethod
 	{
 	protected:
-		bool		m_bCudaFree;		//判断是否在释放CUDA资源
+		bool		m_bCudaFree;	//判断是否在释放CUDA资源
 		bool		m_bGenTridiag;	//判断数组是否已经malloc过，如果malloc过，hostmalloc函数里当检测指针不为0时，用delete[]；如果没有用delete
 		bool		m_bGPUFlag;		//是否GPU可用
-		int		m_DevID;			//所选择的最好的GPU的ID号
-		bool		m_bSave;			//是否存盘
+		int			m_DevID;		//所选择的最好的GPU的ID号
+		bool		m_bSave;		//是否存盘
 
 		cudaError_t			_cuError_id;			//cuda内存拷贝等错误返回值
 		cublasStatus_t		_cublasError_id;		//cublas返回值
-		cusparseStatus_t		_cusparseError_id;	//cusparse得返回值
+		cusparseStatus_t	_cusparseError_id;		//cusparse得返回值
 		HBXDef::DataAloc_t	m_DataAloc;
 
 		float	msecUsed;	//时间统计double型变量
@@ -61,7 +61,7 @@ namespace HBXFEMDef
 		int*						d_iColSort;
 		int*						d_iNonZeroRowSort;
 		HBXDef::UserCalPrec*		d_x;	//待求特征值
-		HBXDef::UserCalPrec*		d_r;		//等式右边向量
+		HBXDef::UserCalPrec*		d_r;	//等式右边向量
 
 		std::vector<double>	h_vNoneZeroVal;
 		std::vector<int>		h_viColSort;
