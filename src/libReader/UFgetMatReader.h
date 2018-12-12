@@ -19,6 +19,7 @@ namespace HBXFEMDef
 	private:
 		typedef std::map<std::string, mxArray*>::iterator	mx_Map_itr;
 
+		//mat文件中，项目-数据 的映射表
 		std::map<std::string, mxArray*>	_mxArray_Map;
 
 		MATFile*	m_pMatFile;	//文件指针

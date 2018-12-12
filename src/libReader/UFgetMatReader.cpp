@@ -4,9 +4,11 @@ namespace HBXFEMDef
 {
 	::ImpMatError_t UFgeMatReader::ReadObject(const mxArray * const _Array)
 	{
+		//获取当前块内的项目数
 		int _nObj = mxGetNumberOfFields(_Array);
 		if ( 0 != _nObj)
 		{
+			//遍历块内项目
 			for (int i = 0; i < _nObj; i++)
 			{
 				mxChar *_tmpchar;
@@ -93,20 +95,21 @@ namespace HBXFEMDef
 	{
 		m_RowNum = mxGetM(_Array);
 		m_ColNum = mxGetN(_Array);
-		if (m_RowNum == m_ColNum)
+		if (m_RowNum != m_ColNum)
 		{
-			std::cout << "矩阵为square，对全局变量g_MatRowNum赋值..." << std::endl;
-			std::cout << "当前矩阵维度为" << m_RowNum << std::endl;
-			//以下确定维度
-			g_MatRowNum = (int)m_RowNum;
-			m_MatMsg._nA = m_nA = (int)(m_RowNum)+1;
-			m_MatMsg._nnzA = m_nnzA = (int)mxGetNzmax(_Array) - 1;
+			std::cout << "矩阵不为方阵..."<<std::endl;
 		}
+//		std::cout << "矩阵为square，对全局变量g_MatRowNum赋值..." << std::endl;
+//		std::cout << "当前矩阵维度为" << m_RowNum << std::endl;
+		//以下确定维度
+//		g_MatRowNum = (int)m_RowNum;
+		m_MatMsg._nA = (int)(m_RowNum)+1;
+		m_MatMsg._nnzA = (int)mxGetNzmax(_Array) - 1;
 		m_MatMsg.h_NoneZeroVal = mxGetPr(_Array);
 		m_MatMsg.h_iColSort = mxGetIr(_Array); //rowsort = nna_z
 		m_MatMsg.h_iNonZeroRowSort = mxGetJc(_Array); //colsort = N+1
 
-		SetStiffMat(m_MatMsg.h_NoneZeroVal, m_MatMsg.h_iColSort, m_MatMsg.h_iNonZeroRowSort, m_nnzA, m_nA);
+//		SetStiffMat(m_MatMsg.h_NoneZeroVal, m_MatMsg.h_iColSort, m_MatMsg.h_iNonZeroRowSort, m_nnzA, m_nA);
 		return ::ImpMatError_t::IMPSUCCESS;
 	}
 
@@ -124,6 +127,7 @@ namespace HBXFEMDef
 			return false;
 		}
 		const char** dir = (const char **)matGetDir(m_pMatFile, &_ndir);
+		//这里逻辑有些问题，应该用do while
 		if ( nullptr == dir )	//判定是否读取正常
 		{
 			if ( _ndir < 0 )
@@ -136,6 +140,7 @@ namespace HBXFEMDef
 				std::cerr << " 当前mat下无任何矩阵 " << std::endl;
 			}
 		}
+		//判断是否为mat数据
 		else if (boost::iequals("problem", dir[0]))
 		{
 			for (int i = 0; i < _ndir; i++)
@@ -144,6 +149,7 @@ namespace HBXFEMDef
 				ReadObject(m_pMxArray);
 			}
 		}
+		//判断是否为UFget数据库索引文件
 		else if (boost::iequals("UF_Index", dir[0]))
 		{
 			for (int i = 0; i < _ndir; i++)
