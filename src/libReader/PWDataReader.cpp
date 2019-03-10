@@ -154,17 +154,15 @@ namespace HBXFEMDef
 	}
 
 
-	bool PWDataReader::SetInputData()
+	InputFileResult PWDataReader::SetInputData()
 	{
 		namespace fs = boost::filesystem;
 		using namespace HBXDef;
-		if (fs::extension(m_SrcFileName) == ".pw")
+		if (fs::extension(m_SrcFileName) != ".pw")
 		{
-			CheckUserDefErrors(ReadpwFile());
-			return true;
+			return InputFileResult::IRRT_NOTFOUND;
 		}
-
-		return false;
+		return ReadpwFile();
 	}
 
 	void PWDataReader::terminate()

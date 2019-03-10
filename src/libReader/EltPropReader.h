@@ -23,7 +23,10 @@ namespace HBXFEMDef
 
 		HBXFEMDef::_EltPtyInMap* const GetPtyMap();
 
-		bool SetInputData();
+		//设置索引路径，会根据当前索引路径下所有文件夹索引，搜索到的第一个当前文件读入
+		bool SetSourceFilePath(const std::string _SourceFile, std::string _savepath);
+
+		InputFileResult SetInputData();
 
 		//强制断开所有数据连接
 		void terminate();

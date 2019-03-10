@@ -1,4 +1,4 @@
-#include "ClassFactory.h"
+#include <libCUFEM\ClassFactory.h>
 #include <HbxDefMacro.h>
 #include <boost\algorithm\string.hpp>
 #include <boost\bind.hpp>
@@ -153,12 +153,12 @@ namespace HBXFEMDef
 		return true;
 	}
 
-	BaseNumMethod * ClassFactory::CreateNumMethod(HBXDef::SolveMethod_t _name, Domain * _dm, Engng * _master, int _id)
+	BaseNumMethod * ClassFactory::CreateNumMethod(HBXDef::SolveMethod_t _name, Domain * _dm, Engng * _master)
 	{
-		return (1 == NumericalMethodList.count(_name)) ? NumericalMethodList[_name](_dm, _master,_id) : nullptr;
+		return (1 == NumericalMethodList.count(_name)) ? NumericalMethodList[_name](_dm, _master) : nullptr;
 	}
 
-	bool ClassFactory::RegistNumMethod(HBXDef::SolveMethod_t _name, BaseNumMethod *(*creator)(Domain *, Engng *, int))
+	bool ClassFactory::RegistNumMethod(HBXDef::SolveMethod_t _name, BaseNumMethod *(*creator)(Domain *, Engng * ))
 	{
 		NumericalMethodList[_name] = creator;
 		return true;

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <CUFEMLIB_EXPORT_PATH>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2</CUFEMLIB_EXPORT_PATH>
+  </PropertyGroup>
   <PropertyGroup>
     <IncludePath>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2\src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
@@ -14,7 +16,12 @@
     </CudaCompile>
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <BuildMacro Include="CUFEMLIB_EXPORT_PATH">
+      <Value>$(CUFEMLIB_EXPORT_PATH)</Value>
+    </BuildMacro>
+  </ItemGroup>
 </Project>

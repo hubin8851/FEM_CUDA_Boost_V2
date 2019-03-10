@@ -81,17 +81,22 @@ namespace HBXFEMDef
 		return InputFileResult_t::IRRT_OK;
 	}
 
-	bool EltPropReader::SetInputData()
+	bool EltPropReader::SetSourceFilePath(const std::string _SourceFile, std::string _savepath)
+	{
+		BaseReader::m_path = _savepath;
+		BaseReader::m_SrcFileName = _SourceFile;
+		return true;
+	}
+
+	InputFileResult EltPropReader::SetInputData()
 	{
 		namespace fs = boost::filesystem;
 		using namespace HBXDef;
-		if (fs::extension(m_SrcFileName) == ".xml")
+		if (fs::extension(m_SrcFileName) != ".xml")
 		{
-			CheckUserDefErrors(ReadElemtProperty());
-			return true;
+			return InputFileResult::IRRT_NOTFOUND;	
 		}
-
-		return false;
+		return ReadElemtProperty();
 	}
 
 	void EltPropReader::terminate()

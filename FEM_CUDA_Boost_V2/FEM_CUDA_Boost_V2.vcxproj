@@ -75,11 +75,13 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="E:\SDK\hbxdef\x64\MyMetis.props" />
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_debug_x64.props" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\VTK.props" />
     <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_gd_MDD.props" />
+    <Import Project="E:\SDK\hbxdef\MatlabInterface.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -218,6 +220,7 @@
     </ClCompile>
     <ClCompile Include="EngngTest.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="FEM_CUDA_Boost_V2.cpp" />
     <CudaCompile Include="IntervalTest.cpp">
@@ -225,7 +228,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <UseHostInclude Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</UseHostInclude>
     </CudaCompile>
-    <ClCompile Include="ReaderTest.cpp" />
+    <ClCompile Include="ReaderTest.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

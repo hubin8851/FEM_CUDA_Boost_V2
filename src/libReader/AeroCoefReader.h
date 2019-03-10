@@ -48,7 +48,7 @@ namespace HBXFEMDef
 		HBXDef::_AEROTABLE*	GetAeroTable(const char* _str);	//获取气动数据表
 
 		//通用接口
-		bool SetInputData();
+		InputFileResult SetInputData();
 
 		//强制断开所有数据连接
 		void terminate();

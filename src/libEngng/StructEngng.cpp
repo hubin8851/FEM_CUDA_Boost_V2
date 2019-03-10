@@ -60,7 +60,7 @@ namespace HBXFEMDef
 		for (auto &MyDom: domainList)
 		{
 			
-			for ( auto& _bc:MyDom->_vLoad)
+			for ( auto& _bc:MyDom._vLoad)
 			{
 
 			}

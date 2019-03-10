@@ -9,7 +9,7 @@
 #include "regextest.h"
 #include "IntervalTest.h"
 #include "EngngTest.h"
-
+#include "ReaderTest.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -19,6 +19,7 @@ extern "C" CUT_THREADPROC InterpolateTest(void* void_arg);
 CUT_THREADPROC AsynInterpolateTest(void* void_arg);
 extern "C" float MultiInterpolateTest(void* void_arg);
 extern "C" void EngngTest(void* void_arg);
+extern "C" void ReaderTest(void* void_arg);
 // 唯一的应用程序对象
 
 
@@ -29,17 +30,19 @@ int main()
 	if (0)
 	{
 //		InterpolateTest();	
-		MultiInterpolateTest();
+//		MultiInterpolateTest();
 	}
 
-	if (0)
+	if (1)
 	{
+		ReaderTest();
+
 		vtktest();
 	}
 
 	if (1)
 	{
-		EngngTest();
+//		EngngTest();
 	}
 
 //

@@ -22,6 +22,7 @@ namespace HBXFEMDef
 
 		unsigned int m_dim;	//当前数据的维度
 		std::vector< std::vector<_T> > _MyData;
+		_T ErrCode = INF;
 	protected:
 
 	public:
@@ -55,7 +56,6 @@ namespace HBXFEMDef
 			{
 				std::cerr << "索引越界" << std::endl;
 				//这里要注意，没有返回值，如果索引越界可能会报错。
-				_T ErrCode = INF;
 				return ErrCode;
 			}
 		}

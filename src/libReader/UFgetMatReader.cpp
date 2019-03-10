@@ -2,7 +2,7 @@
 
 namespace HBXFEMDef
 {
-	::ImpMatError_t UFgeMatReader::ReadObject(const mxArray * const _Array)
+	::ImpMatError_t UFgetMatReader::ReadObject(const mxArray * const _Array)
 	{
 		//获取当前块内的项目数
 		int _nObj = mxGetNumberOfFields(_Array);
@@ -59,7 +59,7 @@ namespace HBXFEMDef
 		return ::ImpMatError_t::IMPSUCCESS;
 	}
 
-	::ImpMatError_t UFgeMatReader::ReadMsg(const mxArray * const _Array)
+	::ImpMatError_t UFgetMatReader::ReadMsg(const mxArray * const _Array)
 	{
 		using namespace boost;
 		int _nObj = mxGetNumberOfFields(_Array);
@@ -91,7 +91,7 @@ namespace HBXFEMDef
 		return ::ImpMatError_t::IMPSUCCESS;
 	}
 
-	::ImpMatError_t UFgeMatReader::ReadSparseMat(const mxArray * const _Array)
+	::ImpMatError_t UFgetMatReader::ReadSparseMat(const mxArray * const _Array)
 	{
 		m_RowNum = mxGetM(_Array);
 		m_ColNum = mxGetN(_Array);
@@ -113,9 +113,31 @@ namespace HBXFEMDef
 		return ::ImpMatError_t::IMPSUCCESS;
 	}
 
+	::ImpMatError_t UFgetMatReader::ReadRhs(const mxArray * const _Array)
+	{
+		return ::ImpMatError_t();
+	}
+
+	::ImpMatError_t UFgetMatReader::ReadCell(const mxArray * const _Array)
+	{
+		return ::ImpMatError_t();
+	}
 
 
-	bool UFgeMatReader::SetInputData()
+
+	UFgetMatReader::UFgetMatReader(const char * _matname, const char* _searchpath)
+	{
+		this->SetSourceFilePath(_matname, _searchpath);
+
+		std::cout << "create UFgeMatReader!" << std::endl;
+
+	}
+
+	UFgetMatReader::~UFgetMatReader(void)
+	{
+	}
+
+	InputFileResult UFgetMatReader::SetInputData()
 	{
 		int _ndir = -1;	//根目录下mxArray数目
 		int _nfield = -1;	//mxArray下file数目
@@ -124,7 +146,7 @@ namespace HBXFEMDef
 		if (nullptr == m_pMatFile)
 		{
 			std::cerr << "当前路径索引不正确未找到mat文件" << std::endl;
-			return false;
+			return InputFileResult::IRRT_NOTFOUND;
 		}
 		const char** dir = (const char **)matGetDir(m_pMatFile, &_ndir);
 		//这里逻辑有些问题，应该用do while
@@ -133,11 +155,12 @@ namespace HBXFEMDef
 			if ( _ndir < 0 )
 			{
 				std::cerr << "读取过程发生错误" << std::endl;
-				return ImpMatError_t::MATFILENULL;
+				return InputFileResult::IRRT_BAD_FORMAT;
 			}
 			else
 			{
 				std::cerr << " 当前mat下无任何矩阵 " << std::endl;
+				return InputFileResult::IRRT_BAD_FORMAT;
 			}
 		}
 		//判断是否为mat数据
@@ -158,9 +181,41 @@ namespace HBXFEMDef
 				ReadMsg(m_pMxArray);
 			}
 		}
+		return InputFileResult::IRRT_OK;
+	}
+
+	void * UFgetMatReader::GetStiffMat(bool _bSv)
+	{
+		return nullptr;
+	}
+
+	void * UFgetMatReader::GetRhsVec(bool _bSv)
+	{
+		return nullptr;
+	}
+
+	int & UFgetMatReader::GetNoneZeroLgt()
+	{
+		// TODO: 在此处插入 return 语句
+		return m_MatMsg._nnzA;
+	}
+
+	int & UFgetMatReader::GetnALgt()
+	{
+		// TODO: 在此处插入 return 语句
+		return m_MatMsg._nA;
+	}
+
+	size_t & UFgetMatReader::GetID()
+	{
+		// TODO: 在此处插入 return 语句
+		return this->m_id;
+	}
 
 
-		return true;
+	CUFEM_API BaseReader * InstanceUFgetReader(const char* _name, const char* _path)
+	{
+		return (BaseReader*)new UFgetMatReader(_name, _path);
 	}
 
 }

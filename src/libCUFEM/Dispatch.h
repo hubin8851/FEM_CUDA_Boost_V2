@@ -14,7 +14,7 @@ namespace HBXFEMDef
 	class BaseComponent;
 	class Package;
 
-	class MessageDispatcher
+	CUFEM_API class MessageDispatcher
 	{
 	private:
 	protected:
@@ -39,8 +39,7 @@ namespace HBXFEMDef
 			int    msg,
 			void*  ExtraInfo);
 
-		//send out any delayed messages. This method is called each time through   
-		//the main game loop.
+		//发送延迟消息，只有在主程序重启动时使用
 		void DispatchDelayedMessages();
 
 		Engng* GetEngng() const { return this->MyEngng; };

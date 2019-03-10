@@ -55,7 +55,7 @@ namespace HBXFEMDef
 		virtual bool SetSourceFilePath(const std::string _SourceFile, std::string _savepath);
 
 		//完成inp\xml\PW文件的导入，填充各容器并计算总刚矩阵的维度等参数
-		virtual bool SetInputData() = 0;
+		virtual InputFileResult SetInputData() = 0;
 
 		//依据文件名称输出记录类
 		InputRecord* GetInputRecord() { return m_Record; }

@@ -23,7 +23,7 @@ namespace HBXFEMDef
 			public StructEngng
 	{
 	private:
-		std::unique_ptr<HBXDef::SparseMat> _StiffMtx;			//按当前解算器使用稀疏矩阵
+		std::unique_ptr<HBXFEMDef::SparseMat> _StiffMtx;			//按当前解算器使用稀疏矩阵
 		HBXDef::UserCalPrec*	_LoadArray;	//载荷向量
 		HBXDef::UserCalPrec*	_DisplayArray;//位移向量
 

@@ -2,6 +2,7 @@
 #include "LinearStaticEngng.h"
 #include <libCUFEM\TimerManager.h>
 #include <libCUFEM\timestep.h>
+#include <libCUFEM\ClassFactory.h>
 #include "..\libElement\ElementStiffCal.h"
 
 namespace HBXFEMDef
@@ -37,7 +38,7 @@ namespace HBXFEMDef
 		if (!InitFlag)
 		{
 			//指针重置，指向新的稀疏矩阵类型
-			_StiffMtx.reset(classFactory.CreatSparseMatrix(spMatType));
+			_StiffMtx.reset(HBXFEMDef::classFactory.CreatSparseMatrix(spMatType));
 			if (!_StiffMtx) {
 				std::cerr<<"sparse matrix creation failed"<<std::endl;
 			}
@@ -102,7 +103,7 @@ namespace HBXFEMDef
 	{
 		if (!_MyMethod)
 		{
-			_MyMethod.reset(classFactory.CreateNumMethod(solverType, this->GetDomain(1), this));
+			_MyMethod.reset(HBXFEMDef::classFactory.CreateNumMethod(solverType, this->GetDomain(1), this));
 		}
 		return _MyMethod.get();
 	}

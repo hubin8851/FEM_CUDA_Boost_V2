@@ -13,7 +13,7 @@ namespace HBXFEMDef
 {
 
 
-	class CUFEM_API UFgeMatReader :
+	class CUFEM_API UFgetMatReader :
 		public BaseReader
 	{
 	private:
@@ -40,14 +40,14 @@ namespace HBXFEMDef
 		::ImpMatError_t ReadCell(const mxArray* const _Array);
 
 	public:
-		UFgeMatReader(const char* _matname, boost::filesystem::path _searchpath = "C:\\Users\\hbx\\Desktop\\SuiteSparse-2.1.1\\UFget");
-		~UFgeMatReader(void);
+		UFgetMatReader(const char* _matname = "662_bus.mat", const char* _searchpath = "C:\\Users\\hbx\\Desktop\\SuiteSparse-2.1.1\\UFget");
+		virtual ~UFgetMatReader(void);
 
 		//完成inp\xml\PW文件的导入，填充各容器并计算总刚矩阵的维度等参数
-		bool SetInputData();
+		InputFileResult SetInputData();
 
 		//强制断开所有数据连接
-		void terminate();
+		void terminate() {};
 
 		//获取稀疏矩阵模板函数
 		void* GetStiffMat( bool _bSv = false );
@@ -60,7 +60,10 @@ namespace HBXFEMDef
 		//输出rowsort的长度，即rownum+1
 		int& GetnALgt();
 		//获取当前矩阵的ID号，因为某些矩阵的CSR格式其rowsort有问题
-		int& GetID();
+		size_t& GetID();
 
-	}
+	};
+
+
+	CUFEM_API BaseReader* InstanceUFgetReader(const char* _name = "", const char* _path = "");
 }

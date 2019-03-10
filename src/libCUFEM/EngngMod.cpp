@@ -1,4 +1,5 @@
 #include "EngngMod.h"
+#include <cuda_runtime_api.h>
 #include <helper_cuda.h>
 #include <libCUFEM\ExportModuleManager.h>
 #include <libCUFEM\timestep.h>

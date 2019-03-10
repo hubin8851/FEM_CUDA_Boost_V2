@@ -274,17 +274,15 @@ namespace HBXFEMDef
 		return m_Record->GiveField( _str);
 	}
 
-	bool AeroCoefReader::SetInputData()
+	InputFileResult AeroCoefReader::SetInputData()
 	{
 		namespace fs = boost::filesystem;
 		using namespace HBXDef;
-		if (fs::extension(m_SrcFileName) == ".xml")
+		if (fs::extension(m_SrcFileName) != ".xml")
 		{
-			CheckUserDefErrors(ReadAeroCoef());
-			return true;
+			return InputFileResult::IRRT_NOTFOUND;
 		}
-
-		return false;
+		return ReadAeroCoef();
 	}
 
 	void AeroCoefReader::terminate()

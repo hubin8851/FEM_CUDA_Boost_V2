@@ -74,7 +74,7 @@ namespace HBXFEMDef
 		_tmppath = m_path.append(m_SrcFileName);
 		std::ifstream inFile;
 		inFile.open(_tmppath.c_str());
-		if (inFile.bad())
+		if ( inFile.bad() || !inFile.is_open() )
 		{
 			std::cerr << "Error1： Can not open input data file" << std::endl;
 			return InputFileResult::IRRT_BAD_FORMAT;
@@ -90,15 +90,18 @@ namespace HBXFEMDef
 		std::shared_ptr<HBXFEMDef::Set>	_pSet;
 
 		ipControlMark = HBXDef::RESET;
+
+		// 定义分割方式为英文逗号，中文逗号和空格，构造一个分词器，  
+		boost::char_separator<char> sep(" ,，*");
+		typedef boost::tokenizer<boost::char_separator<char> >  CustonTokenizer;
+
 		while (!inFile.eof())
 		{
 			getline(inFile, stringLine);
-			// 定义分割方式为英文逗号，中文逗号和空格，构造一个分词器，  
-			boost::char_separator<char> sep(" ,，*");
-			typedef boost::tokenizer<boost::char_separator<char> >  CustonTokenizer;
-			CustonTokenizer tok(stringLine, sep);
+			boost::trim(stringLine);//去掉两端的空格
+			CustonTokenizer tok(stringLine, sep);//将获得的string填入分割器
 
-			if (!std::regex_match(stringLine, IfNotNum))	//判断，若为数字直接swith
+			if (!std::regex_match(stringLine, IfNotNum))	//判断，若为数字直接分割并swith
 			{
 				//sregex_iterator用法参见
 				// 
@@ -281,26 +284,35 @@ namespace HBXFEMDef
  		return InputFileResult::IRRT_OK;
 	}
 
-	InpDataReader::InpDataReader(const std::string _SourceFile, 
-								std::string _savepath ):m_EltProp("EltProperty.xml", _savepath)
+	InpDataReader::InpDataReader(const std::string _SourceFile,
+		std::string _savepath) :m_EltProp("EltProperty.xml", _savepath)
 	{
+		BaseReader::m_SrcFileName = _SourceFile;
+		BaseReader::m_path = _savepath;
+
 		std::cout << "create InpDataReader!" << std::endl;
-		m_EltProp.SetInputData();
+//		m_EltProp.SetInputData();
 
 		m_Record = new DynamicInputRecord();
 	}
 
-	bool InpDataReader::SetInputData()
+	bool InpDataReader::SetEltPropFilePath(const std::string _SourceFile, boost::filesystem::path _savepath)
+	{
+		return this->m_EltProp.SetSourceFilePath(_SourceFile, _savepath.string());
+	}
+
+	InputFileResult InpDataReader::SetInputData()
 	{
 		namespace fs = boost::filesystem;
 		using namespace HBXDef;
-		if (fs::extension(m_SrcFileName) == ".inp")
-		{
-			CheckUserDefErrors(ReadInpFile());
-			return true;
-		}
 
-		return false;
+		CheckUserDefErrors( m_EltProp.SetInputData() );
+
+		if (fs::extension(m_SrcFileName) != ".inp")
+		{
+			return InputFileResult::IRRT_NOTFOUND;
+		}
+		return ReadInpFile();
 	}
 
 	void InpDataReader::terminate()
