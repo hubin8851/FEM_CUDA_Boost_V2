@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ElementStiffCal.h"
 
 __device__ EltMatFunc_t EltMatFunc_table[2];

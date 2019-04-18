@@ -41,7 +41,7 @@ namespace HBXFEMDef
 	public:
 		//默认构造函数
 		InpDataReader(	const std::string _SourceFile = "", 
-						std::string _savepath = "F:\\data from HBX_phd\\vs2015");
+						std::string _savepath = "F:\\data_from_HBX_phd\\vs2015");
 		//拷贝构造函数
 		//		PWDataReader(const _SameClass&) {};
 		~InpDataReader() {};
@@ -58,7 +58,7 @@ namespace HBXFEMDef
 	};
 
 	CUFEM_API BaseReader* InstanceInpReader(const std::string _SourceFile = "",
-											std::string _savepath = "F:\\data from HBX_phd\\vs2015");
+											std::string _savepath = "F:\\data_from_HBX_phd\\vs2015");
 
 
 }

@@ -5,7 +5,7 @@
     <CUFEMLIB_EXPORT_PATH>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2</CUFEMLIB_EXPORT_PATH>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2\src;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)src;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>

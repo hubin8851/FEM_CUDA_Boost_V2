@@ -4,7 +4,8 @@ namespace HBXFEMDef
 {
 
 
-	S4RElemt::S4RElemt(Engng * _engng, Domain * _dm, int _id) :BaseElem(_engng, _dm, _id)
+	S4RElemt::S4RElemt(Engng * _engng, Domain * _dm, int _id) 
+		:BaseElem(_engng, _dm, _id)
 	{
 		m_pStateMachine = new StateMachine<S4RElemt>(this);
 
@@ -27,6 +28,7 @@ namespace HBXFEMDef
 
 	void S4RElemt::StiffMatCal()
 	{
+
 	}
 
 	void S4RElemt::MassMatCal()

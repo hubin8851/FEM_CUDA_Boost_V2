@@ -9,7 +9,7 @@ extern "C"
 void EngngTest(void * void_arg)
 {
 
-	HBXFEMDef::BaseReader* __Reader = HBXFEMDef::InstanceInpReader("EltProperty.xml", "F:\\data from HBX_phd\\VS2015\\FEM_CUDA_Boost_V2");
+	HBXFEMDef::BaseReader* __Reader = HBXFEMDef::InstanceInpReader("EltProperty.xml", "F:\\data_from_HBX_phd\\VS2015\\FEM_CUDA_Boost_V2");
 
 	using namespace HBXFEMDef;
 	__Reader->SetSourceFilePath("spaceshuttle_quadmain.inp", "C:\\Users\\hbx\\Desktop\\");

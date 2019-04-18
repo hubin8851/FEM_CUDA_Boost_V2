@@ -39,7 +39,7 @@ CUT_THREADPROC InterpolateTest(void* void_arg)
 	HBXFEMDef::BaseReader* g_AeroTableReader = HBXFEMDef::InstanceAeroCoefReader();
 
 	g_AeroTableReader->SetSourceFilePath("CA_da.xml",
-		"F:\\data from HBX_phd\\database\\x33气动数据\\");
+		"F:\\data_from_HBX_phd\\database\\x33气动数据\\");
 	g_AeroTableReader->SetInputData();
 
 	HBXDef::_AEROTABLE* g_Aerotable = g_AeroTableReader->GetInputRecord()->GiveField("ca_da");
@@ -268,7 +268,7 @@ float MultiInterpolateTest(void* void_arg)
 	//初始化XML表
 	HBXFEMDef::BaseReader* g_AeroTableReader = HBXFEMDef::InstanceAeroCoefReader();
 	g_AeroTableReader->SetSourceFilePath("CA_da.xml",
-		"F:\\data from HBX_phd\\database\\x33气动数据\\");
+		"F:\\data_from_HBX_phd\\database\\x33气动数据\\");
 	g_AeroTableReader->SetInputData();
 
 	//设置当前读取的气动数据表

@@ -24,8 +24,8 @@ void ReaderTest(void * void_arg)
 	if (1)
 	{
 		using namespace HBXFEMDef;
-		InpDataReader g_InpDataReader("B31BEAMTEST.inp", "F:\\data from HBX_phd\\database\\B31Test\\");
-		g_InpDataReader.SetEltPropFilePath("EltProperty.xml", "F:\\data from HBX_phd\\vs2015\\FEM_CUDA_Boost_V2\\");
+		InpDataReader g_InpDataReader("B31BEAMTEST.inp", "F:\\data_from_HBX_phd\\database\\B31Test\\");
+		g_InpDataReader.SetEltPropFilePath("EltProperty.xml", "F:\\data_from_HBX_phd\\vs2015\\FEM_CUDA_Boost_V2\\");
 		g_InpDataReader.SetInputData();
 		InputRecord* g_Record = g_InpDataReader.GetInputRecord();
 

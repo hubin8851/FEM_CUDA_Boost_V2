@@ -42,7 +42,7 @@ namespace HBXFEMDef
 
 	public:
 		AeroCoefReader(const std::string& _SourceFile = "EltProperty.xml",
-			std::string _savepath = "F:\\data from HBX_phd\\VS2015");	//构造函数
+			std::string _savepath = "F:\\data_from_HBX_phd\\VS2015");	//构造函数
 
 		//自身额外添加的函数，假装减少一次指针的指向
 		HBXDef::_AEROTABLE*	GetAeroTable(const char* _str);	//获取气动数据表
