@@ -193,6 +193,7 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxFemDef\HBXFEMEngng.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXPreDef.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.h" />
+    <ClInclude Include="ElementMatricTest.h" />
     <ClInclude Include="EngngTest.h" />
     <ClInclude Include="FemCmpnn.h" />
     <ClInclude Include="FEM_CUDA_Boost_V2.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxXmlDef\AeroTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ElementMatricTest.cpp" />
     <ClCompile Include="EngngTest.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

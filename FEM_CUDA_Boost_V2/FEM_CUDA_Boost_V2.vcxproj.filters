@@ -87,6 +87,9 @@
     <ClInclude Include="ReaderTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ElementMatricTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -108,6 +111,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="ReaderTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ElementMatricTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

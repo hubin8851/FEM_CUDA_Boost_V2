@@ -20,6 +20,7 @@ CUT_THREADPROC AsynInterpolateTest(void* void_arg);
 extern "C" float MultiInterpolateTest(void* void_arg);
 extern "C" void EngngTest(void* void_arg);
 extern "C" void ReaderTest(void* void_arg);
+extern "C" void ElementMatricCalTest(void* void_arg);
 // 唯一的应用程序对象
 
 
