@@ -18,7 +18,12 @@ namespace HBXFEMDef
 		virtual ~Beam31Elemt();
 
 
-
+		//刚度矩阵计算
+		//传入杨氏模量、截面、和单元长度
+		void StiffMatCal(	int _iMatSort, int _iSecSort, 
+							UserCalPrec _x1, UserCalPrec3 _y1, UserCalPrec _z1,
+							UserCalPrec _x2, UserCalPrec3 _y2, UserCalPrec _z2,
+							UserCalPrec _theta);
 		//刚度矩阵计算
 		//传入杨氏模量、截面、和单元长度
 		void StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec3 _N1, UserCalPrec3 _N2, UserCalPrec _theta);
@@ -37,6 +42,8 @@ namespace HBXFEMDef
 
 	};
 
-
+//#define _EX_Beam31Elemt_Name "B31"
+//	//向工厂类中注册该解算引擎
+//	REGIST_ELEMT(Beam31Elemt);
 
 }

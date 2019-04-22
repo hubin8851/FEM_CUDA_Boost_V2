@@ -174,7 +174,7 @@ namespace HBXFEMDef
 		return InputFileResult_t::IRRT_OK;
 	}
 
-	InputFileResult_t DynamicInputRecord::GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>> answer,
+	InputFileResult_t DynamicInputRecord::GiveField(std::vector<HBXFEMDef::Node>& answer,
 													InputFieldType _id)
 	{
 		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> > ::iterator _it = this->NodeArrayRecord.find(_id);
@@ -182,7 +182,7 @@ namespace HBXFEMDef
 		{
 			return InputFileResult_t::IRRT_NOTFOUND;
 		}
-		answer = _it->second;
+		answer = *_it->second;
 		return InputFileResult_t::IRRT_OK;
 	}
 

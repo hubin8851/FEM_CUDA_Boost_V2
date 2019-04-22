@@ -16,6 +16,11 @@ namespace HBXFEMDef
 	}
 
 
+	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec _x1, UserCalPrec3 _y1, UserCalPrec _z1, UserCalPrec _x2, UserCalPrec3 _y2, UserCalPrec _z2, UserCalPrec _theta)
+	{
+
+	}
+
 	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec3 _N1, UserCalPrec3 _N2, UserCalPrec _theta)
 	{
 
@@ -24,6 +29,10 @@ namespace HBXFEMDef
 		//UserCalPrec Iz = pow(_w, 3) *_h / 12;
 		//UserCalPrec J = 0.229 * _w *pow(_h, 3);
 
+	}
+
+	void Beam31Elemt::MassMatCal()
+	{
 	}
 
 	UserCalPrec Beam31Elemt::ElemtLengthCal(UserCalPrec3 _N1, UserCalPrec3 _N2)

@@ -10,6 +10,7 @@
 #include "IntervalTest.h"
 #include "EngngTest.h"
 #include "ReaderTest.h"
+#include "ElementMatricTest.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -34,15 +35,15 @@ int main()
 //		MultiInterpolateTest();
 	}
 
-	if (1)
+	if (0)
 	{
 		ReaderTest();
-
 		vtktest();
 	}
 
 	if (1)
 	{
+		ElementMatricCalTest();
 //		EngngTest();
 	}
 

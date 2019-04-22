@@ -89,7 +89,7 @@ namespace HBXFEMDef
 
 		virtual InputFileResult_t GiveField(std::string &answer, InputFieldType _id);
 
-		virtual InputFileResult_t GiveField(std::shared_ptr<std::vector<HBXFEMDef::Node>> answer, InputFieldType _id);
+		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::Node>& answer, InputFieldType _id);
 
 		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::UserReadPrec>* answer, InputFieldType _id);
 

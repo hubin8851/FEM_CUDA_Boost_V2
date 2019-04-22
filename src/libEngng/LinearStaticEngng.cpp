@@ -8,7 +8,8 @@
 namespace HBXFEMDef
 {
 
-	LinearStaticEngng::LinearStaticEngng(Engng* _master, int _n, int _threadNum):StructEngng(_master, _n, _threadNum)
+	LinearStaticEngng::LinearStaticEngng(Engng* _master, int _n, int _threadNum)
+		:StructEngng(_master, _n, _threadNum)
 	{
 		bInit = false;
 		spMatType = HBXDef::SpMatrixType_t::SMT_CSR;

@@ -19,6 +19,9 @@
     <ClCompile Include="..\src\libElement\Beam31.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="ElementStiffCal.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libElement\Beam21.h">
