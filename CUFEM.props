@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <CUFEMLIB_EXPORT_PATH>F:\data from HBX_phd\vs2015\FEM_CUDA_Boost_V2</CUFEMLIB_EXPORT_PATH>
+    <CUFEMLIB_EXPORT_PATH>F:\data_from_HBX_phd\vs2015\FEM_CUDA_Boost_V2</CUFEMLIB_EXPORT_PATH>
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>$(SolutionDir)src;$(IncludePath)</IncludePath>

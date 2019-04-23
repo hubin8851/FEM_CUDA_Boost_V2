@@ -32,6 +32,7 @@ namespace HBXFEMDef
 			_MyData.resize(m_dim); 
 		};
 
+		//获得单元的总数量
 		size_t GetRowNum()
 		{
 			return this->_MyData[0].size();
