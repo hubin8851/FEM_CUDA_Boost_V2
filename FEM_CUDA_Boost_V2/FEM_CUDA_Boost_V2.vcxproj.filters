@@ -116,6 +116,9 @@
     <ClCompile Include="ElementMatricTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="vtktest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FEM_CUDA_Boost_V2.rc">

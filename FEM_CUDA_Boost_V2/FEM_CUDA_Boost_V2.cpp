@@ -38,27 +38,18 @@ int main()
 	if (0)
 	{
 		ReaderTest();
+	}
+	if(1)
+	{
 		vtktest();
 	}
 
-	if (1)
+	if (0)
 	{
 		ElementMatricCalTest();
 //		EngngTest();
 	}
 
-//
-//	BaseVtk g_VTK;
-//	g_VTK.Initial();
-//
-//	g_VTK.SetData("first_stage.stl", "C:\\Users\\hbx\\Desktop\\");
-////	g_VTK.SetData(xxx->GetInputRecord());
-//	g_VTK.AutoFreshNodeNum();
-//	g_VTK.SetColorTable();
-//	g_VTK.SetScalarBar();
-//
-//	g_VTK.Instance();
-//	g_VTK.Run();
 
 
     return 0;
