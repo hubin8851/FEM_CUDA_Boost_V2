@@ -1,4 +1,6 @@
 #include "BaseVtk.h"
+#include <string>
+#include <algorithm>
 #include <VtkPreDef.h>
 
 //bool BaseVtk::bScalarLabel = false;		//是否显示标签栏
@@ -7,7 +9,7 @@
 //vtkIdType  BaseVtk::m_SumElmtNum = 0;	//单元总数
 //int		 BaseVtk::m_LabelNum = 0;	//标签分类个数
 
-double BaseVtk::m_scalarRange[2] = { 0, 0 };	//属性范围
+//double BaseVtk::m_scalarRange[2] = { 0, 0 };	//属性范围
 
 //vtkSmartPointer<vtkFloatArray> BaseVtk::m_Scalar = nullptr;
 //vtkSmartPointer<vtkPolyDataAlgorithm> BaseVtk::m_AlgorithmFilter = nullptr;
@@ -105,12 +107,10 @@ UserStatusError_t BaseVtk::Initial()
 	m_Interactor->SetInteractorStyle(m_Camera);
 	
 
-	m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
-	m_BoxWidget->SetInteractor(m_Interactor);
-	m_BoxWidget->SetPlaceFactor(1.25);
-	m_BoxWidget->PlaceWidget();
-	m_BoxWidget->AddObserver(vtkCommand::InteractionEvent, m_MyCallback);
-	m_BoxWidget->On();
+//	m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
+//	m_BoxWidget->SetInteractor(m_Interactor);
+//	m_BoxWidget->SetPlaceFactor(1.25);
+
 
 
 	return UserStatusError_t::USER_STATUS_SUCCESS;
@@ -118,6 +118,10 @@ UserStatusError_t BaseVtk::Initial()
 
 UserStatusError_t BaseVtk::Instance()
 {
+	//不自动刷新的函数
+	m_vMapper[0]->SetScalarRange(m_scalarRange[0], m_scalarRange[1]);
+	m_vMapper[0]->SetLookupTable(m_ColorTable);
+
 	//此处还要修改
 	m_Renderer->AddActor(m_vActor[0]);
 	m_Renderer->ResetCamera();
@@ -125,7 +129,10 @@ UserStatusError_t BaseVtk::Instance()
 
 	m_RenderWin->AddRenderer(m_Renderer);
 
-	m_BoxWidget->SetProp3D(m_vActor[0]);
+//	m_BoxWidget->SetProp3D(m_vActor[0]);
+//	m_BoxWidget->PlaceWidget();
+//	m_BoxWidget->AddObserver(vtkCommand::InteractionEvent, m_MyCallback);
+//	m_BoxWidget->On();
 
 	//m_Mapper->SetInputData( m_AlgorithmFilter->GetOutput() );
 	//m_Mapper->ScalarVisibilityOn();
@@ -198,11 +205,13 @@ UserStatusError_t BaseVtk::SetData(HBXFEMDef::InputRecord* _ir)
 
 	}
 
+
 	//设置构成多边形的几何数据
 	_PolyCube->SetPoints(points);
 	//设置单元类型，多边形
 	_PolyCube->SetPolys(_pElmt);	
-	
+	m_PartMap.insert(std::make_pair( ("part"+ std::to_string(m_PartCount) ), _PolyCube));
+
 	m_AlgorithmFilter->SetInputData( _PolyCube );
 
 	m_vMapper.push_back(vtkSmartPointer<vtkPolyDataMapper>::New());
@@ -251,9 +260,53 @@ UserStatusError_t BaseVtk::SetData( const char * _FileName, std::string  _path)
 	return UserStatusError_t::USER_EMPTY_POINT;
 }
 
-void BaseVtk::SetScalar(vtkDataArray * _inArray)
+void BaseVtk::SetScalar(int * _intArray, int _num, const char* _name)
 {
-	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(_inArray);
+	using namespace std;
+	vector<int> _v(_intArray, _intArray+_num);//备用，因为scalars并不复制该向量。随着向量的消失，scalar也重置
+	int _max = (*max_element(_intArray, _intArray + _num) );
+	int _min = (*min_element(_intArray, _intArray + _num));
+
+	vtkSmartPointer<vtkIntArray> scalars = vtkSmartPointer<vtkIntArray>::New();
+	//设定每个顶点的标量值
+	scalars->SetArray(_intArray, _num, 1);
+
+	_PartIter _iter = m_PartMap.find(_name);
+	if (_iter != m_PartMap.end() )
+	{
+		_iter->second->GetPointData()->SetScalars(scalars);
+	}
+
+	m_scalarRange[0] = _min;
+	m_scalarRange[1] = _max;
+}
+
+void BaseVtk::SetScalar(float * _fArray, int _num, const char* _name)
+{
+	vtkSmartPointer<vtkFloatArray> scalars = vtkSmartPointer<vtkFloatArray>::New();
+	//设定每个顶点的标量值
+	scalars->SetArray(_fArray, _num, 1);
+	_PartIter _iter = m_PartMap.find(_name);
+	if (_iter != m_PartMap.end())
+	{
+		_iter->second->GetPointData()->SetScalars(scalars);
+	}
+
+//	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(_inArray);
+}
+
+void BaseVtk::SetScalar(double * _dArray, int _num, const char* _name)
+{
+	vtkSmartPointer<vtkDoubleArray> scalars = vtkSmartPointer<vtkDoubleArray>::New();
+	//设定每个顶点的标量值
+	scalars->SetArray(_dArray, _num, 1);
+	_PartIter _iter = m_PartMap.find(_name);
+	if (_iter != m_PartMap.end())
+	{
+		_iter->second->GetPointData()->SetScalars(scalars);
+	}
+
+	//	m_AlgorithmFilter->GetOutput()->GetPointData()->SetScalars(_inArray);
 }
 
 void BaseVtk::CallbackFunc(vtkObject * _caller, unsigned long _eventId, void* clientdata, void * _callData)
@@ -264,20 +317,28 @@ void BaseVtk::CallbackFunc(vtkObject * _caller, unsigned long _eventId, void* cl
 
 }
 
-void BaseVtk::SetColorTable()
+void BaseVtk::SetColorTable(HBXDef::ColorType_t _t)
 {
-	//定义颜色映射表
-	m_ColorTable = vtkSmartPointer<vtkLookupTable>::New();
-	//设置颜色表中的颜色
-	m_ColorTable->SetHueRange(0.6, 0.0);        //色调范围从红色到蓝色
-	m_ColorTable->SetAlphaRange(1.0, 1.0);
-	m_ColorTable->SetValueRange(1.0, 1.0);
-	m_ColorTable->SetSaturationRange(1.0, 1.0);
-	m_ColorTable->SetNumberOfTableValues(512);	//与setnumberofcolors一样
-	m_ColorTable->SetRange(m_scalarRange);
-	m_ColorTable->Build();
-
-//	m_Mapper->SetLookupTable(m_ColorTable);
+	using namespace HBXDef;
+	switch (_t)
+	{
+	case RGB:default:
+		break;
+	case HUE:
+		//定义颜色映射表
+		m_ColorTable = vtkSmartPointer<vtkLookupTable>::New();
+		//设置颜色表中的颜色
+		m_ColorTable->SetHueRange(0.67, 0.0);        //色调范围从红色到蓝色
+		m_ColorTable->SetAlphaRange(1.0, 1.0);
+		m_ColorTable->SetValueRange(1.0, 1.0);
+		m_ColorTable->SetSaturationRange(1.0, 1.0);
+		m_ColorTable->SetNumberOfTableValues(512);	//与setnumberofcolors一样
+//		m_ColorTable->SetRange(m_scalarRange);
+		m_ColorTable->Build();
+	
+		break;
+	}
+	
 }
 
 void BaseVtk::SetScalarBar()
@@ -427,10 +488,12 @@ UserStatusError_t BaseVtk::Draw()
 void BaseVtk::Run()
 {
 	//渲染
-	m_RenderWin->Render();		
+	m_RenderWin->Render();	
+
 	//开始绘制
 	m_Interactor->Initialize();
 	m_Interactor->Start();
+
 }
 
 

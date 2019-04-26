@@ -6,7 +6,7 @@
 void vtktest(void * void_arg)
 {
 	using namespace HBXFEMDef;
-	InpDataReader g_InpDataReader("B31BEAMTEST.inp", "F:\\data_from_HBX_phd\\database\\B31Test\\");
+	InpDataReader g_InpDataReader("2D4NShell.inp", "F:\\data_from_HBX_phd\\database\\2D4NShell\\");
 	g_InpDataReader.SetEltPropFilePath("EltProperty.xml", "F:\\data_from_HBX_phd\\vs2015\\FEM_CUDA_Boost_V2\\");
 	g_InpDataReader.SetInputData();
 	InputRecord* g_Record = g_InpDataReader.GetInputRecord();
@@ -15,11 +15,18 @@ void vtktest(void * void_arg)
 	BaseVtk g_VTK;
 	g_VTK.Initial();
 
+	int scalar[50] = { 1,1,1,1,1,1,1,1,1,1,
+						2,2,2,2,2,2,2,2,2,2,
+						3,3,3,3,3,3,3,3,3,3,
+						4,4,4,4,4,4,4,4,4,4,
+						5,5,5,5,5,5,5,5,5,5 };
+
 //	g_VTK.SetData("first_stage.stl", "C:\\Users\\hbx\\Desktop\\");
 	g_VTK.SetData(g_Record);
+	g_VTK.SetScalar(scalar, 50);
 //	g_VTK.AutoFreshNodeNum();
 	g_VTK.SetColorTable();
-	g_VTK.SetScalarBar();
+//	g_VTK.SetScalarBar();
 //
 	g_VTK.Instance();
 	g_VTK.Run();
