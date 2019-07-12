@@ -6,6 +6,7 @@ namespace HBXFEMDef
 {
 	double RefactorConjugate::GetB()
 	{
+
 		fprintf(stdout,"step 3: B = Q*A*Q^T\n");
 		memcpy(h_csrRowPtrB, h_iNonZeroRowSort, sizeof(int)*(m_RowNum + 1));
 		memcpy(h_csrColIndB, h_iColSort, sizeof(int)*m_nnzA);
@@ -85,6 +86,7 @@ namespace HBXFEMDef
 			checkCudaErrors(cudaMalloc((void **)&d_P, sizeof(int)*m_RowNum));
 			checkCudaErrors(cudaMalloc((void **)&d_Q, sizeof(int)*m_ColNum));
 			checkCudaErrors(cudaMalloc((void **)&d_T, sizeof(double)*m_RowNum * 1));
+
 		}
 		cudaDeviceSynchronize();
 		m_bCudaFree = false;
