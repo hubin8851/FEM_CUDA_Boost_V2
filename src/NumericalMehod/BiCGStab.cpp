@@ -11,6 +11,17 @@ namespace HBXFEMDef
 		: BaseConjugate(_dm, _eng)
 	{
 		_trans = CUSPARSE_OPERATION_NON_TRANSPOSE;
+
+		h_ptrF = nullptr;
+		h_ptrR = nullptr;
+		h_ptrRW = nullptr;
+		h_ptrP = nullptr;
+		h_ptrPW = nullptr;
+		h_ptrS = nullptr;
+		h_ptrT = nullptr;
+		h_ptrV = nullptr;
+		h_ptrTX = nullptr;
+		h_ptrMval = nullptr;
 	}
 
 
@@ -18,19 +29,53 @@ namespace HBXFEMDef
 	{
 	}
 
-	void	BiCGStab::ResetMem()
+	void	BiCGStab::ResetMem(int _nnzA, int _nA)
 	{
-		h_ptrF = (double *)malloc(m_RowNum * sizeof(h_ptrF[0]));
-		h_ptrR = (double *)malloc(m_RowNum * sizeof(h_ptrR[0]));
-		h_ptrRW = (double *)malloc(m_RowNum * sizeof(h_ptrRW[0]));
-		h_ptrP = (double *)malloc(m_RowNum * sizeof(h_ptrP[0]));
-		h_ptrPW = (double *)malloc(m_RowNum * sizeof(h_ptrPW[0]));
-		h_ptrS = (double *)malloc(m_RowNum * sizeof(h_ptrS[0]));
-		h_ptrT = (double *)malloc(m_RowNum * sizeof(h_ptrT[0]));
-		h_ptrV = (double *)malloc(m_RowNum * sizeof(h_ptrV[0]));
-		h_ptrTX = (double *)malloc(m_RowNum * sizeof(h_ptrTX[0]));
-		h_ptrMval = (double *)malloc(m_nnzA * sizeof(h_ptrMval[0]));
-		BaseConjugate::ResetMem();
+		BaseConjugate::ResetMem(_nnzA, _nA);
+		if (nullptr != h_ptrF)
+		{
+			delete[] h_ptrF;
+		}
+		h_ptrF = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrF[0]));
+
+		if (nullptr != h_ptrR)
+		{
+			delete[] h_ptrR;
+		}
+		h_ptrR = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrR[0]));
+
+		if (nullptr != h_ptrRW)
+		{
+			delete[] h_ptrRW;
+		}
+		h_ptrRW = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrRW[0]));
+
+		if (nullptr != h_ptrP)
+		{
+			delete[] h_ptrP;
+		}
+		h_ptrP = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrP[0]));
+
+		if (nullptr != h_ptrPW)
+		{
+			delete[] h_ptrPW;
+		}
+		h_ptrPW = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrPW[0]));
+
+		if (nullptr != h_ptrS)
+		{
+			delete[] h_ptrS;
+		}
+		h_ptrS = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrS[0]));
+
+		if (nullptr != h_ptrT)
+		{
+			delete[] h_ptrT;
+		}
+		h_ptrT = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrT[0]));
+		h_ptrV = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrV[0]));
+		h_ptrTX = (UserCalPrec *)malloc(m_RowNum * sizeof(h_ptrTX[0]));
+		h_ptrMval = (UserCalPrec *)malloc(m_nnzA * sizeof(h_ptrMval[0]));
 
 		memset(h_ptrF, 0, m_RowNum * sizeof(h_ptrF[0]));
 		memset(h_ptrR, 0, m_RowNum * sizeof(h_ptrR[0]));
@@ -45,20 +90,23 @@ namespace HBXFEMDef
 	}
 
 	//重载devicemalloc，因为多了临时数组
-	void	BiCGStab::ResetGraphMem()
+	void	BiCGStab::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
-		/* allocate device memory for csr matrix and vectors */
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrF, sizeof(d_ptrF[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrR, sizeof(d_ptrR[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrRW, sizeof(d_ptrRW[0])* m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrP, sizeof(d_ptrP[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrPW, sizeof(d_ptrPW[0])* m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrS, sizeof(d_ptrS[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrT, sizeof(d_ptrT[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrV, sizeof(d_ptrV[0]) * m_RowNum));
-		HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrMval, sizeof(d_ptrMval[0]) * m_nnzA));
+		if (HbxCuDef::NORMAL == _cuMac)
+		{
+			/* allocate device memory for csr matrix and vectors */
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrF, sizeof(d_ptrF[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrR, sizeof(d_ptrR[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrRW, sizeof(d_ptrRW[0])* m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrP, sizeof(d_ptrP[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrPW, sizeof(d_ptrPW[0])* m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrS, sizeof(d_ptrS[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrT, sizeof(d_ptrT[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrV, sizeof(d_ptrV[0]) * m_RowNum));
+			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrMval, sizeof(d_ptrMval[0]) * m_nnzA));
+		}
 
-		BaseConjugate::ResetGraphMem();
+		BaseConjugate::ResetGraphMem(_cuMac);
 		cudaDeviceSynchronize();
 		m_bCudaFree = false;
 	}
@@ -70,8 +118,9 @@ namespace HBXFEMDef
 
 		if (HBXDef::HostToDevice == _temp)
 		{
-			HBXDef::CheckUserDefErrors(cudaMemcpy(d_ptrMval, d_NonZeroVal, (size_t)(m_nnzA * sizeof(d_ptrMval[0])), cudaMemcpyDeviceToDevice));//此算法多传入一个长度为nnz的数组
+			HBXDef::CheckUserDefErrors(cudaMemcpy(d_ptrMval, h_NoneZeroVal, (size_t)(m_nnzA * sizeof(d_ptrMval[0])), cudaMemcpyDeviceToDevice));//此算法多传入一个长度为nnz的数组
 			//传入额外的中间变量,以下步骤是否可以省略？？？
+			//hbx,20190507,不省略了。
 			HBXDef::CheckUserDefErrors(cudaMemcpy(d_ptrF, h_ptrF, (size_t)(m_RowNum * sizeof(d_ptrF[0])), cudaMemcpyHostToDevice));
 			HBXDef::CheckUserDefErrors(cudaMemcpy(d_ptrR, h_ptrR, (size_t)(m_RowNum * sizeof(d_ptrR[0])), cudaMemcpyHostToDevice));
 			HBXDef::CheckUserDefErrors(cudaMemcpy(d_ptrRW, h_ptrRW, (size_t)(m_RowNum * sizeof(d_ptrRW[0])), cudaMemcpyHostToDevice));
@@ -145,17 +194,19 @@ namespace HBXFEMDef
 		double ttt_mv = 0.0;
 
 		//在给定初值条件下计算r0=b-Ax0的残差
-		checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+		checkCudaErrors(cudaDeviceSynchronize());
 		ttm = GetTimeStamp();
+#endif
 		//dr = A*x0
 		checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, m_RowNum, m_RowNum, m_nnzA, &one,
 			descra, d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_x, &zero, d_ptrR));
-
-		cudaThreadSynchronize();
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+		cudaDeviceSynchronize();
 		ttm2 = GetTimeStamp();
 		ttt_mv += (ttm2 - ttm);
 		//printf("matvec %f (s)\n",ttm2-ttm);
-
+#endif
 		//d_r = -d_r
 		checkCudaErrors(cublasDscal(cublasHandle, m_RowNum, &mone, d_ptrR, 1));
 		//d_r= d_f + d_r
@@ -165,8 +216,11 @@ namespace HBXFEMDef
 		checkCudaErrors(cublasDcopy(cublasHandle, m_RowNum, d_ptrR, 1, d_ptrRW, 1));
 		checkCudaErrors(cublasDcopy(cublasHandle, m_RowNum, d_ptrR, 1, d_ptrP, 1));
 		checkCudaErrors(cublasDnrm2(cublasHandle, m_RowNum, d_ptrR, 1, &nrmr0));
+#ifdef _DEBUG
+		printf("gpu, init residual:norm %20.16f\n", nrmr0);
+#endif // _DEBUG
 
-		for (i = 0; i < maxit; )
+		for (i = 0; i < maxit; i++)
 		{
 			rhop = rho;
 			checkCudaErrors(cublasDdot(cublasHandle, m_RowNum, d_ptrRW, 1, d_ptrR, 1, &rho));	//d_rw .d_r
@@ -178,37 +232,44 @@ namespace HBXFEMDef
 				checkCudaErrors(cublasDscal(cublasHandle, m_RowNum, &beta, d_ptrP, 1));					//d_p *= beta;
 				checkCudaErrors(cublasDaxpy(cublasHandle, m_RowNum, &one, d_ptrR, 1, d_ptrP, 1));		//d_p = d_r+ d_p
 			}
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			//预处理阶段 (lower and upper triangular solve)
-			checkCudaErrors(cudaThreadSynchronize());
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttl = GetTimeStamp();
+#endif
 			checkCudaErrors(cusparseSetMatFillMode(descrm, CUSPARSE_FILL_MODE_LOWER));
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_UNIT));
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
 				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_l, d_ptrP, d_ptrT));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttl2 = GetTimeStamp();
 			ttu = GetTimeStamp();
-
+#endif
 			checkCudaErrors(cusparseSetMatFillMode(descrm, CUSPARSE_FILL_MODE_UPPER));
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_NON_UNIT));
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
 				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_u, d_ptrT, d_ptrPW));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttu2 = GetTimeStamp();
 			ttt_sv += (ttl2 - ttl) + (ttu2 - ttu);
-
-			checkCudaErrors(cudaThreadSynchronize());
+			//printf("The %d times solve lower %f (s), upper %f (s) \n", i, ttl2 - ttl, ttu2 - ttu);
+#endif
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttm = GetTimeStamp();
 			// d_v = A * d_pw;
 			checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, m_RowNum, m_nnzA, &one, descra,
 				d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_ptrPW, &zero, d_ptrV));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttm2 = GetTimeStamp();
 			ttt_mv += (ttm2 - ttm);
 			//printf("matvec %f (s)\n",ttm2-ttm);
+#endif
 
 			checkCudaErrors(cublasDdot(cublasHandle, m_RowNum, d_ptrRW, 1, d_ptrV, 1, &temp));  // d_v *= d_rw
 			alpha = rho / temp;
@@ -223,39 +284,48 @@ namespace HBXFEMDef
 				break;
 			}
 			//预处理步骤
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttl = GetTimeStamp();
+#endif
 			checkCudaErrors(cusparseSetMatFillMode(descrm, CUSPARSE_FILL_MODE_LOWER));
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_UNIT));
 			//d_t = M * d_r
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
 				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_l, d_ptrR, d_ptrT));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttl2 = GetTimeStamp();
 			ttu = GetTimeStamp();
-
+#endif
 			checkCudaErrors(cusparseSetMatFillMode(descrm, CUSPARSE_FILL_MODE_UPPER));
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_NON_UNIT));
 			//d_s = M * d_t
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
 				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_u, d_ptrT, d_ptrS));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttu2 = GetTimeStamp();
 			ttt_sv += (ttl2 - ttl) + (ttu2 - ttu);
+#endif
 			//printf("solve lower %f (s), upper %f (s) \n",ttl2-ttl,ttu2-ttu);
 			//matrix-vector multiplication
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttm = GetTimeStamp();
+#endif
 			//d_t = A * d_s;
 			checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, m_RowNum, m_nnzA, &one, descra,
 				d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_ptrS, &zero, d_ptrT));
-			checkCudaErrors(cudaThreadSynchronize());
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
+			checkCudaErrors(cudaDeviceSynchronize());
 			ttm2 = GetTimeStamp();
 			ttt_mv += (ttm2 - ttm);
 			//printf("matvec %f (s)\n",ttm2-ttm);
+#endif
 
 			checkCudaErrors(cublasDdot(cublasHandle, m_RowNum, d_ptrT, 1, d_ptrR, 1, &temp));
 			checkCudaErrors(cublasDdot(cublasHandle, m_RowNum, d_ptrT, 1, d_ptrT, 1, &temp2));
@@ -272,11 +342,11 @@ namespace HBXFEMDef
 				j = 0;
 				break;
 			}
-			i++;
 
 		}//end for
-
+#ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 		printf("gpu total solve time %f (s), matvec time %f (s)\n", ttt_sv, ttt_mv);
+#endif
 	}
 
 
@@ -334,13 +404,13 @@ namespace HBXFEMDef
 		fprintf(stdout, "time(s) = %10.8f \n", stop_ilu - start_ilu);
 
 		double calcstart = HBXDef::GetTimeStamp();
-		gpu_pbicgstab(m_RowNum, _tol, _iter);
+		gpu_pbicgstab(_iter, _tol, ttt_sv);
 		HBXDef::CheckUserDefErrors(cudaThreadSynchronize());
 		double calcstop = HBXDef::GetTimeStamp();
 
 		/* copy the result into host memory */
 		checkCudaErrors(cudaMemcpy(h_ptrTX, d_x, (size_t)(m_RowNum * sizeof(h_ptrTX[0])), cudaMemcpyDeviceToHost));
-
+		fprintf(stdout, "calculate time(s) = %10.8f \n", calcstop - calcstart);
 		return calcstop - calcstart;
 	}
 

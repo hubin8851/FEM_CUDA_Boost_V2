@@ -1,7 +1,13 @@
 #include "BaseConjugate.h"
+#include <random>
 #include <HbxGloFunc.h>
+#include <cuda_runtime.h>
 #include <CudaPreDef.h>
+#include <HBXPreDef.h>
 #include <helper_cuda.h>
+
+#include <..\src\NumericalMehod\mmio.h>
+#include <..\src\NumericalMehod\mmio_wrapper.h>
 
 namespace HBXFEMDef
 {
@@ -19,7 +25,7 @@ namespace HBXFEMDef
 		m_nA = (int)m_RowNum + 1;
 
 #pragma region 重新分配内存，并生成随机数
-		ResetMem();
+		ResetMem(m_nnzA, m_nA);
 
 
 #pragma endregion
@@ -27,10 +33,51 @@ namespace HBXFEMDef
 
 	void BaseConjugate::genRhs(size_t _genRowNum, bool _bsave, const char* _savepath)
 	{
+		using std::default_random_engine;
+		using std::uniform_real_distribution;
+
+		std::cout << "生成等式右端长度为" << _genRowNum << "随机向量" << std::endl;
+
+		std::random_device rd;  //Will be used to obtain a seed for the random number engine
+		std::mt19937 gen(rd());	//Standard mersenne_twister_engine seeded with rd()
+
+		if (0 != h_vNoneZeroVal.size()  )
+		{
+			h_vRhs.resize(_genRowNum);
+			std::vector<HBXDef::UserCalPrec>::iterator max = std::max_element(h_vNoneZeroVal.begin(), h_vNoneZeroVal.end());
+			std::vector<double>::iterator min = std::min_element(h_vNoneZeroVal.begin(), h_vNoneZeroVal.end());	
+			if (fabs(*max-*min)< 0.00001)//判断最大值和最小值一样，说明矩阵内部的数据为某一特定值，故需要右端做一定的变化
+			{
+				goto Random01;
+			}
+			uniform_real_distribution<> dis(*min, *max);
+			for (size_t i = 0; i < _genRowNum; i++)
+			{
+				h_rhs[i] = h_vRhs[i] = dis(gen);
+#ifdef _DEBUG
+				std::cout << h_vRhs[i] << std::endl;
+#endif
+			}
+		}
+		else
+		{
+			Random01:
+			std::cout << "CSR格式矩阵未初始化" << std::endl;
+			std::cout << "将默认等式右端初始化为0-1之间数值" << std::endl;
+			h_vRhs.resize(_genRowNum);
+			uniform_real_distribution<> dis(0, 1);
+			for (size_t i = 0; i < _genRowNum; i++)
+			{
+				h_rhs[i] = h_vRhs[i] = dis(gen);
+				std::cout << h_vRhs[i] << std::endl;
+			}
+		}	
+
+		return;
 	}
 
 	BaseConjugate::BaseConjugate(Domain * _dm, Engng * _eng)
-		:BaseNumMethod(_dm, _eng)
+//		:BaseNumMethod(_dm, _eng)
 	{
 		m_nA = (int)m_RowNum + 1;
 		m_bGenTridiag = false;
@@ -39,6 +86,12 @@ namespace HBXFEMDef
 		m_DevID = -1;
 		m_DataAloc = HBXDef::INVALID;
 		m_bSave = false;				//是否存盘
+
+		memcpy_totalT = 0;
+		startT = 0;
+		stopT = 0;
+		time_sp_analysisT = 0;
+		time_sp_solveT = 0;
 
 		//所用流初始化
 		m_stream = 0;
@@ -70,9 +123,12 @@ namespace HBXFEMDef
 		else FreeGPUResource();
 	}
 
-	void BaseConjugate::ResetMem()
+	void BaseConjugate::ResetMem(int _nnzA, int _nA)
 	{
 		using namespace HBXDef;
+		m_nnzA = _nnzA;
+		m_nA = _nA;
+		m_RowNum = m_ColNum = _nA - 1;
 		if (m_bGenTridiag) return;
 
 		if (nullptr != h_NoneZeroVal)
@@ -99,6 +155,7 @@ namespace HBXFEMDef
 		}
 		_cuError_id = cudaHostAlloc((void**)&h_x, sizeof(UserCalPrec)*m_RowNum, 0);
 //		h_x = (UserCalPrec *)malloc(sizeof(UserCalPrec) * m_RowNum);
+		/* reset the initial guess of the solution to zero */
 		memset(h_x, 0, m_RowNum);
 		if (nullptr != h_rhs)
 		{
@@ -117,39 +174,20 @@ namespace HBXFEMDef
 		{
 #pragma region  裸指针时CSR格式矩阵的显存分配
 			//CSR非零值显存分配
-			_cuError_id = cudaMalloc((void **)&d_NonZeroVal, m_nnzA * sizeof(double));
-			if (_cuError_id != cudaSuccess)
-			{
-				printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-			}
+			checkCudaErrors( cudaMalloc((void **)&d_NonZeroVal, m_nnzA * sizeof(double)) );
+			
 			//CSR列索引值显存分配
-			_cuError_id = cudaMalloc((void **)&d_iColSort, m_nnzA * sizeof(int));
-			if (_cuError_id != cudaSuccess)
-			{
-				printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-			}
+			checkCudaErrors( cudaMalloc((void **)&d_iColSort, m_nnzA * sizeof(int)) );
+			
 			//CSR每行第一个非零数索引显存分配
-			_cuError_id = cudaMalloc((void **)&d_iNonZeroRowSort, m_nA * sizeof(int));
-			if (_cuError_id != cudaSuccess)
-			{
-				printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-			}
+			checkCudaErrors( cudaMalloc((void **)&d_iNonZeroRowSort, m_nA * sizeof(int)) );
+
 			//方程等式右边向量显存分配
-			_cuError_id = cudaMalloc((void **)&d_r, m_RowNum * sizeof(double));
-			if (_cuError_id != cudaSuccess)
-			{
-				printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-			}
+			checkCudaErrors( cudaMalloc((void **)&d_r, m_RowNum * sizeof(double)) );
+
 			//待求特征值显存分配
-			_cuError_id = cudaMalloc((void **)&d_x, m_RowNum * sizeof(double));
-			if (_cuError_id != cudaSuccess)
-			{
-				printf("cudaGetDeviceCount returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-			}
-#ifdef _DEBUG
-			exit(EXIT_FAILURE);
-#endif // _DEBUG
-			m_bCudaFree = false;
+			checkCudaErrors( cudaMalloc((void **)&d_x, m_RowNum * sizeof(double)) );
+
 #pragma  endregion
 		}
 
@@ -157,147 +195,154 @@ namespace HBXFEMDef
 
 	HBXDef::DataAloc_t BaseConjugate::MemCpy(HBXDef::CopyType_t _temp)
 	{
+		using namespace HBXDef;
 		if (HBXDef::DeviceToHost == _temp)
 		{
-			_cuError_id = cudaMemcpy(h_NoneZeroVal, d_NonZeroVal, m_nnzA * sizeof(double), cudaMemcpyDeviceToHost);
-			if (_cuError_id != cudaSuccess)//矩阵中非零数
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(h_iColSort, d_iColSort, m_nnzA * sizeof(int), cudaMemcpyDeviceToHost);
-			if (_cuError_id != cudaSuccess)//矩阵中非零数列索引
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(h_iNonZeroRowSort, d_iNonZeroRowSort, m_nA * sizeof(int), cudaMemcpyDeviceToHost);
-			if (_cuError_id != cudaSuccess)//每行首个非零数行索引
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(h_x, d_x, m_RowNum * sizeof(double), cudaMemcpyDeviceToHost);
-			if (_cuError_id != cudaSuccess)//特征至向量
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(h_rhs, d_r, m_RowNum * sizeof(double), cudaMemcpyDeviceToHost);
-			if (_cuError_id != cudaSuccess)//等式右值
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
+			double start_matrix_copy = GetTimeStamp();
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_NoneZeroVal, d_NonZeroVal, 
+										m_nnzA * sizeof(double), cudaMemcpyDeviceToHost) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iColSort, d_iColSort,
+										m_nnzA * sizeof(int), cudaMemcpyDeviceToHost) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iNonZeroRowSort, d_iNonZeroRowSort,
+										m_nA * sizeof(int), cudaMemcpyDeviceToHost) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_x, d_x, 
+										m_RowNum * sizeof(double), cudaMemcpyDeviceToHost) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_rhs, d_r, 
+										m_RowNum * sizeof(double), cudaMemcpyDeviceToHost) );
+
+			double stop_matrix_copy = GetTimeStamp();
+			memcpy_totalT += stop_matrix_copy - start_matrix_copy;
+			std::cout << "DeviceToHost内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
+
 			return HBXDef::DataAloc_t::DATAINMEM;
 		}
 		else if (HBXDef::HostToDevice == _temp)
 		{
 			double start_matrix_copy = HBXDef::GetTimeStamp();
-			_cuError_id = cudaMemcpy(d_NonZeroVal, h_NoneZeroVal, m_nnzA * sizeof(double), cudaMemcpyHostToDevice);
-			if (_cuError_id != cudaSuccess)//非零值
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(d_iColSort, h_iColSort, m_nnzA * sizeof(int), cudaMemcpyHostToDevice);
-			if (_cuError_id != cudaSuccess)//列索引
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(d_iNonZeroRowSort, h_iNonZeroRowSort, m_nA * sizeof(int), cudaMemcpyHostToDevice);
-			if (_cuError_id != cudaSuccess)//行索引
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(d_x, h_x, m_RowNum * sizeof(double), cudaMemcpyHostToDevice);
-			//		_cuError_id = cudaMemcpy( m_CSRInput.h_x,			d_x,			m_RowNum*sizeof(double), cudaMemcpyDeviceToHost);	//测试用，无错误
-			if (_cuError_id != cudaSuccess)//特征至向量
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
-			_cuError_id = cudaMemcpy(d_r, h_rhs, m_RowNum * sizeof(double), cudaMemcpyHostToDevice);
-			if (_cuError_id != cudaSuccess)//等式右值
-			{
-				printf("cudaMemcpy returned %d\n-> %s\n", (int)_cuError_id, cudaGetErrorString(_cuError_id));
-				exit(EXIT_FAILURE);
-			}
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_NonZeroVal, h_NoneZeroVal,
+										m_nnzA * sizeof(double), cudaMemcpyHostToDevice) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iColSort, h_iColSort,
+										m_nnzA * sizeof(int), cudaMemcpyHostToDevice) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iNonZeroRowSort, h_iNonZeroRowSort,
+										m_nA * sizeof(int), cudaMemcpyHostToDevice) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_x, h_x,
+										m_RowNum * sizeof(double), cudaMemcpyHostToDevice) );
+			
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_r, h_rhs,
+										m_RowNum * sizeof(double), cudaMemcpyHostToDevice) );
+			
 			double end_matrix_copy = HBXDef::GetTimeStamp();
-			std::cout << "双精度基类下系数矩阵及右端向量内存拷贝耗时共计:" << end_matrix_copy - start_matrix_copy << std::endl;
+			memcpy_totalT += end_matrix_copy - start_matrix_copy;
+			std::cout << "基类下系数矩阵及右端向量HostToDevice内存拷贝耗时共计:" << end_matrix_copy - start_matrix_copy << std::endl;
 			return HBXDef::DataAloc_t::DATAINGPU;
 		}
 		else return HBXDef::DataAloc_t::INVALID;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMatFromMTX(const char * _mat_filename, const char* _dir)
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMatFromMTX(char * _mat_filename, const char* _dir)
 	{
-		std::string _tmppath(_dir);
-		_tmppath.append(_mat_filename);
-		// 	char *TmpPath = new char[_tmppath.string().size()+1];
-		// 	memcpy( TmpPath, _tmppath.string().data(), _tmppath.string().size() );
-		// 	TmpPath[_tmppath.string().size()] = '\0';
-		if (HBXDef::loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
+		if (1)
 		{
-			fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
-			return HBXDef::DataAloc_t::INVALID;
-		}
+			std::string _tmppath(_dir);
+			_tmppath.append(_mat_filename);
+			// 	char *TmpPath = new char[_tmppath.string().size()+1];
+			// 	memcpy( TmpPath, _tmppath.string().data(), _tmppath.string().size() );
+			// 	TmpPath[_tmppath.string().size()] = '\0';
+			if (HBXDef::loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
+			{
+				fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
+				return HBXDef::DataAloc_t::INVALID;
+			}
 
-		ResetMem();
-		if (0 == h_viColSort[0] && 0 == h_viNonZeroRowSort[0])
-		{
-			m_CSRIndexBase = CUSPARSE_INDEX_BASE_ZERO;
-			std::cout << "压缩格式的矩阵以零为索引起始..." << std::endl;
+			ResetMem(m_nnzA, m_RowNum + 1);
+			if (0 == h_viColSort[0] && 0 == h_viNonZeroRowSort[0])
+			{
+				m_CSRIndexBase = CUSPARSE_INDEX_BASE_ZERO;
+				std::cout << "压缩格式的矩阵以零为索引起始..." << std::endl;
+			}
+			else if (1 == h_viColSort[0] && 1 == h_viNonZeroRowSort[0])
+			{
+				m_CSRIndexBase = CUSPARSE_INDEX_BASE_ONE;
+				std::cout << "以一为索引起始..." << std::endl;
+			}
+			else return HBXDef::DataAloc_t::INVALID;
+			//在此需每个元素赋值，因为vector的内存可能不连续
+			for (int i = 0; i < m_nnzA; i++)
+			{
+				h_NoneZeroVal[i] = h_vNoneZeroVal[i];
+				h_iColSort[i] = h_viColSort[i];
+			}
+			for (int i = 0; i < m_nA; i++)
+			{
+				h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i];
+			}
 		}
-		else if (1 == h_viColSort[0] && 1 == h_viNonZeroRowSort[0])
+		if (0)//另一种方案，sample原生
 		{
-			m_CSRIndexBase = CUSPARSE_INDEX_BASE_ONE;
-			std::cout << "以一为索引起始..." << std::endl;
+			int matrixM;
+			int matrixN;
+			double *Aval = 0;
+			int nnz;
+			int    *AcolsIndex = 0;
+			int    *ArowsIndex = 0;
+			/* load the coefficient matrix */
+			if (loadMMSparseMatrix(_mat_filename, 'f',
+				true, &matrixM, &matrixN, &nnz, &Aval, &ArowsIndex, &AcolsIndex, 0)) {
+				fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
+				return HBXDef::DataAloc_t::INVALID;
+			}
+			printf("^^^^ M=%d, N=%d, nnz=%d\n", matrixM, matrixN, nnz);
 		}
-		else return HBXDef::DataAloc_t::INVALID;
-		//在此需每个元素赋值，因为vector的内存可能不连续
-		for (int i = 0; i < m_nnzA; i++)
-		{
-			h_NoneZeroVal[i] = h_vNoneZeroVal[i];
-			h_iColSort[i] = h_viColSort[i];
-		}
-		for (int i = 0; i < m_nA; i++)
-		{
-			h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i];
-		}
+				
 		return HBXDef::DataAloc_t::DATAINMEM;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(const void * const _srcVal, const void * const _srcCol, const void * const _srcRow, size_t _nnA, size_t _nA, bool _bsave)
+	UserStatusError_t BaseConjugate::SetStiffMatFrom(HBXDef::_CSRInput<HBXDef::UserCalPrec>* _matIn)
 	{
 		h_vNoneZeroVal.clear();
 		h_viColSort.clear();
 		h_viNonZeroRowSort.clear();
+
+		return UserStatusError_t::USER_STATUS_SUCCESS;
+	}
+
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(HBXDef::UserCalPrec *  _srcVal,
+													size_t *  _srcCol,
+													size_t *  _srcRow, 
+													size_t _nnA, size_t _nA, bool _bsave)
+	{
 		using namespace HBXDef;
-		const UserCalPrec *_tmpVal = static_cast<const UserCalPrec*>(_srcVal);
-		const size_t *_tmpCol = static_cast<const size_t*>(_srcCol);
-		const size_t *_tmpRow = static_cast<const size_t*>(_srcRow);
-		UserCalPrec *p_NoneZeroVal = const_cast<UserCalPrec*>(_tmpVal);
-		size_t *p_iColSort = const_cast<size_t*>(_tmpCol);
-		size_t *p_iNonZeroRowSort = const_cast<size_t*>(_tmpRow);
-		m_nnzA = (int)_nnA;
-		m_nA = (int)_nA;
-		m_RowNum = m_nA - 1;
+//		void *_tmpVal = const_cast<void*>(_srcVal);
+//		void *_tmpCol = const_cast<void*>(_srcCol);
+//		void *_tmpRow = const_cast<void*>(_srcRow);
+
+//		UserCalPrec *p_NoneZeroVal = static_cast<UserCalPrec*>(_srcVal);
+//		size_t *p_iColSort = static_cast<size_t*>(_srcCol);
+//		size_t *p_iNonZeroRowSort = static_cast<size_t*>(_srcRow);
+		if (m_nnzA!=_nnA && m_nA!=_nA)
+		{
+			std::cout << "维度与之前初始化数据不一致，重新分配内存！" << std::endl;
+			return HBXDef::DataAloc_t::INVALID;
+		}
 		h_vNoneZeroVal.resize(m_nnzA);
 		h_viColSort.resize(m_nnzA);
 		h_viNonZeroRowSort.resize(m_nA);
-		ResetMem();
 		//在此需每个元素赋值，因为vector的内存可能不连续
 		for (int i = 0; i < m_nnzA; i++)
 		{
-			h_NoneZeroVal[i] = h_vNoneZeroVal[i] = p_NoneZeroVal[i];
-			h_iColSort[i] = h_viColSort[i] = (int)p_iColSort[i];
+			h_NoneZeroVal[i] = h_vNoneZeroVal[i] = _srcVal[i];
+			h_iColSort[i] = h_viColSort[i] = (int)_srcCol[i];
 		}
 		for (int i = 0; i < m_nA; i++)
 		{
-			h_viNonZeroRowSort[i] = h_viNonZeroRowSort[i] = (int)p_iNonZeroRowSort[i];
+			h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i] = (int)_srcRow[i];
 		}
 		return HBXDef::DataAloc_t::DATAINMEM;
 	}
@@ -315,7 +360,7 @@ namespace HBXFEMDef
 		if (m_nnzA == h_vNoneZeroVal.size() && m_nnzA == h_viColSort.size() && m_nA == h_viNonZeroRowSort.size())//m_nA = N+1，在此无误
 		{
 			std::cout << "正确读取CSR数据,维度正确..." << std::endl;
-			ResetMem();
+			ResetMem(m_nnzA, m_nA);
 			if (0 == h_viColSort[0] && 0 == h_viNonZeroRowSort[0])
 			{
 				m_CSRIndexBase = CUSPARSE_INDEX_BASE_ZERO;
@@ -345,6 +390,7 @@ namespace HBXFEMDef
 			return HBXDef::DataAloc_t::INVALID;
 		}
 	}
+
 
 	HBXDef::DataAloc_t BaseConjugate::SetLoadVec(const char * _FileName, const char* _dir)
 	{
@@ -389,12 +435,20 @@ namespace HBXFEMDef
 		return HBXDef::DataAloc_t::INVALID;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetLoadVec(const void * _LoadVec, size_t _RowNum)
+	HBXDef::DataAloc_t BaseConjugate::SetLoadVec(HBXDef::UserCalPrec * _LoadVec, size_t _RowNum)
 	{
+		if (nullptr == _LoadVec)
+		{
+			this->genRhs(_RowNum);
+			return DataAloc_t::DATAINMEM;
+		}
+
 		using namespace HBXDef;
-		const UserCalPrec* _tmpload = static_cast<const UserCalPrec*>(_LoadVec);
+//		void* pVoid = const_cast<void*>(_LoadVec);
+//		const UserCalPrec* _tmpload = static_cast<const UserCalPrec*>(_LoadVec);
 		h_vRhs.resize(_RowNum);
-		h_rhs = const_cast<UserCalPrec*>(_tmpload);
+//		h_rhs = static_cast<UserCalPrec*>(_LoadVec);
+		h_rhs = _LoadVec;
 		m_nA = (int)_RowNum + 1;
 		//在此需每个元素赋值，因为vector的内存可能不连续
 		for (int i = 0; i < _RowNum; i++)
@@ -422,6 +476,13 @@ namespace HBXFEMDef
 		h_viNonZeroRowSort.clear();
 
 
+	}
+
+	UserStatusError_t BaseConjugate::Solve(SparseMat & _A, HBXDef::UserCalPrec & b, HBXDef::UserCalPrec & _x)
+	{
+
+
+		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
 	bool BaseConjugate::InitialDescr(cudaStream_t _stream, cusparseMatrixType_t _MatrixType)

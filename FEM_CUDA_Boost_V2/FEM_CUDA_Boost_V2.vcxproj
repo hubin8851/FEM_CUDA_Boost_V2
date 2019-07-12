@@ -22,7 +22,7 @@
     <ProjectGuid>{9B499C68-D044-4A8B-9019-AC0C64D1E4AE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>FEM_CUDA_Boost_V2</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -53,7 +53,7 @@
     <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -89,7 +89,9 @@
     <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
     <Import Project="..\CUFEM.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_rl.props" />
+    <Import Project="E:\SDK\hbxdef\x64\MyMetis.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_rl_MDD.props" />
+    <Import Project="E:\SDK\hbxdef\MatlabInterface.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -132,7 +134,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;libInterpolate.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libNumericalMethod.lib;libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;libInterpolate.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>nafxcwd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <CudaCompile>
@@ -167,14 +169,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libVtk.lib;libInterpolate.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libNumericalMethod.lib;libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;libInterpolate.lib;libboost_atomic-vc140-mt-gd-1_65_1.lib;libboost_chrono-vc140-mt-gd-1_65_1.lib;libboost_container-vc140-mt-gd-1_65_1.lib;libboost_coroutine-vc140-mt-gd-1_65_1.lib;libboost_date_time-vc140-mt-gd-1_65_1.lib;libboost_exception-vc140-mt-gd-1_65_1.lib;libboost_filesystem-vc140-mt-gd-1_65_1.lib;libboost_graph-vc140-mt-gd-1_65_1.lib;libboost_iostreams-vc140-mt-1_65_1.lib;libboost_locale-vc140-mt-gd-1_65_1.lib;libboost_log-vc140-mt-gd-1_65_1.lib;libboost_log_setup-vc140-mt-gd-1_65_1.lib;libboost_math_c99-vc140-mt-gd-1_65_1.lib;libboost_math_c99f-vc140-mt-gd-1_65_1.lib;libboost_math_c99l-vc140-mt-gd-1_65_1.lib;libboost_math_tr1-vc140-mt-gd-1_65_1.lib;libboost_math_tr1f-vc140-mt-gd-1_65_1.lib;libboost_math_tr1l-vc140-mt-gd-1_65_1.lib;libboost_prg_exec_monitor-vc140-mt-gd-1_65_1.lib;libboost_program_options-vc140-mt-gd-1_65_1.lib;libboost_random-vc140-mt-gd-1_65_1.lib;libboost_regex-vc140-mt-gd-1_65_1.lib;libboost_signals-vc140-mt-gd-1_65_1.lib;libboost_system-vc140-mt-gd-1_65_1.lib;libboost_test_exec_monitor-vc140-mt-gd-1_65_1.lib;libboost_thread-vc140-mt-gd-1_65_1.lib;libboost_timer-vc140-mt-gd-1_65_1.lib;libboost_unit_test_framework-vc140-mt-gd-1_65_1.lib;libboost_wave-vc140-mt-gd-1_65_1.lib;libboost_wserialization-vc140-mt-gd-1_65_1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -200,6 +203,7 @@
     <ClInclude Include="IntervalTest.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="NumericalCalTest.h" />
     <ClInclude Include="ReaderTest.h" />
     <ClInclude Include="regextest.h" />
     <ClInclude Include="Resource.h" />
@@ -218,13 +222,16 @@
     </ClCompile>
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxXmlDef\AeroTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ElementMatricTest.cpp" />
     <ClCompile Include="EngngTest.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="FEM_CUDA_Boost_V2.cpp" />
+    <ClCompile Include="NumericalCalTest.cpp" />
     <ClCompile Include="vtktest.cpp" />
     <CudaCompile Include="IntervalTest.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

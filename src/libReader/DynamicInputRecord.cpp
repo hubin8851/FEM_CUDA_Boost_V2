@@ -186,6 +186,18 @@ namespace HBXFEMDef
 		return InputFileResult_t::IRRT_OK;
 	}
 
+	InputFileResult_t DynamicInputRecord::GiveField(std::shared_ptr< std::vector<Node>> answer, 
+													std::string _strName)
+	{
+		std::map< std::string, std::shared_ptr<std::vector<HBXFEMDef::Node>> > ::iterator _it = this->NodeArrayRecord.find(_strName);
+		if (_it == this->NodeArrayRecord.end())
+		{
+			return InputFileResult_t::IRRT_NOTFOUND;
+		}
+		answer = _it->second;
+		return InputFileResult_t::IRRT_OK;
+	}
+
 	InputFileResult_t DynamicInputRecord::GiveField(std::vector<HBXFEMDef::UserReadPrec>* answer, InputFieldType _id)
 	{
 		std::map< std::string, std::vector<HBXFEMDef::UserReadPrec> > ::iterator _it = this->CalDataArraRecord.find(_id);

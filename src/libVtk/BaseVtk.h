@@ -65,7 +65,7 @@ protected:
 	virtual vtkFloatArray* GetCurData(vtkPolyDataAlgorithm* _dataIn);
 
 
-	static void CallbackFunc(vtkObject* _caller, unsigned long _eventId, void* clientdata, void* _callData);
+//	static void CallbackFunc(vtkObject* _caller, unsigned long _eventId, void* clientdata, void* _callData);
 public:
 	BaseVtk();
 	BaseVtk( unsigned int _wide, unsigned int _height );
@@ -87,7 +87,7 @@ public:
 //_intArray:传入的属性参数指针
 //_num 长度
 //_name 待放入部件的名称，默认part0
-	virtual void SetScalar(int* _intArray, int _num, const char* _name = "part0");
+	virtual void SetScalar(int* _intArray, int _lgth, int _colorCount, const char* _name = "part0");
 	virtual void SetScalar(float* _fArray, int _num, const char* _name = "part0");
 	virtual void SetScalar(double* _dArray, int _num, const char* _name = "part0");
 
@@ -100,7 +100,7 @@ public:
 	void ResizeWin(unsigned int _wide, unsigned int _height);
 
 	//设置颜色表,必须在setdata函数后使用
-	void SetColorTable( HBXDef::ColorType_t _t = HBXDef::ColorType_t::RGB );
+	void SetColorTable( HBXDef::ColorType_t _t = HBXDef::ColorType_t::RGB,  int _ColorCount = 0);
 
 	//设置标签栏,必须在设置颜色表函数后使用，否则无效
 	void SetScalarBar();

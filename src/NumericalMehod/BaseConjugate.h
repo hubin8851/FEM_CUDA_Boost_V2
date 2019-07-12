@@ -2,10 +2,21 @@
 #include <ExportDef.h>
 #include <HbxDefMacro.h>
 #include <HBXDefStruct.h>
-#include <CuDefMacro.h>
-
+#include <CudaPreDef.h>
 #include <libCUFEM\BaseNumMethod.h>
 #include <HbxGloFunc.h>
+
+#ifndef _THRUST_
+
+#else
+
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+#include <thrust/copy.h>
+#include <thrust/fill.h>
+#include <thrust/sequence.h>
+
+#endif
 
 namespace HBXFEMDef
 {
@@ -17,8 +28,8 @@ namespace HBXFEMDef
 
 
 	//参考于FEMCal_CUDA_mpi_Boost下的BaseXConjugate基类，略作修改
-	class CUFEM_API BaseConjugate:
-		public BaseNumMethod
+	class CUFEM_API BaseConjugate
+//		:public BaseNumMethod
 	{
 	protected:
 		bool		m_bCudaFree;	//判断是否在释放CUDA资源
@@ -32,7 +43,12 @@ namespace HBXFEMDef
 		cusparseStatus_t	_cusparseError_id;		//cusparse得返回值
 		HBXDef::DataAloc_t	m_DataAloc;
 
-		float	msecUsed;	//时间统计double型变量
+		double startT, stopT;
+		double memcpy_totalT;
+		double time_sp_analysisT;//分析时间，相当于初始化阶段矩阵预处理时间
+		double time_sp_solveT;//解算时间
+
+		double	msecUsed;	//时间统计double型变量
 		double	m_qaerr1;	//残差
 		size_t	m_iters;		//迭代次数
 
@@ -63,10 +79,17 @@ namespace HBXFEMDef
 		HBXDef::UserCalPrec*		d_x;	//待求特征值
 		HBXDef::UserCalPrec*		d_r;	//等式右边向量
 
-		std::vector<double>	h_vNoneZeroVal;
+#ifndef _THRUST_
+		std::vector<HBXDef::UserCalPrec>	h_vNoneZeroVal;
 		std::vector<int>		h_viColSort;
 		std::vector<int>		h_viNonZeroRowSort;
-		std::vector<double>	h_vRhs;
+		std::vector<HBXDef::UserCalPrec>	h_vRhs;
+#else
+		thrust::host_vector<HBXDef::UserCalPrec> h_vNoneZeroVal;
+		thrust::host_vector<int> h_viColSort;
+		thrust::host_vector<int> h_viNonZeroRowSort;
+		thrust::host_vector<HBXDef::UserCalPrec> h_vRhs;
+#endif
 	protected:
 		//生成随机的三对角对称阵
 		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
@@ -76,7 +99,7 @@ namespace HBXFEMDef
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();
 
-		virtual void	ResetMem();									//重置内存
+		virtual void	ResetMem(int _nnzA, int _nA);									//重置内存
 		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);		//在GPU上重置显存
 
 		//设备和主机端的内存拷贝
@@ -87,10 +110,12 @@ namespace HBXFEMDef
 		/************************************************************************/
 
 		//从Mtx格式的文件读取三元数的稀疏矩阵信息
-		HBXDef::DataAloc_t		SetStiffMatFromMTX(const char* _mat_filename = "gr_900_900_crg.mtx", const const char* _dir = "..\\data\\check");
+		HBXDef::DataAloc_t		SetStiffMatFromMTX( char* _mat_filename = "gr_900_900_crg.mtx", const const char* _dir = "..\\data\\check");
+
+		UserStatusError_t SetStiffMatFrom( HBXDef::_CSRInput<HBXDef::UserCalPrec>* _matIn );
 
 		//从外部获取三个数组指针及其长度得到刚度矩阵的CSR格式
-		HBXDef::DataAloc_t	SetStiffMat(const void *const _srcVal, const void *const _srcCol, const void *const _srcRow,
+		HBXDef::DataAloc_t	SetStiffMat(HBXDef::UserCalPrec * _srcVal, size_t * _srcCol, size_t * _srcRow,
 			size_t _nnA, size_t _nA, bool _bsave = false);
 		//从文件中读取CSR格式的刚度矩阵
 		HBXDef::DataAloc_t		SetStiffMat(const char* _NoneZeroVal = "NoneZeroVal.data",
@@ -101,7 +126,7 @@ namespace HBXFEMDef
 		//从文件中读取载荷向量
 		virtual HBXDef::DataAloc_t SetLoadVec(const char* _FileName = "LoadVec.data", const const char* _dir = "..\\data\\source");
 		//从类外部获得载荷数组指针
-		HBXDef::DataAloc_t	SetLoadVec(const void* _LoadVec, size_t _RowNum);
+		HBXDef::DataAloc_t	SetLoadVec(HBXDef::UserCalPrec* _LoadVec, size_t _RowNum);
 
 		virtual const char* GetClassName() const { return typeid(BaseConjugate).name(); };
 
@@ -116,7 +141,7 @@ namespace HBXFEMDef
 
 		virtual void Reset();
 
-		virtual UserStatusError solve();
+		virtual UserStatusError_t Solve(SparseMat& _A, HBXDef::UserCalPrec& b, HBXDef::UserCalPrec& _x) ;
 
 		//初始化描述器等对象
 		virtual	bool		InitialDescr(cudaStream_t _stream = 0, 

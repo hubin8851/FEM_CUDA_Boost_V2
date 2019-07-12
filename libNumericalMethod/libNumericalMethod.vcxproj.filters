@@ -30,6 +30,21 @@
     <ClInclude Include="NumericalMethodTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\mmio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\mmio_wrapper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\PcgConjugate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\CgConjugate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -48,6 +63,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NumericalMethodTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\mmio.c">
+      <Filter>头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\PcgConjugate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

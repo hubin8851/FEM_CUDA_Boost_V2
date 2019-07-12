@@ -91,6 +91,8 @@ namespace HBXFEMDef
 
 		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::Node>& answer, InputFieldType _id);
 
+		virtual InputFileResult_t GiveField(std::shared_ptr< std::vector<Node>> answer, std::string _strName);
+
 		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::UserReadPrec>* answer, InputFieldType _id);
 
 		virtual InputFileResult_t GiveField(std::shared_ptr<HBXFEMDef::NSortMat<HBXDef::UserCalPrec>>* answer, InputFieldType _id);

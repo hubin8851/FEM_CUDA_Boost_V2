@@ -1,3 +1,6 @@
+#ifdef _STDAFX_
+#include "stdafx.h"
+#endif
 #include "NumericalMethodTest.h"
 #include <libCUFEM\solverEnum.h>
 #include <libCUFEM\util.h>
@@ -6,7 +9,7 @@
 #include <libReader\InpDataReader.h>
 
 extern "C"
-void NumericalMethodTest(void * void_arg)
+void NumericalCalTest(void * void_arg)
 {
 
 

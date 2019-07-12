@@ -115,7 +115,8 @@ namespace HBXFEMDef
 
 	::ImpMatError_t UFgetMatReader::ReadRhs(const mxArray * const _Array)
 	{
-		return ::ImpMatError_t();
+		m_MatMsg.h_rhs = mxGetPr(_Array);
+		return ::ImpMatError_t::IMPSUCCESS;
 	}
 
 	::ImpMatError_t UFgetMatReader::ReadCell(const mxArray * const _Array)
@@ -142,7 +143,9 @@ namespace HBXFEMDef
 		int _ndir = -1;	//根目录下mxArray数目
 		int _nfield = -1;	//mxArray下file数目
 
-		m_pMatFile = matOpen( BaseReader::m_path.c_str(), "r" );
+		std::string _tmpstr = BaseReader::m_path + "\\" + BaseReader::m_SrcFileName;
+
+		m_pMatFile = matOpen(_tmpstr.c_str(), "r" );
 		if (nullptr == m_pMatFile)
 		{
 			std::cerr << "当前路径索引不正确未找到mat文件" << std::endl;
@@ -184,9 +187,9 @@ namespace HBXFEMDef
 		return InputFileResult::IRRT_OK;
 	}
 
-	void * UFgetMatReader::GetStiffMat(bool _bSv)
+	HBXDef::_CSRInput<HBXDef::UserCalPrec>* UFgetMatReader::GetStiffMat(bool _bSv)
 	{
-		return nullptr;
+		return &this->m_MatMsg;
 	}
 
 	void * UFgetMatReader::GetRhsVec(bool _bSv)

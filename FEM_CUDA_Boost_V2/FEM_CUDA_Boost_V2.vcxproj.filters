@@ -90,6 +90,9 @@
     <ClInclude Include="ElementMatricTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="NumericalCalTest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -117,6 +120,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="vtktest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="NumericalCalTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

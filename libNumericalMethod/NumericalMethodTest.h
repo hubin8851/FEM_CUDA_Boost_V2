@@ -1,4 +1,4 @@
 #pragma once
 
 
-extern "C" void NumericalMethodTest(void* void_arg = nullptr);
+extern "C" void NumericalCalTest(void* void_arg = nullptr);

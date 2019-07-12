@@ -14,14 +14,17 @@
 
 void ReaderTest(void * void_arg)
 {
-	if (0)
+	if (1)//UFGET∂¡»°∆˜≤‚ ‘
 	{
-//		using namespace HBXFEMDef;
-//		UFgetMatReader  g_UFgetMatReader("UF_Index.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat");
-//		bool _res = g_UFgetMatReader.SetInputData();
+		using namespace HBXFEMDef;
+		UFgetMatReader  g_UFgetMatReader("bcsstk03.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat\\HB");
+		bool _res = g_UFgetMatReader.SetInputData();
+		HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_UFgetMatReader.GetStiffMat();
+
+
 	}
 	
-	if (1)
+	if (0)
 	{
 		using namespace HBXFEMDef;
 		InpDataReader g_InpDataReader("B31BEAMTEST.inp", "F:\\data_from_HBX_phd\\database\\B31Test\\");

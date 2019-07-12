@@ -49,8 +49,8 @@ namespace HBXFEMDef
 		//强制断开所有数据连接
 		void terminate() {};
 
-		//获取稀疏矩阵模板函数
-		void* GetStiffMat( bool _bSv = false );
+		//获取CSR格式稀疏矩阵
+		HBXDef::_CSRInput<HBXDef::UserCalPrec>* GetStiffMat( bool _bSv = false );
 
 		//输出系统方程右端向量
 		void* GetRhsVec( bool _bSv = false );

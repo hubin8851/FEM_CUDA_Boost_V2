@@ -84,6 +84,12 @@ namespace HBXFEMDef
 			return InputFileResult_t::IRRT_NOTFOUND;
 		};
 
+		InputFileResult_t GiveField(std::shared_ptr< std::vector<Node>> answer, std::string _strName)
+		{
+			std::cout << "气动数据表内无节点数据" << std::endl;
+			return InputFileResult_t::IRRT_NOTFOUND;
+		}
+
 		InputFileResult_t GiveField(std::vector<HBXFEMDef::UserReadPrec>* answer, InputFieldType _id) 
 		{
 			std::cout << "气动数据表内无节点数据" << std::endl;

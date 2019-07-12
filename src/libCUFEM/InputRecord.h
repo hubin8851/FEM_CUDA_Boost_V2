@@ -80,6 +80,8 @@ CheckUserDefErrors(result);
 
 		virtual InputFileResult_t GiveField(std::string &answer, InputFieldType _id) = 0;
 
+		virtual InputFileResult_t GiveField(std::shared_ptr< std::vector<Node>> answer, std::string _strName) = 0;//为了domain提供接口
+
 		virtual InputFileResult_t GiveField(std::vector<HBXFEMDef::Node>& answer, InputFieldType _id) = 0;
 
 		virtual InputFileResult_t GiveField( std::vector<HBXDef::UserReadPrec>* answer, InputFieldType _id) = 0;

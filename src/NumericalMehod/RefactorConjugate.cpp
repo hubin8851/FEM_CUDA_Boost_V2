@@ -1,0 +1,252 @@
+#include "RefactorConjugate.h"
+#include <helper_cuda.h>
+#include "helper_hbx.h"
+
+namespace HBXFEMDef
+{
+	double RefactorConjugate::GetB()
+	{
+		fprintf(stdout,"step 3: B = Q*A*Q^T\n");
+		memcpy(h_csrRowPtrB, h_iNonZeroRowSort, sizeof(int)*(m_RowNum + 1));
+		memcpy(h_csrColIndB, h_iColSort, sizeof(int)*m_nnzA);
+
+		startT = GetTimeStamp();
+
+		checkCudaErrors(cusolverSpXcsrperm_bufferSizeHost(
+			cusolverSpH, m_RowNum, m_ColNum, m_nnzA,
+			Matdescr, h_csrRowPtrB, h_csrColIndB,
+			h_Qreorder, h_Qreorder,
+			&size_perm));
+
+		if (buffer_cpu) {
+			free(buffer_cpu);
+		}
+		buffer_cpu = (void*)malloc(sizeof(char)*size_perm);
+		assert(NULL != buffer_cpu);
+
+		// h_mapBfromA = Identity 
+		for (int j = 0; j < m_nnzA; j++) {
+			h_mapBfromA[j] = j;
+		}
+		checkCudaErrors(cusolverSpXcsrpermHost(
+			cusolverSpH, m_RowNum, m_ColNum, m_nnzA,
+			Matdescr, h_csrRowPtrB, h_csrColIndB,
+			h_Qreorder, h_Qreorder,
+			h_mapBfromA,
+			buffer_cpu));
+
+		// B = A( mapBfromA )
+		for (int j = 0; j < m_nnzA; j++) {
+			h_csrValB[j] = h_NoneZeroVal[h_mapBfromA[j]];
+		}
+
+		stopT = GetTimeStamp();
+		time_permT = stopT - startT;
+		fprintf(stdout, " B = Q*A*Q^T : %f sec\n", time_permT);
+
+		return time_permT;
+	}
+
+
+	RefactorConjugate::RefactorConjugate(Domain * _dm, Engng * _eng)
+		:BaseConjugate(_dm, _eng)
+	{
+
+	}
+
+	RefactorConjugate::~RefactorConjugate()
+	{
+
+	}
+
+	void RefactorConjugate::ResetMem(int _nnzA, int _nA)
+	{
+		BaseConjugate::ResetMem(_nnzA, _nA);
+
+		h_Qreorder = (int*)malloc(sizeof(int)*m_ColNum);
+
+		h_csrRowPtrB = (int*)malloc(sizeof(int)*(m_RowNum + 1));
+		h_csrColIndB = (int*)malloc(sizeof(int)*_nnzA);
+		h_csrValB = (double*)malloc(sizeof(double)*_nnzA);
+		h_mapBfromA = (int*)malloc(sizeof(int)*_nnzA);
+
+		h_r = (double*)malloc(sizeof(double)*m_RowNum);
+		h_xhat = (double*)malloc(sizeof(double)*m_ColNum);
+		h_bhat = (double*)malloc(sizeof(double)*m_RowNum);
+
+	}
+
+	void RefactorConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
+	{
+		BaseConjugate::ResetGraphMem(_cuMac);
+		if (HbxCuDef::NORMAL == _cuMac)
+		{
+			checkCudaErrors(cudaMalloc((void **)&d_b, sizeof(double)*m_RowNum));
+			checkCudaErrors(cudaMalloc((void **)&d_P, sizeof(int)*m_RowNum));
+			checkCudaErrors(cudaMalloc((void **)&d_Q, sizeof(int)*m_ColNum));
+			checkCudaErrors(cudaMalloc((void **)&d_T, sizeof(double)*m_RowNum * 1));
+		}
+		cudaDeviceSynchronize();
+		m_bCudaFree = false;
+	}
+
+	HBXDef::DataAloc_t RefactorConjugate::MemCpy(HBXDef::CopyType_t _temp)
+	{
+		using namespace HBXDef;
+		double start_matrix_copy, stop_matrix_copy;
+
+
+		if (HBXDef::HostToDevice == _temp)
+		{
+			start_matrix_copy = GetTimeStamp();
+
+			stop_matrix_copy = GetTimeStamp();
+		}
+
+		std::cout << "双共轭梯度法内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
+		return BaseConjugate::MemCpy(_temp);
+	}
+
+	bool RefactorConjugate::InitialDescr(cudaStream_t _stream, cusparseMatrixType_t _MatrixType)
+	{
+		m_stream = _stream;
+		BaseConjugate::InitialDescr(_stream, _MatrixType);
+
+		checkCudaErrors(cusolverSpCreate(&cusolverSpH));
+		checkCudaErrors(cusparseCreate(&cusparseHandle));
+		checkCudaErrors(cudaStreamCreate(&m_stream));
+
+		checkCudaErrors(cusolverSpSetStream(cusolverSpH, m_stream));
+		checkCudaErrors(cusparseSetStream(cusparseHandle, m_stream));
+
+		checkCudaErrors(cusparseCreateMatDescr(&Matdescr));
+		checkCudaErrors(cusparseSetMatType(Matdescr, CUSPARSE_MATRIX_TYPE_GENERAL));
+
+		if (m_CSRIndexBase)
+		{
+			checkCudaErrors(cusparseSetMatIndexBase(Matdescr, CUSPARSE_INDEX_BASE_ONE));
+		}
+		else
+		{
+			checkCudaErrors(cusparseSetMatIndexBase(Matdescr, CUSPARSE_INDEX_BASE_ZERO));
+		}
+
+
+		return true;
+	}
+
+	double RefactorConjugate::Preconditioning(ReorderType_t _type)
+	{
+		fprintf(stdout, "step 2: reorder the matrix to reduce zero fill-in\n");
+		fprintf(stdout, "        Q = symrcm(A) or Q = symamd(A) \n");
+
+		startT = GetTimeStamp();
+
+		if (SYMRCM == _type )
+		{
+			checkCudaErrors(cusolverSpXcsrsymrcmHost(
+				cusolverSpH, m_RowNum, m_nnzA,
+				Matdescr, h_iNonZeroRowSort, h_iColSort,
+				h_Qreorder));
+		}
+		else if (SYMAMD == _type)
+		{
+			checkCudaErrors(cusolverSpXcsrsymamdHost(
+				cusolverSpH, m_RowNum, m_nnzA,
+				Matdescr, h_iNonZeroRowSort, h_iColSort,
+				h_Qreorder));
+		}
+		else
+		{
+			fprintf(stderr, "Error: unknow reordering\n");
+			return -1;
+		}
+		stopT = GetTimeStamp();
+		time_reorderT = stopT - startT;
+
+		return time_reorderT;
+	}
+
+	double RefactorConjugate::ConjugateWithGPU(const double & _tol, const int & _iter)
+	{
+		fprintf(stdout,"step 4: solve A*x = b by LU(B) in cusolverSp\n");
+
+		printf("step 4.1: create opaque info structure\n");
+		checkCudaErrors(cusolverSpCreateCsrluInfoHost(&info));
+
+		printf("step 4.2: analyze LU(B) to know structure of Q and R, and upper bound for nnz(L+U)\n");
+		startT = GetTimeStamp();
+
+		checkCudaErrors(cusolverSpXcsrluAnalysisHost(
+			cusolverSpH, m_RowNum, m_nnzA,
+			Matdescr, h_csrRowPtrB, h_csrColIndB,
+			info));
+
+		stopT = GetTimeStamp();
+		time_sp_analysisT = stopT - startT;
+
+		printf("step 4.3: workspace for LU(B)\n");
+		checkCudaErrors(cusolverSpDcsrluBufferInfoHost(
+			cusolverSpH, m_RowNum, m_nnzA,
+			Matdescr, h_csrValB, h_csrRowPtrB, h_csrColIndB,
+			info,
+			&size_internal,
+			&size_lu));
+
+		if (buffer_cpu) {
+			free(buffer_cpu);
+			}
+		buffer_cpu = (void*)malloc(sizeof(char)*size_lu);
+		assert(NULL != buffer_cpu);
+
+		printf("step 4.4: compute Ppivot*B = L*U \n");
+
+		startT = GetTimeStamp();
+
+		checkCudaErrors(cusolverSpDcsrluFactorHost(
+			cusolverSpH, m_RowNum, m_nnzA,
+			Matdescr, h_csrValB, h_csrRowPtrB, h_csrColIndB,
+			info, pivot_threshold,
+			buffer_cpu));
+
+		stopT = GetTimeStamp();
+		time_sp_factorT = stopT - startT;
+
+		// TODO: check singularity by tol
+		printf("step 4.5: check if the matrix is singular \n");
+		checkCudaErrors(cusolverSpDcsrluZeroPivotHost(
+			cusolverSpH, info, tol, &singularity));
+
+		if (0 <= singularity) {
+			fprintf(stderr, "Error: A is not invertible, singularity=%d\n", singularity);
+			return 1;
+		}
+
+		printf("step 4.6: solve A*x = b \n");
+		printf("    i.e.  solve B*(Qx) = Q*b \n");
+		startT = GetTimeStamp();
+
+		// b_hat = Q*b
+		for (int j = 0; j < m_RowNum; j++) {
+			h_bhat[j] = h_rhs[h_Qreorder[j]];
+		}
+		// B*x_hat = b_hat
+		checkCudaErrors(cusolverSpDcsrluSolveHost(
+			cusolverSpH, m_RowNum, h_bhat, h_xhat, info, buffer_cpu));
+
+		// x = Q^T * x_hat
+		for (int j = 0; j < m_RowNum; j++) {
+			h_x[h_Qreorder[j]] = h_xhat[j];
+		}
+
+		stopT = GetTimeStamp();
+		time_sp_solveT = stopT - startT;
+
+
+
+		return 0.0;
+	}
+
+
+}
+

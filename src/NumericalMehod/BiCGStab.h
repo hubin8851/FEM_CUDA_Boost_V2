@@ -21,17 +21,18 @@ namespace HBXFEMDef
 
 		int arraySizeX, arraySizeF, arraySizeR, arraySizeRW, arraySizeP, arraySizePW, arraySizeS, arraySizeT, arraySizeV;
 		//主机端计算中的中间变量
-		double *h_ptrF;
-		double *h_ptrR, *h_ptrRW;
-		double *h_ptrP, *h_ptrPW;
-		double *h_ptrS, *h_ptrT, *h_ptrV, *h_ptrTX;
-		double *h_ptrMval;
+		//hbx,20190507,似乎都用不到？？？？
+		UserCalPrec *h_ptrF;
+		UserCalPrec *h_ptrR, *h_ptrRW;
+		UserCalPrec *h_ptrP, *h_ptrPW;
+		UserCalPrec *h_ptrS, *h_ptrT, *h_ptrV, *h_ptrTX;
+		UserCalPrec *h_ptrMval;
 		//设备端计算中的中间变量
-		double *d_ptrF;
-		double *d_ptrR, *d_ptrRW;
-		double *d_ptrP, *d_ptrPW;
-		double *d_ptrS, *d_ptrT, *d_ptrV;
-		double *d_ptrMval;
+		UserCalPrec *d_ptrF;
+		UserCalPrec *d_ptrR, *d_ptrRW;
+		UserCalPrec *d_ptrP, *d_ptrPW;
+		UserCalPrec *d_ptrS, *d_ptrT, *d_ptrV;
+		UserCalPrec *d_ptrMval;
 	protected:
 		//@maxit:最大迭代次数
 		//@tol:许用误差精度
@@ -42,8 +43,8 @@ namespace HBXFEMDef
 		virtual ~BiCGStab();
 //		void	FreeGPUResource();
 
-		virtual void	ResetMem();//重载HostMalloc，因为可能需要拷贝更多的参数
-		virtual void	ResetGraphMem();//重载devicemalloc，因为多了临时数组
+		virtual void	ResetMem(int _nnzA, int _nA);//重载HostMalloc，因为可能需要拷贝更多的参数
+		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);//重载devicemalloc，因为多了临时数组
 
 							   //设备和主机端的内存拷贝,在此处重载，因为需要拷贝更多的参数
 		virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
@@ -55,6 +56,8 @@ namespace HBXFEMDef
 		//@_tol:残差
 		//@_iter:迭代次数
 		double	ConjugateWithGPU(const double &_tol, const int &_iter);
+
+
 
 	};
 
