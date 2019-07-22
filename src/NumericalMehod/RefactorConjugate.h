@@ -17,6 +17,9 @@ namespace HBXFEMDef
 		SYMAMD,		//对称近似最小阶数置换
 	}ReorderType_t;
 	
+
+	//基于RCM，缩减带宽的预处理共轭梯度法
+	//流程为resetmem->resetGraphmem->Preconditioning->getB
 	class CUFEM_API RefactorConjugate 
 		:public BaseConjugate
 	{
@@ -30,7 +33,7 @@ namespace HBXFEMDef
 							// reorder to reduce zero fill-in
 							// Qreorder = symrcm(A) or Qreroder = symamd(A)
 
-		// B = Q*A*Q^T
+		// B = Q*A*Q^T，就是RCM后的矩阵A~，因为只是减小带宽，故nnzA不变
 		int *h_csrRowPtrB = nullptr; // <int> n+1
 		int *h_csrColIndB = nullptr; // <int> nnzA
 		HBXDef::UserCalPrec *h_csrValB = nullptr; // <HBXDef::UserCalPrec> nnzA
@@ -49,6 +52,12 @@ namespace HBXFEMDef
 		void *buffer_cpu = nullptr; // working space for
 							 // - permutation: B = Q*A*Q^T
 							 // - LU with partial pivoting in cusolverSp
+
+		//cusplverSp通过部分主消元的办法计算LU分解
+		//     Plu*B*Qlu^T = L*U
+		//直至因式分解完成后nnzL和nnzU才能知道
+		int *h_Plu = nullptr; // <int> n
+		int *h_Qlu = nullptr; // <int> n
 
 		int nnzL = 0;
 		int *h_csrRowPtrL = nullptr; // <int> n+1
@@ -84,7 +93,7 @@ namespace HBXFEMDef
 		// the constant used in cusolverSp
 		// singularity is -1 if A is invertible under tol
 		// tol determines the condition of singularity
-		// pivot_threshold decides pivoting strategy            
+		// pivot_threshold decides pivoting strategy  主阈值？          
 		int singularity = 0;
 		const double tol = 1.e-14;
 		const double pivot_threshold = 1.0;
@@ -107,7 +116,9 @@ namespace HBXFEMDef
 		double time_rf_solveT;
 
 	protected:
-		double GetB();//step 3: B = Q*A*Q^T
+		//step 3: B = Q*A*Q^T
+		//本质上是在CPU上执行的，CUDA调用了别家的库
+		double GetB();
 
 	public:
 		RefactorConjugate(Domain* _dm, Engng* _eng);
@@ -122,8 +133,8 @@ namespace HBXFEMDef
 		//初始化描述器等对象
 		bool		InitialDescr(cudaStream_t _stream = 0, cusparseMatrixType_t _MatrixType = CUSPARSE_MATRIX_TYPE_GENERAL);
 
-		//预处理
-		double Preconditioning( ReorderType_t _type );
+		//预处理,对矩阵进行带宽缩减
+		double Preconditioning( ReorderType_t _type = ReorderType_t::SYMRCM );
 
 		//各种特征值算法求解,返回计算时间，ms为单位.
 		//@_tol:残差
@@ -131,5 +142,8 @@ namespace HBXFEMDef
 		//step 4: solve A*x = b by LU(B) in cusolverSp
 		double	ConjugateWithGPU(const double &_tol = 1e-9f, const int &_iter = 1000);
 
+		//从P*B*Q^T = L*U中提取P,Q,L,U
+		//返回计时
+		double ExtractPQLU();
 	};
 };

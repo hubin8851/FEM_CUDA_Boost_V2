@@ -1,5 +1,6 @@
 #include "RefactorConjugate.h"
 #include <helper_cuda.h>
+#include <helper_cusolver.h>
 #include "helper_hbx.h"
 
 namespace HBXFEMDef
@@ -23,7 +24,7 @@ namespace HBXFEMDef
 			free(buffer_cpu);
 		}
 		buffer_cpu = (void*)malloc(sizeof(char)*size_perm);
-		assert(NULL != buffer_cpu);
+		assert(nullptr != buffer_cpu);
 
 		// h_mapBfromA = Identity 
 		for (int j = 0; j < m_nnzA; j++) {
@@ -80,6 +81,18 @@ namespace HBXFEMDef
 	void RefactorConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		BaseConjugate::ResetGraphMem(_cuMac);
+		assert(nullptr != h_Qreorder);
+		assert(nullptr != h_csrRowPtrB);
+		assert(nullptr != h_csrColIndB);
+		assert(nullptr != h_csrValB);
+		assert(nullptr != h_mapBfromA);
+
+		assert(nullptr != h_x);
+		assert(nullptr != h_b);
+		assert(nullptr != h_r);
+		assert(nullptr != h_xhat);
+		assert(nullptr != h_bhat);
+
 		if (HbxCuDef::NORMAL == _cuMac)
 		{
 			checkCudaErrors(cudaMalloc((void **)&d_b, sizeof(double)*m_RowNum));
@@ -139,6 +152,11 @@ namespace HBXFEMDef
 
 	double RefactorConjugate::Preconditioning(ReorderType_t _type)
 	{
+		printf("step 1.2: set right hand side vector (b) to 1\n");
+		for (int row = 0; row < m_RowNum; row++) {
+			h_rhs[row] = 1.0;
+		}
+
 		fprintf(stdout, "step 2: reorder the matrix to reduce zero fill-in\n");
 		fprintf(stdout, "        Q = symrcm(A) or Q = symamd(A) \n");
 
@@ -244,11 +262,97 @@ namespace HBXFEMDef
 		stopT = GetTimeStamp();
 		time_sp_solveT = stopT - startT;
 
+		printf("step 4.7: evaluate residual r = b - A*x (result on CPU)\n");
+		// use GPU gemv to compute r = b - A*x
+		checkCudaErrors(cudaMemcpy(d_iNonZeroRowSort, h_iNonZeroRowSort, sizeof(int)*(m_RowNum + 1), cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_iColSort, h_iColSort, sizeof(int)*m_nnzA, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_NoneZeroVal, h_NoneZeroVal, sizeof(double)*m_nnzA, cudaMemcpyHostToDevice));
 
+		checkCudaErrors(cudaMemcpy(d_r, h_rhs, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_x, h_x, sizeof(double)*m_ColNum, cudaMemcpyHostToDevice));
+
+		checkCudaErrors(cusparseDcsrmv(cusparseHandle,
+			CUSPARSE_OPERATION_NON_TRANSPOSE,
+			m_RowNum,
+			m_ColNum,
+			m_nnzA,
+			&minus_one,
+			Matdescr,
+			d_NonZeroVal,
+			d_iNonZeroRowSort,
+			d_iColSort,
+			d_x,
+			&one,
+			d_r));
+
+		checkCudaErrors(cudaMemcpy(h_rhs, d_r, sizeof(double)*rowsA, cudaMemcpyDeviceToHost));
+
+		x_inf = vec_norminf(m_ColNum, h_x);
+		r_inf = vec_norminf(m_RowNum, h_r);
+		A_inf = csr_mat_norminf(m_RowNum, m_ColNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iNonZeroRowSort, h_iColSort);
+
+		printf("(CPU) |b - A*x| = %E \n", r_inf);
+		printf("(CPU) |A| = %E \n", A_inf);
+		printf("(CPU) |x| = %E \n", x_inf);
+		printf("(CPU) |b - A*x|/(|A|*|x|) = %E \n", r_inf / (A_inf * x_inf));
 
 		return 0.0;
 	}
 
+
+	double RefactorConjugate::ExtractPQLU()
+	{
+		printf("step 5: extract P, Q, L and U from P*B*Q^T = L*U \n");
+		printf("        L has implicit unit diagonal\n");
+		startT = second();
+
+		checkCudaErrors(cusolverSpXcsrluNnzHost(
+			cusolverSpH,
+			&nnzL,
+			&nnzU,
+			info));
+		h_Plu = (int*)malloc(sizeof(int)*rowsA);
+		h_Qlu = (int*)malloc(sizeof(int)*colsA);
+
+		h_csrValL = (double*)malloc(sizeof(double)*nnzL);
+		h_csrRowPtrL = (int*)malloc(sizeof(int)*(rowsA + 1));
+		h_csrColIndL = (int*)malloc(sizeof(int)*nnzL);
+
+		h_csrValU = (double*)malloc(sizeof(double)*nnzU);
+		h_csrRowPtrU = (int*)malloc(sizeof(int)*(rowsA + 1));
+		h_csrColIndU = (int*)malloc(sizeof(int)*nnzU);
+
+		assert(NULL != h_Plu);
+		assert(NULL != h_Qlu);
+
+		assert(NULL != h_csrValL);
+		assert(NULL != h_csrRowPtrL);
+		assert(NULL != h_csrColIndL);
+
+		assert(NULL != h_csrValU);
+		assert(NULL != h_csrRowPtrU);
+		assert(NULL != h_csrColIndU);
+
+		checkCudaErrors(cusolverSpDcsrluExtractHost(
+			cusolverSpH,
+			h_Plu,
+			h_Qlu,
+			Matdescr,
+			h_csrValL,
+			h_csrRowPtrL,
+			h_csrColIndL,
+			Matdescr,
+			h_csrValU,
+			h_csrRowPtrU,
+			h_csrColIndU,
+			info,
+			buffer_cpu));
+
+		stopT = second();
+		time_sp_extractT = stopT - startT;
+
+		printf("nnzL = %d, nnzU = %d\n", nnzL, nnzU);
+	}
 
 }
 
