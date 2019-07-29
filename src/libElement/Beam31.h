@@ -14,25 +14,26 @@ namespace HBXFEMDef
 	class CUFEM_API Beam31Elemt :public BaseElem
 	{
 	public:
-		Beam31Elemt(Engng* _engng, Domain* _dm = nullptr, int _id = B31ELEMENT);
+		Beam31Elemt(	Engng* _engng, Domain* _dm, 
+					int _id /*= B31ELEMENT */ );
 		virtual ~Beam31Elemt();
 
 
 		//刚度矩阵计算
 		//传入杨氏模量、截面、和单元长度
 		void StiffMatCal(	int _iMatSort, int _iSecSort, 
-							UserCalPrec _x1, UserCalPrec3 _y1, UserCalPrec _z1,
-							UserCalPrec _x2, UserCalPrec3 _y2, UserCalPrec _z2,
+							UserCalPrec _x1, HBXDef::UserCalPrec3 _y1, UserCalPrec _z1,
+							UserCalPrec _x2, HBXDef::UserCalPrec3 _y2, UserCalPrec _z2,
 							UserCalPrec _theta);
 		//刚度矩阵计算
 		//传入杨氏模量、截面、和单元长度
-		void StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec3 _N1, UserCalPrec3 _N2, UserCalPrec _theta);
+		void StiffMatCal(int _iMatSort, int _iSecSort, HBXDef::UserCalPrec3 _N1, HBXDef::UserCalPrec3 _N2, UserCalPrec _theta);
 		//质量矩阵计算
 		void MassMatCal();
 
 	private:
 		//应该在截面类中计算
-		UserCalPrec ElemtLengthCal(UserCalPrec3 _N1, UserCalPrec3 _N2);
+		UserCalPrec ElemtLengthCal( HBXDef::UserCalPrec3 _N1, HBXDef::UserCalPrec3 _N2 );
 
 
 		//《Midas分析和设计原理手册》

@@ -38,13 +38,11 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\libFluid2D\cuFluid.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\libFluid2D\Fluid_kernel.cu">
       <Filter>源文件</Filter>
     </CudaCompile>
+    <CudaCompile Include="..\src\libFluid2D\cuFluid.cu" />
   </ItemGroup>
 </Project>

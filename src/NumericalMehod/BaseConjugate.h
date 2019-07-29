@@ -68,14 +68,15 @@ namespace HBXFEMDef
 		//	HBXDef::_CSRInput<double>	m_CSRInput;	//存在问题，结构体内存连续可能导致赋值错误
 		std::string	m_SavePath;
 		//主机端buffer
-		int			*h_iColSort, *h_iNonZeroRowSort;
 		HBXDef::UserCalPrec		*h_NoneZeroVal;
+		int						*h_iColIndex;
+		int						*h_iRowSort;
 		HBXDef::UserCalPrec		*h_x;
 		HBXDef::UserCalPrec		*h_rhs;
 		//显存内裸指针
-		HBXDef::UserCalPrec*		d_NonZeroVal;
-		int*						d_iColSort;
-		int*						d_iNonZeroRowSort;
+		HBXDef::UserCalPrec*		d_NoneZeroVal;
+		int*						d_iColIndex;
+		int*						d_iRowSort;
 		HBXDef::UserCalPrec*		d_x;	//待求特征值
 		HBXDef::UserCalPrec*		d_r;	//等式右边向量
 

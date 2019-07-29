@@ -108,8 +108,8 @@ namespace HBXFEMDef
 		m_iters = 0;
 
 		h_NoneZeroVal = nullptr;
-		h_iColSort = nullptr;
-		h_iNonZeroRowSort = nullptr;
+		h_iColIndex = nullptr;
+		h_iRowSort = nullptr;
 		h_x = nullptr;
 		h_rhs = nullptr;
 	}
@@ -136,18 +136,18 @@ namespace HBXFEMDef
 			delete[] h_NoneZeroVal;
 		}
 		_cuError_id = cudaHostAlloc((void**)&h_NoneZeroVal, sizeof(UserCalPrec)*m_nnzA, 0);
-		if (nullptr != h_iColSort)
+		if (nullptr != h_iColIndex)
 		{
-			delete[]h_iColSort;
-			h_iColSort = nullptr;
+			delete[]h_iColIndex;
+			h_iColIndex = nullptr;
 		}
-		_cuError_id = cudaHostAlloc((void**)&h_iColSort, sizeof(int)*m_nnzA, 0);
-		if (nullptr != h_iNonZeroRowSort)
+		_cuError_id = cudaHostAlloc((void**)&h_iColIndex, sizeof(int)*m_nnzA, 0);
+		if (nullptr != h_iRowSort)
 		{
-			delete[]h_iNonZeroRowSort;
-			h_iNonZeroRowSort = nullptr;
+			delete[]h_iRowSort;
+			h_iRowSort = nullptr;
 		}
-		_cuError_id = cudaHostAlloc((void**)&h_iNonZeroRowSort, sizeof(int)*m_nA, 0);
+		_cuError_id = cudaHostAlloc((void**)&h_iRowSort, sizeof(int)*m_nA, 0);
 		if (nullptr != h_x)
 		{
 			delete[]h_x;
@@ -174,13 +174,13 @@ namespace HBXFEMDef
 		{
 #pragma region  裸指针时CSR格式矩阵的显存分配
 			//CSR非零值显存分配
-			checkCudaErrors( cudaMalloc((void **)&d_NonZeroVal, m_nnzA * sizeof(double)) );
+			checkCudaErrors( cudaMalloc((void **)&d_NoneZeroVal, m_nnzA * sizeof(double)) );
 			
 			//CSR列索引值显存分配
-			checkCudaErrors( cudaMalloc((void **)&d_iColSort, m_nnzA * sizeof(int)) );
+			checkCudaErrors( cudaMalloc((void **)&d_iColIndex, m_nnzA * sizeof(int)) );
 			
 			//CSR每行第一个非零数索引显存分配
-			checkCudaErrors( cudaMalloc((void **)&d_iNonZeroRowSort, m_nA * sizeof(int)) );
+			checkCudaErrors( cudaMalloc((void **)&d_iRowSort, m_nA * sizeof(int)) );
 
 			//方程等式右边向量显存分配
 			checkCudaErrors( cudaMalloc((void **)&d_r, m_RowNum * sizeof(double)) );
@@ -199,13 +199,13 @@ namespace HBXFEMDef
 		if (HBXDef::DeviceToHost == _temp)
 		{
 			double start_matrix_copy = GetTimeStamp();
-			HBXDef::CheckUserDefErrors( cudaMemcpy(h_NoneZeroVal, d_NonZeroVal, 
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_NoneZeroVal, d_NoneZeroVal, 
 										m_nnzA * sizeof(double), cudaMemcpyDeviceToHost) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iColSort, d_iColSort,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iColIndex, d_iColIndex,
 										m_nnzA * sizeof(int), cudaMemcpyDeviceToHost) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iNonZeroRowSort, d_iNonZeroRowSort,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_iRowSort, d_iRowSort,
 										m_nA * sizeof(int), cudaMemcpyDeviceToHost) );
 			
 			HBXDef::CheckUserDefErrors( cudaMemcpy(h_x, d_x, 
@@ -223,13 +223,13 @@ namespace HBXFEMDef
 		else if (HBXDef::HostToDevice == _temp)
 		{
 			double start_matrix_copy = HBXDef::GetTimeStamp();
-			HBXDef::CheckUserDefErrors( cudaMemcpy(d_NonZeroVal, h_NoneZeroVal,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_NoneZeroVal, h_NoneZeroVal,
 										m_nnzA * sizeof(double), cudaMemcpyHostToDevice) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iColSort, h_iColSort,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iColIndex, h_iColIndex,
 										m_nnzA * sizeof(int), cudaMemcpyHostToDevice) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iNonZeroRowSort, h_iNonZeroRowSort,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_iRowSort, h_iRowSort,
 										m_nA * sizeof(int), cudaMemcpyHostToDevice) );
 			
 			HBXDef::CheckUserDefErrors( cudaMemcpy(d_x, h_x,
@@ -277,11 +277,11 @@ namespace HBXFEMDef
 			for (int i = 0; i < m_nnzA; i++)
 			{
 				h_NoneZeroVal[i] = h_vNoneZeroVal[i];
-				h_iColSort[i] = h_viColSort[i];
+				h_iColIndex[i] = h_viColSort[i];
 			}
 			for (int i = 0; i < m_nA; i++)
 			{
-				h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i];
+				h_iRowSort[i] = h_viNonZeroRowSort[i];
 			}
 		}
 		if (0)//另一种方案，sample原生
@@ -338,11 +338,11 @@ namespace HBXFEMDef
 		for (int i = 0; i < m_nnzA; i++)
 		{
 			h_NoneZeroVal[i] = h_vNoneZeroVal[i] = _srcVal[i];
-			h_iColSort[i] = h_viColSort[i] = (int)_srcCol[i];
+			h_iColIndex[i] = h_viColSort[i] = (int)_srcCol[i];
 		}
 		for (int i = 0; i < m_nA; i++)
 		{
-			h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i] = (int)_srcRow[i];
+			h_iRowSort[i] = h_viNonZeroRowSort[i] = (int)_srcRow[i];
 		}
 		return HBXDef::DataAloc_t::DATAINMEM;
 	}
@@ -376,11 +376,11 @@ namespace HBXFEMDef
 			for (int i = 0; i < m_nnzA; i++)
 			{
 				h_NoneZeroVal[i] = h_vNoneZeroVal[i];
-				h_iColSort[i] = h_viColSort[i];
+				h_iColIndex[i] = h_viColSort[i];
 			}
 			for (int i = 0; i < m_nA; i++)
 			{
-				h_iNonZeroRowSort[i] = h_viNonZeroRowSort[i];
+				h_iRowSort[i] = h_viNonZeroRowSort[i];
 			}
 			return	HBXDef::DataAloc_t::DATAINMEM;
 		}
@@ -552,9 +552,9 @@ namespace HBXFEMDef
 			/* 释放设备内存 */
 			_cusparseError_id = cusparseDestroy(cusparseHandle);
 			_cublasError_id = cublasDestroy(cublasHandle);
-			_cuError_id = cudaFree(d_NonZeroVal);
-			_cuError_id = cudaFree(d_iColSort);
-			_cuError_id = cudaFree(d_iNonZeroRowSort);
+			_cuError_id = cudaFree(d_NoneZeroVal);
+			_cuError_id = cudaFree(d_iColIndex);
+			_cuError_id = cudaFree(d_iRowSort);
 			_cuError_id = cudaFree(d_x);
 			_cuError_id = cudaFree(d_r);
 

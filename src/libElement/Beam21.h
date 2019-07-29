@@ -1,6 +1,7 @@
 #pragma once
 #include <ExportDef.h>
 #include <HbxDefMacro.h>
+#include <HBXFEMDefMacro.h>
 #include <libCUFEM\BaseNode.h>
 #include <libCUFEM\BaseElement.h.>
 #include <libCUFEM\EngngMod.h>
@@ -15,7 +16,8 @@ namespace HBXFEMDef
 	class CUFEM_API Beam21Elemt 
 	{
 	public:
-		Beam21Elemt(Engng* _engng, Domain* _dm = nullptr, int _id = B21ELEMENT);
+		Beam21Elemt(	Engng* _engng, Domain* _dm, int _id
+					/*= B21ELEMENT */ );
 		virtual ~Beam21Elemt();
 
 

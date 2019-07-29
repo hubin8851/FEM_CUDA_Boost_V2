@@ -16,12 +16,12 @@ namespace HBXFEMDef
 	}
 
 
-	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec _x1, UserCalPrec3 _y1, UserCalPrec _z1, UserCalPrec _x2, UserCalPrec3 _y2, UserCalPrec _z2, UserCalPrec _theta)
+	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, HBXDef::UserCalPrec _x1, HBXDef::UserCalPrec3 _y1, HBXDef::UserCalPrec _z1, HBXDef::UserCalPrec _x2, HBXDef::UserCalPrec3 _y2, UserCalPrec _z2, UserCalPrec _theta)
 	{
 
 	}
 
-	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, UserCalPrec3 _N1, UserCalPrec3 _N2, UserCalPrec _theta)
+	void Beam31Elemt::StiffMatCal(int _iMatSort, int _iSecSort, HBXDef::UserCalPrec3 _N1, HBXDef::UserCalPrec3 _N2, HBXDef::UserCalPrec _theta)
 	{
 
 		//计算转动惯量
@@ -33,9 +33,11 @@ namespace HBXFEMDef
 
 	void Beam31Elemt::MassMatCal()
 	{
+
+	
 	}
 
-	UserCalPrec Beam31Elemt::ElemtLengthCal(UserCalPrec3 _N1, UserCalPrec3 _N2)
+	UserCalPrec Beam31Elemt::ElemtLengthCal(HBXDef::UserCalPrec3 _N1, HBXDef::UserCalPrec3 _N2)
 	{
 		return sqrt( (_N2.x - _N1.x)*(_N2.x - _N1.x) + (_N2.y - _N1.y)*(_N2.y - _N1.y) + (_N2.z - _N1.z)*(_N2.z - _N1.z));
 	}

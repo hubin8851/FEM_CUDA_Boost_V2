@@ -22,7 +22,7 @@ void ElementMatricCalTest(void * void_arg)
 	std::vector<HBXFEMDef::Node> g_Node;
 	g_Record->GiveField(g_Node,"Node");
 	int _lgth =g_Node.size();
-	Beam21Elemt g_B21(nullptr);
+	Beam21Elemt g_B21(nullptr, nullptr,0);
 	
 	auto start = std::chrono::system_clock::now();
 	for (size_t i = 0; i < g_MultiFactor; i++)

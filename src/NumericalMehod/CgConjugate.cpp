@@ -61,7 +61,7 @@ namespace HBXFEMDef
 
 			cusparseDcsrmv(	cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 							m_RowNum, m_RowNum, m_nA, &floatone, Matdescr, 
-							d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_p, &floatzero, d_omega);
+							d_NoneZeroVal, d_iRowSort, d_iColIndex, d_p, &floatzero, d_omega);
 			cublasDdot(cublasHandle, m_RowNum, d_p, 1, d_omega, 1, &dot);
 			alpha = r1 / dot;
 			cublasDaxpy(cublasHandle, m_RowNum, &alpha, d_p, 1, d_x, 1);
@@ -81,7 +81,7 @@ namespace HBXFEMDef
 
 		/*½á¹û¼ìÑé*/
 		m_qaerr1 = CheckResult(m_nnzA, m_nA,
-			h_NoneZeroVal, h_iColSort, h_iNonZeroRowSort,
+			h_NoneZeroVal, h_iColIndex, h_iRowSort,
 			h_x, h_rhs);
 		printf("  Convergence Test: %s \n", (k <= MAX_GPUITER) ? "OK" : "FAIL");
 		m_iters = k;

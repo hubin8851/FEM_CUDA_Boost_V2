@@ -68,16 +68,16 @@ namespace HBXFEMDef
 		// 创建对该非转置矩阵的描述器,相当于绑定
 		_cusparseError_id = cusparseDcsrsv_analysis(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 													m_RowNum, m_nnzA, Matdescr,
-													d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, infoA);
+													d_NoneZeroVal, d_iRowSort, d_iColIndex, infoA);
 		checkCudaErrors(_cusparseError_id);
 
 
 		/* 将A数据作为ILU0的值传入*/
-		cudaMemcpy(d_ILUvals, d_NonZeroVal, m_nnzA * sizeof(HBXDef::UserCalPrec), cudaMemcpyDeviceToDevice);
+		cudaMemcpy(d_ILUvals, d_NoneZeroVal, m_nnzA * sizeof(HBXDef::UserCalPrec), cudaMemcpyDeviceToDevice);
 
 		/* 描述器，以CSR格式存储的A矩阵的不完全LU分解以便于后期计算 */
 		_cusparseError_id = cusparseDcsrilu0(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, m_RowNum,
-			Matdescr, d_ILUvals, d_iNonZeroRowSort, d_iColSort, infoA);
+			Matdescr, d_ILUvals, d_iRowSort, d_iColIndex, infoA);
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 		checkCudaErrors(_cusparseError_id);
 		ttl2 = GetTimeStamp();
@@ -102,7 +102,7 @@ namespace HBXFEMDef
 
 		_cusparseError_id = cusparseDcsrsv_analysis(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 													m_RowNum, m_nnzA, descrU, 
-													d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, info_u);
+													d_NoneZeroVal, d_iRowSort, d_iColIndex, info_u);
 
 
 		return true;
@@ -154,10 +154,10 @@ namespace HBXFEMDef
 			//向前解算，因为infoA是矩阵A的L部分，可重使用
 
 			_cusparseError_id = cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, m_RowNum, &floatone, descrL,
-				d_ILUvals, d_iNonZeroRowSort, d_iColSort, infoA, d_r, d_y);
+				d_ILUvals, d_iRowSort, d_iColIndex, infoA, d_r, d_y);
 			//回溯子步
 			_cusparseError_id = cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, m_RowNum, &floatone, descrU,
-				d_ILUvals, d_iNonZeroRowSort, d_iColSort, info_u, d_y, d_zm1);
+				d_ILUvals, d_iRowSort, d_iColIndex, info_u, d_y, d_zm1);
 
 
 			checkCudaErrors(_cusparseError_id);
@@ -178,7 +178,7 @@ namespace HBXFEMDef
 			_cusparseError_id = cusparseDcsrmv(	cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, 
 												m_RowNum, m_RowNum,
 												nzILU0, &floatone, descrU,
-												d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_p, &floatzero, d_omega);
+												d_NoneZeroVal, d_iRowSort, d_iColIndex, d_p, &floatzero, d_omega);
 			cublasDdot(cublasHandle, m_RowNum, d_r, 1, d_zm1, 1, &numerator);//步骤(3)
 			cublasDdot(cublasHandle, m_RowNum, d_p, 1, d_omega, 1, &denominator);//步骤(4)
 			alpha = numerator / denominator;//步骤(4)
@@ -210,7 +210,7 @@ namespace HBXFEMDef
 
 		/*结果检验*/
 		m_qaerr1 = CheckResult(m_nnzA, m_nA,
-			h_NoneZeroVal, h_iColSort, h_iNonZeroRowSort,
+			h_NoneZeroVal, h_iColIndex, h_iRowSort,
 			h_x, h_rhs);
 		printf("  Convergence Test: %s \n", (k <= MAX_GPUITER) ? "OK" : "FAIL");
 		m_iters = k;

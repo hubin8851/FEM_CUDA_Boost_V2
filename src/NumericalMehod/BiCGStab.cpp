@@ -200,7 +200,7 @@ namespace HBXFEMDef
 #endif
 		//dr = A*x0
 		checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE, m_RowNum, m_RowNum, m_nnzA, &one,
-			descra, d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_x, &zero, d_ptrR));
+			descra, d_NoneZeroVal, d_iRowSort, d_iColIndex, d_x, &zero, d_ptrR));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 		cudaDeviceSynchronize();
 		ttm2 = GetTimeStamp();
@@ -241,7 +241,7 @@ namespace HBXFEMDef
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_UNIT));
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
-				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_l, d_ptrP, d_ptrT));
+				d_ptrMval, d_iRowSort, d_iColIndex, info_l, d_ptrP, d_ptrT));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttl2 = GetTimeStamp();
@@ -251,7 +251,7 @@ namespace HBXFEMDef
 			checkCudaErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_NON_UNIT));
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
-				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_u, d_ptrT, d_ptrPW));
+				d_ptrMval, d_iRowSort, d_iColIndex, info_u, d_ptrT, d_ptrPW));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttu2 = GetTimeStamp();
@@ -263,7 +263,7 @@ namespace HBXFEMDef
 			// d_v = A * d_pw;
 			checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, m_RowNum, m_nnzA, &one, descra,
-				d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_ptrPW, &zero, d_ptrV));
+				d_NoneZeroVal, d_iRowSort, d_iColIndex, d_ptrPW, &zero, d_ptrV));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttm2 = GetTimeStamp();
@@ -293,7 +293,7 @@ namespace HBXFEMDef
 			//d_t = M * d_r
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
-				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_l, d_ptrR, d_ptrT));
+				d_ptrMval, d_iRowSort, d_iColIndex, info_l, d_ptrR, d_ptrT));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttl2 = GetTimeStamp();
@@ -304,7 +304,7 @@ namespace HBXFEMDef
 			//d_s = M * d_t
 			checkCudaErrors(cusparseDcsrsv_solve(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, &one, descrm,
-				d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_u, d_ptrT, d_ptrS));
+				d_ptrMval, d_iRowSort, d_iColIndex, info_u, d_ptrT, d_ptrS));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttu2 = GetTimeStamp();
@@ -319,7 +319,7 @@ namespace HBXFEMDef
 			//d_t = A * d_s;
 			checkCudaErrors(cusparseDcsrmv(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 				m_RowNum, m_RowNum, m_nnzA, &one, descra,
-				d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, d_ptrS, &zero, d_ptrT));
+				d_NoneZeroVal, d_iRowSort, d_iColIndex, d_ptrS, &zero, d_ptrT));
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 			checkCudaErrors(cudaDeviceSynchronize());
 			ttm2 = GetTimeStamp();
@@ -366,7 +366,7 @@ namespace HBXFEMDef
 		HBXDef::CheckUserDefErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_UNIT));
 		HBXDef::CheckUserDefErrors(cusparseDcsrsv_analysis(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 			m_RowNum, m_nnzA, descrm,
-			d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, info_l));
+			d_NoneZeroVal, d_iRowSort, d_iColIndex, info_l));
 
 		HBXDef::CheckUserDefErrors(cudaThreadSynchronize());
 		double ttl2 = HBXDef::GetTimeStamp();
@@ -377,7 +377,7 @@ namespace HBXFEMDef
 		HBXDef::CheckUserDefErrors(cusparseSetMatDiagType(descrm, CUSPARSE_DIAG_TYPE_NON_UNIT));
 		HBXDef::CheckUserDefErrors(cusparseDcsrsv_analysis(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 			m_RowNum, m_nnzA, descrm,
-			d_NonZeroVal, d_iNonZeroRowSort, d_iColSort, info_u));
+			d_NoneZeroVal, d_iRowSort, d_iColIndex, info_u));
 
 		HBXDef::CheckUserDefErrors(cudaThreadSynchronize());
 		double ttu2 = HBXDef::GetTimeStamp();
@@ -394,7 +394,7 @@ namespace HBXFEMDef
 
 		HBXDef::CheckUserDefErrors(cusparseDcsrilu0(cusparseHandle, CUSPARSE_OPERATION_NON_TRANSPOSE,
 			m_RowNum, descra,
-			d_ptrMval, d_iNonZeroRowSort, d_iColSort, info_l));
+			d_ptrMval, d_iRowSort, d_iColIndex, info_l));
 
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 		HBXDef::CheckUserDefErrors(cudaThreadSynchronize());

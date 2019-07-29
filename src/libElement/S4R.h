@@ -26,7 +26,8 @@ namespace HBXFEMDef
 		size_t * _iNode;	//单元内节点编号，在继承后根据类别完成内存分配
 		size_t _iMat;	//单元材料索引
 
-		S4RElemt(Engng* _engng, Domain* _dm = nullptr, int _id = S4RELEMENT);
+		S4RElemt(	Engng* _engng, Domain* _dm, 
+					int _id /*= S4RELEMENT */ );
 
 
 		virtual ~S4RElemt();

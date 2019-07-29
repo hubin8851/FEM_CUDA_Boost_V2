@@ -9,8 +9,8 @@ namespace HBXFEMDef
 	{
 
 		fprintf(stdout,"step 3: B = Q*A*Q^T\n");
-		memcpy(h_csrRowPtrB, h_iNonZeroRowSort, sizeof(int)*(m_RowNum + 1));
-		memcpy(h_csrColIndB, h_iColSort, sizeof(int)*m_nnzA);
+		memcpy(h_csrRowPtrB, h_iRowSort, sizeof(int)*(m_RowNum + 1));
+		memcpy(h_csrColIndB, h_iColIndex, sizeof(int)*m_nnzA);
 
 		startT = GetTimeStamp();
 
@@ -72,7 +72,7 @@ namespace HBXFEMDef
 		h_csrValB = (double*)malloc(sizeof(double)*_nnzA);
 		h_mapBfromA = (int*)malloc(sizeof(int)*_nnzA);
 
-		h_r = (double*)malloc(sizeof(double)*m_RowNum);
+		h_b = (double*)malloc(sizeof(double)*m_RowNum);
 		h_xhat = (double*)malloc(sizeof(double)*m_ColNum);
 		h_bhat = (double*)malloc(sizeof(double)*m_RowNum);
 
@@ -89,7 +89,7 @@ namespace HBXFEMDef
 
 		assert(nullptr != h_x);
 		assert(nullptr != h_b);
-		assert(nullptr != h_r);
+		assert(nullptr != h_rhs);
 		assert(nullptr != h_xhat);
 		assert(nullptr != h_bhat);
 
@@ -166,14 +166,14 @@ namespace HBXFEMDef
 		{
 			checkCudaErrors(cusolverSpXcsrsymrcmHost(
 				cusolverSpH, m_RowNum, m_nnzA,
-				Matdescr, h_iNonZeroRowSort, h_iColSort,
+				Matdescr, h_iRowSort, h_iColIndex,
 				h_Qreorder));
 		}
 		else if (SYMAMD == _type)
 		{
 			checkCudaErrors(cusolverSpXcsrsymamdHost(
 				cusolverSpH, m_RowNum, m_nnzA,
-				Matdescr, h_iNonZeroRowSort, h_iColSort,
+				Matdescr, h_iRowSort, h_iColIndex,
 				h_Qreorder));
 		}
 		else
@@ -264,11 +264,11 @@ namespace HBXFEMDef
 
 		printf("step 4.7: evaluate residual r = b - A*x (result on CPU)\n");
 		// use GPU gemv to compute r = b - A*x
-		checkCudaErrors(cudaMemcpy(d_iNonZeroRowSort, h_iNonZeroRowSort, sizeof(int)*(m_RowNum + 1), cudaMemcpyHostToDevice));
-		checkCudaErrors(cudaMemcpy(d_iColSort, h_iColSort, sizeof(int)*m_nnzA, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_iRowSort, h_iRowSort, sizeof(int)*(m_RowNum + 1), cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_iColIndex, h_iColIndex, sizeof(int)*m_nnzA, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(d_NoneZeroVal, h_NoneZeroVal, sizeof(double)*m_nnzA, cudaMemcpyHostToDevice));
 
-		checkCudaErrors(cudaMemcpy(d_r, h_rhs, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(d_r, h_b, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(d_x, h_x, sizeof(double)*m_ColNum, cudaMemcpyHostToDevice));
 
 		checkCudaErrors(cusparseDcsrmv(cusparseHandle,
@@ -278,18 +278,18 @@ namespace HBXFEMDef
 			m_nnzA,
 			&minus_one,
 			Matdescr,
-			d_NonZeroVal,
-			d_iNonZeroRowSort,
-			d_iColSort,
+			d_NoneZeroVal,
+			d_iRowSort,
+			d_iColIndex,
 			d_x,
 			&one,
 			d_r));
 
-		checkCudaErrors(cudaMemcpy(h_rhs, d_r, sizeof(double)*rowsA, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(h_rhs, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
 
 		x_inf = vec_norminf(m_ColNum, h_x);
-		r_inf = vec_norminf(m_RowNum, h_r);
-		A_inf = csr_mat_norminf(m_RowNum, m_ColNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iNonZeroRowSort, h_iColSort);
+		r_inf = vec_norminf(m_RowNum, h_rhs);
+		A_inf = csr_mat_norminf(m_RowNum, m_ColNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex);
 
 		printf("(CPU) |b - A*x| = %E \n", r_inf);
 		printf("(CPU) |A| = %E \n", A_inf);
@@ -311,15 +311,15 @@ namespace HBXFEMDef
 			&nnzL,
 			&nnzU,
 			info));
-		h_Plu = (int*)malloc(sizeof(int)*rowsA);
-		h_Qlu = (int*)malloc(sizeof(int)*colsA);
+		h_Plu = (int*)malloc(sizeof(int)*m_RowNum);
+		h_Qlu = (int*)malloc(sizeof(int)*m_ColNum);
 
 		h_csrValL = (double*)malloc(sizeof(double)*nnzL);
-		h_csrRowPtrL = (int*)malloc(sizeof(int)*(rowsA + 1));
+		h_csrRowPtrL = (int*)malloc(sizeof(int)*(m_RowNum + 1));
 		h_csrColIndL = (int*)malloc(sizeof(int)*nnzL);
 
 		h_csrValU = (double*)malloc(sizeof(double)*nnzU);
-		h_csrRowPtrU = (int*)malloc(sizeof(int)*(rowsA + 1));
+		h_csrRowPtrU = (int*)malloc(sizeof(int)*(m_RowNum + 1));
 		h_csrColIndU = (int*)malloc(sizeof(int)*nnzU);
 
 		assert(NULL != h_Plu);
@@ -338,9 +338,9 @@ namespace HBXFEMDef
 			h_Plu,
 			h_Qlu,
 			Matdescr,
-			h_csrValL,
-			h_csrRowPtrL,
-			h_csrColIndL,
+			h_NoneZeroVal,
+			h_iRowSort,
+			h_iColIndex,
 			Matdescr,
 			h_csrValU,
 			h_csrRowPtrU,

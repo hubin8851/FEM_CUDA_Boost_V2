@@ -20,6 +20,7 @@ namespace HBXFEMDef
 
 	//基于RCM，缩减带宽的预处理共轭梯度法
 	//流程为resetmem->resetGraphmem->Preconditioning->getB
+	//此类仅适用于CSR格式矩阵输入
 	class CUFEM_API RefactorConjugate 
 		:public BaseConjugate
 	{
@@ -39,7 +40,7 @@ namespace HBXFEMDef
 		HBXDef::UserCalPrec *h_csrValB = nullptr; // <HBXDef::UserCalPrec> nnzA
 		int *h_mapBfromA = nullptr;  // <int> nnzA
 
-		HBXDef::UserCalPrec *h_r = nullptr; // <double> n, r = b - A*x
+		HBXDef::UserCalPrec *h_b = nullptr; // n, b = ones(m,1)
 
 		 // solve B*(Qx) = Q*b
 		HBXDef::UserCalPrec *h_xhat = nullptr; // <HBXDef::UserCalPrec> n, Q*x_hat = x
