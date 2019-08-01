@@ -90,6 +90,7 @@ namespace HBXFEMDef
 		assert(nullptr != h_x);
 		assert(nullptr != h_b);
 		assert(nullptr != h_rhs);
+
 		assert(nullptr != h_xhat);
 		assert(nullptr != h_bhat);
 
@@ -352,6 +353,7 @@ namespace HBXFEMDef
 		time_sp_extractT = stopT - startT;
 
 		printf("nnzL = %d, nnzU = %d\n", nnzL, nnzU);
+		return time_sp_extractT;
 	}
 
 }

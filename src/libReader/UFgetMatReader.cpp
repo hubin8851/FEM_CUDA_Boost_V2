@@ -53,10 +53,11 @@ namespace HBXFEMDef
 
 				ReadObject(innerArray);
 			}
+			return ::ImpMatError::IMPSUCCESS;
 		}
 
 
-		return ::ImpMatError_t::IMPSUCCESS;
+		return ::ImpMatError_t::MATFILENULL;
 	}
 
 	::ImpMatError_t UFgetMatReader::ReadMsg(const mxArray * const _Array)
