@@ -7,12 +7,13 @@
 
 int LocateShaptTab( int _bottomSort, int _upSort)
 {
-
+	int _midSort = 0;
 	if (0 == _upSort % 2)
 	{
 		_upSort = _midSort;
 	}
 	else _upSort = _upSort / 2 + 1;
+
 }
 
 
@@ -104,7 +105,9 @@ namespace HBXFEMDef
 		while (true)
 		{
 			//判断上下限的索引差值是否为1，若为1说明在该区间范围内,跳出循环
-			if ( 1 == (_upSort - _bottomSort) )
+			if ( 1 == (_upSort - _bottomSort) || 
+				fabs(_t - _bottomSort)<HBXDef::ERRORTOLERATE ||
+				fabs(_t - _upSort) < HBXDef::ERRORTOLERATE )
 			{
 				break;
 			}
