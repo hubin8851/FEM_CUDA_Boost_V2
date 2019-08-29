@@ -97,6 +97,9 @@ namespace HBXFEMDef
 
 	double ShapeTabReader::MakeShapeData(double _t, long _flag, int med)
 	{
+		ShapeTable _tmpShapeTable;
+		_tmpShapeTable.t = _t;
+
 		//采用二分法获取邻近节点
 		int _bottomSort = 0;
 		int _upSort = nBlock - 1;
@@ -106,10 +109,15 @@ namespace HBXFEMDef
 		{
 			//判断上下限的索引差值是否为1，若为1说明在该区间范围内,跳出循环
 			if ( 1 == (_upSort - _bottomSort) || 
-				fabs(_t - _bottomSort)<HBXDef::ERRORTOLERATE ||
-				fabs(_t - _upSort) < HBXDef::ERRORTOLERATE )
+				fabs(_t - _bottomSort)<HBXDef::ERRORTOLERATE ) //在底部边界
+				
 			{
+				_upSort = _bottomSort +1;
 				break;
+			}
+			else if ( fabs(_t - _upSort) < HBXDef::ERRORTOLERATE )		//在上部边界)
+			{
+				_bottomSort = _upSort - 1;
 			}
 
 			if (_vShape[_bottomSort]->t < _t <_vShape[_midSort]->t)//如果在区间下半部分，收缩上限为mid
@@ -120,16 +128,20 @@ namespace HBXFEMDef
 				}
 				else _upSort = _upSort / 2 + 1;
 			}
-			else if ( _vShape[_midSort]->t < _t < _vShape[_upSort]->t )//如果在区间上半部分，收缩上限为mid
+			else if ( _vShape[_midSort]->t < _t < _vShape[_upSort]->t )//如果在区间上半部分，收缩下限为mid
 			{
 				_bottomSort = _midSort;
 			}
 			int _midSort = _upSort / 2;
 		}
 		
-
+		int n = _tmpShapeTable.nRow*_tmpShapeTable.nCol + 19;
+		for (int i = 0; i < n; i++)
+			_tmpShapeTable._ShapeData[i] = (_vShape[_upSort]->_ShapeData[i] - _vShape[_bottomSort]->_ShapeData[i])
+											*(_t - _vShape[_bottomSort]->t) / (_vShape[_upSort]->t - _vShape[_bottomSort]->t) 
+											+ _vShape[_bottomSort]->_ShapeData[i];
 		
-		return 0.0;
+		return _t - _vShape[_bottomSort]->t;
 	}
 
 	int ShapeTabReader::GetVibData(double _t, long _structType)

@@ -70,6 +70,7 @@ namespace HBXFEMDef
 		//_fname:文件名称 
 		double* ReadShapeData(int _nBlock, const char* _fname);
 
+		//构建当前时间建立振型数据，返回当前时间与上一插值点时间的间隔
 		//long flag:标志位
 		//t:时间
 		double MakeShapeData( double _t, long _flag, int med = true );
