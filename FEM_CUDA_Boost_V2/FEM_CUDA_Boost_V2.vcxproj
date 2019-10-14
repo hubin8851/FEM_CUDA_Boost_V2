@@ -134,7 +134,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>libNumericalMethod.lib;libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;libInterpolate.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libNumericalMethod.lib;libFEMWithCUDA.lib;libReader.lib;libInterpolate.lib;libElement.lib;libEngng.lib;libVtk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>nafxcwd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <CudaCompile>

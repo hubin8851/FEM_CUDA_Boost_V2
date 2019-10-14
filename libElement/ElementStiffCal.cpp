@@ -6,7 +6,7 @@ __device__ EltMatFunc_t EltMatFunc_table[2];
 EltMatFunc_t h_EltMatFunc_table[2];
 
 
-void EletStiffCal(HBXDef::HbxCuDef::EltMatCalworkload * _workload)
+CUFEM_API void EletStiffCal(HBXDef::HbxCuDef::EltMatCalworkload * _workload)
 {
 //	EltMatFunc_t pOption = h_EltMatFunc_table[_workload->id];
 

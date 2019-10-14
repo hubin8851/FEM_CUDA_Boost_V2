@@ -19,6 +19,11 @@ typedef struct ShapeTable
 	//	malloc( sizeof(HBXDef::UserReadPrec)*( nCol*nRow + 20 ) );
 	//}
 
+	ShapeTable():flag(0), nCol(0), nRow(0), iStart(0), iEnd(0), t(0.0f), _ShapeData(nullptr)
+	{
+		
+	}
+
 	bool AllocShapeStructArray()
 	{
 		this->_ShapeData = (HBXDef::UserReadPrec*)malloc(sizeof(HBXDef::UserReadPrec)*(this->nCol*this->nRow + 20));
@@ -40,7 +45,7 @@ namespace HBXFEMDef
 	class InputRecord;
 	class BaseElem;
 
-
+	//振型表读取类，用以读取振型插值文件
 	class CUFEM_API ShapeTabReader :
 		public BaseReader
 	{

@@ -10,6 +10,7 @@
 
 namespace HBXFEMDef
 {
+	//单元属性读取类，用于读取所有的单元属性数据
 	class CUFEM_API EltPropReader:
 		public BaseReader
 	{

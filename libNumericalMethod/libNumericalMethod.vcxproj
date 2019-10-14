@@ -104,6 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>libFEMWithCUDA.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -158,10 +159,10 @@
     <ClInclude Include="..\src\NumericalMehod\BaseConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\BiCGStab.h" />
     <ClInclude Include="..\src\NumericalMehod\CgConjugate.h" />
-    <ClInclude Include="..\src\NumericalMehod\mmio.h" />
-    <ClInclude Include="..\src\NumericalMehod\mmio_wrapper.h" />
     <ClInclude Include="..\src\NumericalMehod\PcgConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h" />
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h" />
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h" />
     <ClInclude Include="NumericalMethodTest.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -176,12 +177,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp" />
-    <ClCompile Include="..\src\NumericalMehod\mmio.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="..\src\NumericalMehod\PcgConjugate.cpp" />
     <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c" />
     <ClCompile Include="libNumericalMethod.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -1,13 +1,13 @@
 #include "BaseConjugate.h"
 #include <random>
-#include <HbxGloFunc.h>
 #include <cuda_runtime.h>
 #include <CudaPreDef.h>
 #include <HBXPreDef.h>
 #include <helper_cuda.h>
 
-#include <..\src\NumericalMehod\mmio.h>
-#include <..\src\NumericalMehod\mmio_wrapper.h>
+#include <HbxGloFunc.h>
+#include <mmio.h>
+#include <mmio_wrapper.h>
 
 namespace HBXFEMDef
 {
@@ -255,7 +255,7 @@ namespace HBXFEMDef
 			// 	char *TmpPath = new char[_tmppath.string().size()+1];
 			// 	memcpy( TmpPath, _tmppath.string().data(), _tmppath.string().size() );
 			// 	TmpPath[_tmppath.string().size()] = '\0';
-			if (HBXDef::loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
+			if (loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
 			{
 				fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
 				return HBXDef::DataAloc_t::INVALID;

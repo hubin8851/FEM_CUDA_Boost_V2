@@ -13,7 +13,7 @@ void NumericalCalTest(void * void_arg)
 
 	using namespace HBXFEMDef;
 	UFgetMatReader  g_UFgetMatReader("RM07R.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat\\Fluorem");
-	bool _res = g_UFgetMatReader.SetInputData();
+	InputFileResult _res = g_UFgetMatReader.SetInputData();
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_UFgetMatReader.GetStiffMat();
 	g_Iters = (_tmpCSR->_nA) * 3;
 	std::cout << "读取部分结束" << std::endl;

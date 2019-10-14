@@ -41,7 +41,7 @@ int main()
 //		MultiInterpolateTest();
 	}
 
-	if (1)//VTK²âÊÔ
+	if (1)//µü´ú·¨²âÊÔ
 	{
 		NumericalCalTest();
 	}

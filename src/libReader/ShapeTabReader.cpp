@@ -13,7 +13,8 @@ int LocateShaptTab( int _bottomSort, int _upSort)
 		_upSort = _midSort;
 	}
 	else _upSort = _upSort / 2 + 1;
-
+	//to be continue...
+	return 0;
 }
 
 
@@ -109,13 +110,13 @@ namespace HBXFEMDef
 		{
 			//判断上下限的索引差值是否为1，若为1说明在该区间范围内,跳出循环
 			if ( 1 == (_upSort - _bottomSort) || 
-				fabs(_t - _bottomSort)<HBXDef::ERRORTOLERATE ) //在底部边界
+				fabs(_t - _bottomSort)< ERRORTOLERATE ) //在底部边界
 				
 			{
 				_upSort = _bottomSort +1;
 				break;
 			}
-			else if ( fabs(_t - _upSort) < HBXDef::ERRORTOLERATE )		//在上部边界)
+			else if ( fabs(_t - _upSort) < ERRORTOLERATE )		//在上部边界)
 			{
 				_bottomSort = _upSort - 1;
 			}
@@ -181,6 +182,11 @@ namespace HBXFEMDef
 		BaseReader::m_path = _savepath;
 
 		std::cout << "create ShapeTabReader!" << std::endl;
+	}
+
+	InputFileResult ShapeTabReader::SetInputData()
+	{
+		return InputFileResult::IRRT_OK;
 	}
 
 
