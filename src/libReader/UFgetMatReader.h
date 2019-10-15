@@ -12,7 +12,8 @@
 namespace HBXFEMDef
 {
 
-
+	//UFget的读取类，适用于UFget文件中matlab的*.mat文件
+	//UFgetMatReader的数据在m_pMatFile内，所以CSR格式的矩阵结构体仅提供指针，不额外分配内存
 	class CUFEM_API UFgetMatReader :
 		public BaseReader
 	{
