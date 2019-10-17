@@ -5,15 +5,15 @@
 
 namespace HBXFEMDef
 {
-	double RefactorConjugate::GetB()
+	double RefactorConjugate::GetReorderMat()
 	{
-
+		//计算B = P*A*P^T，得到
 		fprintf(stdout,"step 3: B = Q*A*Q^T\n");
 		memcpy(h_csrRowPtrB, h_iRowSort, sizeof(int)*(m_RowNum + 1));
 		memcpy(h_csrColIndB, h_iColIndex, sizeof(int)*m_nnzA);
 
 		startT = GetTimeStamp();
-
+		
 		checkCudaErrors(cusolverSpXcsrperm_bufferSizeHost(
 			cusolverSpH, m_RowNum, m_ColNum, m_nnzA,
 			Matdescr, h_csrRowPtrB, h_csrColIndB,
@@ -30,6 +30,7 @@ namespace HBXFEMDef
 		for (int j = 0; j < m_nnzA; j++) {
 			h_mapBfromA[j] = j;
 		}
+		//获得从A向B非零元素的映射向量
 		checkCudaErrors(cusolverSpXcsrpermHost(
 			cusolverSpH, m_RowNum, m_ColNum, m_nnzA,
 			Matdescr, h_csrRowPtrB, h_csrColIndB,
@@ -163,6 +164,7 @@ namespace HBXFEMDef
 
 		startT = GetTimeStamp();
 
+		//该函数以RCM算法将压缩的稀疏矩阵变为对角阵，输出至h_Qreorder
 		if (SYMRCM == _type )
 		{
 			checkCudaErrors(cusolverSpXcsrsymrcmHost(

@@ -17,14 +17,14 @@ namespace HBXFEMDef
 	{
 	private:
 		char m_ElemetType;
-		bool MatSaveType;
+		bool MatSaveFormat;
 		HBXDef::_CSRInput<HBXDef::UserCalPrec> m_MatMsg;
 
 	protected:
 	public:
 		MMSpMatReader(	const char* _matname = "lap2D_5pt_n100.mtx", 
 						const char* _searchpath = "C:\\ProgramData\\NVIDIA Corporation\\CUDA Samples\\v10.1\\7_CUDALibraries\\cuSolverSp_LinearSolver",
-						bool _csrFormat = false);
+						bool _csrFormat = true);
 		virtual ~MMSpMatReader(void);
 
 		//完成mtx文件的导入，对矩阵维度进行校验并放入稀疏矩阵结构体中

@@ -293,7 +293,7 @@ namespace HBXFEMDef
 			int    *AcolsIndex = 0;
 			int    *ArowsIndex = 0;
 			/* load the coefficient matrix */
-			if (loadMMSparseMatrix(_mat_filename, 'f',
+			if (loadMMSparseMatrix<double>(_mat_filename, 'f',
 				true, &matrixM, &matrixN, &nnz, &Aval, &ArowsIndex, &AcolsIndex, 0)) {
 				fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
 				return HBXDef::DataAloc_t::INVALID;

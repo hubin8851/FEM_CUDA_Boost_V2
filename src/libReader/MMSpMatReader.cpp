@@ -6,7 +6,7 @@ namespace HBXFEMDef
 {
 	MMSpMatReader::MMSpMatReader(	const char * _matname, 
 									const char* _searchpath,
-									bool _csrFormat):MatSaveType(_csrFormat)
+									bool _csrFormat):MatSaveFormat(_csrFormat)
 	{
 		this->SetSourceFilePath(_matname, _searchpath);
 
@@ -21,136 +21,52 @@ namespace HBXFEMDef
 
 	InputFileResult MMSpMatReader::SetInputData()
 	{
-		//四位的结构体，表示不同的矩阵类型，比如矩阵的对称性、元素为实数亦或复数
-		MM_typecode matcode;
-		int error;
-		int m, n, nnz;
-		int    *trow, *tcol;
-		int i, j;
-		int count;
-		double *tval;
+		int rowsA = 0; // number of rows of A
+		int colsA = 0; // number of columns of A
+		int nnzA = 0; // number of nonzeros of A
+		int baseA = 0; // base index in CSR format
 
-		int    *tempRowInd, *tempColInd;
-		double *tempVal;
-
-		struct cooFormat *work;
+		// CSR(A) from I/O
+		int *h_csrRowPtrA = NULL; // <int> n+1 
+		int *h_csrColIndA = NULL; // <int> nnzA 
+		double *h_csrValA = NULL; // <double> nnzA 
 
 		std::string _tmpstr = BaseReader::m_path + "\\" + BaseReader::m_SrcFileName;
 		char* chr = const_cast<char*>(_tmpstr.c_str());
 
-		/* read the matrix */
-		error = mm_read_mtx_crd( chr, &m, &n, &nnz, &trow, &tcol, &tval, &matcode);
-		if (error) {
-			fprintf(stderr, "!!!! can not open file: '%s'\n", chr);
-			return InputFileResult::IRRT_NOTFOUND;
-		}
-
-		/* start error checking */
-		if (mm_is_complex(matcode) && ((m_ElemetType != 'z') && (m_ElemetType != 'c'))) {
-			fprintf(stderr, "!!!! complex matrix requires type 'z' or 'c'\n");
-			return InputFileResult::IRRT_BAD_FORMAT;
-		}
-
-		//判断矩阵格式是否为稠密、Array形式的矩阵
-		if (mm_is_dense(matcode) || mm_is_array(matcode) || mm_is_pattern(matcode) /*|| mm_is_integer(matcode)*/) {
-			fprintf(stderr, "!!!! dense, array, pattern and integer matrices are not supported\n");
-			return InputFileResult::IRRT_BAD_FORMAT;
-		}
-
-		if ( mm_is_symmetric(matcode) || mm_is_hermitian(matcode) || mm_is_skew(matcode) )
+		
+		if (!this->m_SrcFileName.empty())
 		{
-			//统计非对角元元素
-			count = 0;
-			for (i = 0; i < nnz; i++) {
-				if (trow[i] != tcol[i]) {//如果行号和列好不一，+1
-					count++;
-				}
-			}
-			//为对称阵分配地址空间
-			tempRowInd = (int *)malloc((nnz + count) * sizeof(int));
-			tempColInd = (int *)malloc((nnz + count) * sizeof(int));
-			if (mm_is_real(matcode) || mm_is_integer(matcode)) {
-				tempVal = (double *)malloc((nnz + count) * sizeof(double));
-			}
-			else {
-				tempVal = (double *)malloc(2 * (nnz + count) * sizeof(double));
-			}
-
-			//copy the elements regular and transposed locations
-			for (j = 0, i = 0; i < nnz; i++) 
+			if (loadMMSparseMatrix<HBXDef::UserReadPrec>(chr, 'd', true, &rowsA, &colsA,
+				&nnzA, &h_csrValA, &h_csrRowPtrA, &h_csrColIndA, true))
 			{
-				tempRowInd[j] = trow[i];
-				tempColInd[j] = tcol[i];
-				if (mm_is_real(matcode) || mm_is_integer(matcode)) {
-					tempVal[j] = tval[i];
-				}
-				else {
-					tempVal[2 * j] = tval[2 * i];
-					tempVal[2 * j + 1] = tval[2 * i + 1];
-				}
-				j++;
-				if (trow[i] != tcol[i]) {
-					tempRowInd[j] = tcol[i];
-					tempColInd[j] = trow[i];
-					if (mm_is_real(matcode) || mm_is_integer(matcode)) {
-						if (mm_is_skew(matcode)) {
-							tempVal[j] = -tval[i];
-						}
-						else {
-							tempVal[j] = tval[i];
-						}
-					}
-					else {
-						if (mm_is_hermitian(matcode)) {
-							tempVal[2 * j] = tval[2 * i];
-							tempVal[2 * j + 1] = -tval[2 * i + 1];
-						}
-						else {
-							tempVal[2 * j] = tval[2 * i];
-							tempVal[2 * j + 1] = tval[2 * i + 1];
-						}
-					}
-					j++;
-				}
+				return InputFileResult::IRRT_BAD_FORMAT;
 			}
-			nnz += count;
-			//free temporary storage
-			free(trow);
-			free(tcol);
-			free(tval);
+			baseA = h_csrRowPtrA[0]; // baseA = {0,1}
 		}
-		else 
+
+		if (rowsA != colsA)
 		{
-			tempRowInd = trow;
-			tempColInd = tcol;
-			tempVal = tval;
-		}
-
-		// life time of (trow, tcol, tval) is over.
-	// please use COO format (tempRowInd, tempColInd, tempVal)
-
-// use qsort to sort COO format 
-		work = (struct cooFormat *)malloc(sizeof(struct cooFormat)*nnz);
-		if (NULL == work) {
-			fprintf(stderr, "!!!! allocation error, malloc failed\n");
+			fprintf(stderr, "Error: only support square matrix\n");
 			return InputFileResult::IRRT_BAD_FORMAT;
 		}
-		for (i = 0; i < nnz; i++) 
+
+		printf("WARNING: cusolverRf only works for base-0 \n");
+		if (baseA)
 		{
-			work[i].i = tempRowInd[i];
-			work[i].j = tempColInd[i];
-			work[i].p = i; // permutation is identity
+			for (int i = 0; i <= rowsA; i++)
+			{
+				h_csrRowPtrA[i]--;
+			}
+			for (int i = 0; i < nnzA; i++)
+			{
+				h_csrColIndA[i]--;
+			}
+			baseA = 0;
 		}
 
-		if (csrFormat) {
-			/* create row-major ordering of indices (sorted by row and within each row by column) */
-			qsort(work, nnz, sizeof(struct cooFormat), (FUNPTR)fptr_array[0]);
-		}
-		else {
-			/* create column-major ordering of indices (sorted by column and within each column by row) */
-			qsort(work, nnz, sizeof(struct cooFormat), (FUNPTR)fptr_array[1]);
-
-		}
+		printf("sparse matrix A is %d x %d with %d nonzeros, base=%d\n", rowsA, colsA, nnzA, baseA);
+		return InputFileResult::IRRT_OK;
 	}
 
 
@@ -172,11 +88,6 @@ namespace HBXFEMDef
 		return m_MatMsg._nA;
 	}
 
-	size_t & MMSpMatReader::GetID()
-	{
-		// TODO: 在此处插入 return 语句
-		return this->m_id;
-	}
 
 
 	CUFEM_API BaseReader * InstanceMMSpMatReader(const char* _name, const char* _path)

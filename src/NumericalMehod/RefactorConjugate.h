@@ -21,6 +21,8 @@ namespace HBXFEMDef
 	//基于RCM，缩减带宽的预处理共轭梯度法
 	//流程为resetmem->resetGraphmem->Preconditioning->getB
 	//此类仅适用于CSR格式矩阵输入
+	//本质是直接法，通过矩阵带宽缩减后采用直接LU分解方法进行解算
+	//Sample cuSolverRf
 	class CUFEM_API RefactorConjugate 
 		:public BaseConjugate
 	{
@@ -119,7 +121,7 @@ namespace HBXFEMDef
 	protected:
 		//step 3: B = Q*A*Q^T
 		//本质上是在CPU上执行的，CUDA调用了别家的库
-		double GetB();
+		double GetReorderMat();
 
 	public:
 		RefactorConjugate(Domain* _dm, Engng* _eng);
