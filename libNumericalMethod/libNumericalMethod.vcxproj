@@ -159,6 +159,7 @@
     <ClInclude Include="..\src\NumericalMehod\BaseConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\BiCGStab.h" />
     <ClInclude Include="..\src\NumericalMehod\CgConjugate.h" />
+    <ClInclude Include="..\src\NumericalMehod\LowLevelCholesky.h" />
     <ClInclude Include="..\src\NumericalMehod\PcgConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h" />
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h" />
@@ -177,6 +178,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp" />
+    <ClCompile Include="..\src\NumericalMehod\LowLevelCholesky.cpp" />
     <ClCompile Include="..\src\NumericalMehod\PcgConjugate.cpp" />
     <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp" />
     <ClCompile Include="dllmain.cpp" />

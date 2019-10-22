@@ -6,8 +6,8 @@
 #include <helper_cuda.h>
 
 #include <HbxGloFunc.h>
-#include <mmio.h>
-#include <mmio_wrapper.h>
+#include "mmio.h"
+#include "mmio_wrapper.h"
 
 namespace HBXFEMDef
 {
@@ -53,7 +53,7 @@ namespace HBXFEMDef
 			uniform_real_distribution<> dis(*min, *max);
 			for (size_t i = 0; i < _genRowNum; i++)
 			{
-				h_rhs[i] = h_vRhs[i] = dis(gen);
+				h_b[i] = h_vRhs[i] = dis(gen);
 #ifdef _DEBUG
 				std::cout << h_vRhs[i] << std::endl;
 #endif
@@ -68,7 +68,7 @@ namespace HBXFEMDef
 			uniform_real_distribution<> dis(0, 1);
 			for (size_t i = 0; i < _genRowNum; i++)
 			{
-				h_rhs[i] = h_vRhs[i] = dis(gen);
+				h_b[i] = h_vRhs[i] = dis(gen);
 				std::cout << h_vRhs[i] << std::endl;
 			}
 		}	
@@ -87,11 +87,13 @@ namespace HBXFEMDef
 		m_DataAloc = HBXDef::INVALID;
 		m_bSave = false;				//是否存盘
 
-		memcpy_totalT = 0;
+		time_MemcpyHostToDev = 0;//从CPU-GPU拷贝耗时
+		time_MemcpyDevToHost = 0;//从CPU-GPU拷贝耗时
 		startT = 0;
 		stopT = 0;
-		time_sp_analysisT = 0;
-		time_sp_solveT = 0;
+		time_sp_analysisT = 0;//分析时间，相当于初始化阶段矩阵预处理时间
+		time_sp_CPUSolve = 0;//解算时间
+		time_sp_GPUSolve = 0;
 
 		//所用流初始化
 		m_stream = 0;
@@ -111,7 +113,7 @@ namespace HBXFEMDef
 		h_iColIndex = nullptr;
 		h_iRowSort = nullptr;
 		h_x = nullptr;
-		h_rhs = nullptr;
+		h_b = nullptr;
 	}
 
 	BaseConjugate::~BaseConjugate()
@@ -157,14 +159,14 @@ namespace HBXFEMDef
 //		h_x = (UserCalPrec *)malloc(sizeof(UserCalPrec) * m_RowNum);
 		/* reset the initial guess of the solution to zero */
 		memset(h_x, 0, m_RowNum);
-		if (nullptr != h_rhs)
+		if (nullptr != h_b)
 		{
-			delete[]h_rhs;
-			h_rhs = nullptr;
+			delete[]h_b;
+			h_b = nullptr;
 		}
-		_cuError_id = cudaHostAlloc((void**)&h_rhs, sizeof(UserCalPrec)*m_RowNum, 0);
-		//	h_rhs = (double *) malloc(sizeof(double) * m_RowNum);	//此为不用锁页内存的地址分配
-		memset(h_rhs, 0, m_RowNum);
+		_cuError_id = cudaHostAlloc((void**)&h_b, sizeof(UserCalPrec)*m_RowNum, 0);
+		//	h_b = (double *) malloc(sizeof(double) * m_RowNum);	//此为不用锁页内存的地址分配
+		memset(h_b, 0, m_RowNum);
 	}
 
 	void BaseConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
@@ -183,7 +185,7 @@ namespace HBXFEMDef
 			checkCudaErrors( cudaMalloc((void **)&d_iRowSort, m_nA * sizeof(int)) );
 
 			//方程等式右边向量显存分配
-			checkCudaErrors( cudaMalloc((void **)&d_r, m_RowNum * sizeof(double)) );
+			checkCudaErrors( cudaMalloc((void **)&d_b, m_RowNum * sizeof(double)) );
 
 			//待求特征值显存分配
 			checkCudaErrors( cudaMalloc((void **)&d_x, m_RowNum * sizeof(double)) );
@@ -211,12 +213,12 @@ namespace HBXFEMDef
 			HBXDef::CheckUserDefErrors( cudaMemcpy(h_x, d_x, 
 										m_RowNum * sizeof(double), cudaMemcpyDeviceToHost) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(h_rhs, d_r, 
+			HBXDef::CheckUserDefErrors( cudaMemcpy(h_b, d_b,
 										m_RowNum * sizeof(double), cudaMemcpyDeviceToHost) );
 
 			double stop_matrix_copy = GetTimeStamp();
-			memcpy_totalT += stop_matrix_copy - start_matrix_copy;
-			std::cout << "DeviceToHost内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
+			time_MemcpyDevToHost += stop_matrix_copy - start_matrix_copy;
+			//std::cout << "DeviceToHost内存拷贝耗时共计:" << time_MemcpyDevToHost << std::endl;
 
 			return HBXDef::DataAloc_t::DATAINMEM;
 		}
@@ -235,12 +237,12 @@ namespace HBXFEMDef
 			HBXDef::CheckUserDefErrors( cudaMemcpy(d_x, h_x,
 										m_RowNum * sizeof(double), cudaMemcpyHostToDevice) );
 			
-			HBXDef::CheckUserDefErrors( cudaMemcpy(d_r, h_rhs,
+			HBXDef::CheckUserDefErrors( cudaMemcpy(d_b, h_b,
 										m_RowNum * sizeof(double), cudaMemcpyHostToDevice) );
 			
 			double end_matrix_copy = HBXDef::GetTimeStamp();
-			memcpy_totalT += end_matrix_copy - start_matrix_copy;
-			std::cout << "基类下系数矩阵及右端向量HostToDevice内存拷贝耗时共计:" << end_matrix_copy - start_matrix_copy << std::endl;
+			time_MemcpyHostToDev += end_matrix_copy - start_matrix_copy;
+			std::cout << "基类下系数矩阵及右端向量HostToDevice内存拷贝耗时共计:" << time_MemcpyHostToDev << std::endl;
 			return HBXDef::DataAloc_t::DATAINGPU;
 		}
 		else return HBXDef::DataAloc_t::INVALID;
@@ -428,7 +430,7 @@ namespace HBXFEMDef
 		else if (m_RowNum == _RowNum)
 		{
 			std::cout << "载荷数据维度正确..." << std::endl;
-			memcpy(h_rhs, h_vRhs.data(), m_RowNum * sizeof(float));
+			memcpy(h_b, h_vRhs.data(), m_RowNum * sizeof(float));
 			return HBXDef::DataAloc_t::DATAINMEM;
 		}
 		std::cout << "载荷数据维度错误..." << std::endl;
@@ -448,12 +450,12 @@ namespace HBXFEMDef
 //		const UserCalPrec* _tmpload = static_cast<const UserCalPrec*>(_LoadVec);
 		h_vRhs.resize(_RowNum);
 //		h_rhs = static_cast<UserCalPrec*>(_LoadVec);
-		h_rhs = _LoadVec;
+		h_b = _LoadVec;
 		m_nA = (int)_RowNum + 1;
 		//在此需每个元素赋值，因为vector的内存可能不连续
 		for (int i = 0; i < _RowNum; i++)
 		{
-			h_vRhs[i] = h_rhs[i];
+			h_vRhs[i] = h_b[i];
 		}
 		return DataAloc_t::DATAINMEM;
 	}
@@ -547,21 +549,46 @@ namespace HBXFEMDef
 	void BaseConjugate::FreeGPUResource()
 	{
 #pragma region 裸指针版
-		if (false == m_bCudaFree)
-		{
-			/* 释放设备内存 */
-			_cusparseError_id = cusparseDestroy(cusparseHandle);
-			_cublasError_id = cublasDestroy(cublasHandle);
-			_cuError_id = cudaFree(d_NoneZeroVal);
-			_cuError_id = cudaFree(d_iColIndex);
-			_cuError_id = cudaFree(d_iRowSort);
-			_cuError_id = cudaFree(d_x);
-			_cuError_id = cudaFree(d_r);
+		//if (false == m_bCudaFree)
+		//{
+		//	/* 释放设备内存 */
+		//	_cusparseError_id = cusparseDestroy(cusparseHandle);
+		//	_cublasError_id = cublasDestroy(cublasHandle);
+		//	_cuError_id = cudaFree(d_NoneZeroVal);
+		//	_cuError_id = cudaFree(d_iColIndex);
+		//	_cuError_id = cudaFree(d_iRowSort);
+		//	_cuError_id = cudaFree(d_x);
+		//	_cuError_id = cudaFree(d_r);
+		//
+		//	_cuError_id = cudaDeviceReset();	//重置GPU设备
+		//	m_bCudaFree = true;
+		//}
+		//else return;
+#pragma endregion
 
-			_cuError_id = cudaDeviceReset();	//重置GPU设备
-			m_bCudaFree = true;
-		}
-		else return;
+#pragma region 裸指针版
+		//CPU部分，如果是锁页内存可能有所不同 
+		if (h_x) { free(h_x); }
+		if (h_b) { free(h_b); }
+		if (h_r) { free(h_r); }
+
+		if (h_NoneZeroVal) { free(h_NoneZeroVal); }
+		if (h_iRowSort) { free(h_iRowSort); }
+		if (h_iColIndex) { free(h_iColIndex); }
+
+		//GPU部分
+		if (d_NoneZeroVal) { checkCudaErrors(cudaFree(d_NoneZeroVal)); }
+		if (d_iRowSort) { checkCudaErrors(cudaFree(d_iRowSort)); }
+		if (d_iColIndex) { checkCudaErrors(cudaFree(d_iColIndex)); }
+		if (d_x) { checkCudaErrors(cudaFree(d_x)); }
+		if (d_b) { checkCudaErrors(cudaFree(d_b)); }
+		if (d_r) { checkCudaErrors(cudaFree(d_r)); }
+
+		if (cusparseHandle) { checkCudaErrors(cusparseDestroy(cusparseHandle)); }
+		if (m_stream) { checkCudaErrors(cudaStreamDestroy(m_stream)); }
+		if (Matdescr) { checkCudaErrors(cusparseDestroyMatDescr(Matdescr)); }
+		if (cublasHandle) { checkCudaErrors(cublasDestroy(cublasHandle)); }
+
 #pragma endregion
 	}
 

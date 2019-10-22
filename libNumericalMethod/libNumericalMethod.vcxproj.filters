@@ -45,6 +45,9 @@
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\NumericalMehod\LowLevelCholesky.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -75,6 +78,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\LowLevelCholesky.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

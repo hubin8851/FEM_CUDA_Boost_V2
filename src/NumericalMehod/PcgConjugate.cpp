@@ -130,7 +130,7 @@ namespace HBXFEMDef
 		checkCudaErrors(cudaDeviceSynchronize());
 		double th2d = GetTimeStamp();
 #endif
-		_cuError_id = cudaMemcpy(d_r, h_rhs, m_RowNum * sizeof(double), cudaMemcpyHostToDevice);
+		_cuError_id = cudaMemcpy(d_r, h_b, m_RowNum * sizeof(double), cudaMemcpyHostToDevice);
 		_cuError_id = cudaMemcpy(d_x, h_x, m_RowNum * sizeof(double), cudaMemcpyHostToDevice);
 #ifdef TIME_INDIVIDUAL_LIBRARY_CALLS
 		checkCudaErrors(cudaDeviceSynchronize());
@@ -211,7 +211,7 @@ namespace HBXFEMDef
 		/*½á¹û¼ìÑé*/
 		m_qaerr1 = CheckResult(m_nnzA, m_nA,
 			h_NoneZeroVal, h_iColIndex, h_iRowSort,
-			h_x, h_rhs);
+			h_x, h_b);
 		printf("  Convergence Test: %s \n", (k <= MAX_GPUITER) ? "OK" : "FAIL");
 		m_iters = k;
 		return msecUsed;

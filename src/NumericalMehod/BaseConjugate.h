@@ -44,9 +44,12 @@ namespace HBXFEMDef
 		HBXDef::DataAloc_t	m_DataAloc;
 
 		double startT, stopT;
-		double memcpy_totalT;
+		double time_MemcpyHostToDev;	//从CPU-GPU拷贝耗时
+		double time_MemcpyDevToHost;	//从CPU-GPU拷贝耗时
 		double time_sp_analysisT;//分析时间，相当于初始化阶段矩阵预处理时间
-		double time_sp_solveT;//解算时间
+		double time_sp_factorT;
+		double time_sp_CPUSolve;//解算时间
+		double time_sp_GPUSolve;//解算时间
 
 		double	msecUsed;	//时间统计double型变量
 		double	m_qaerr1;	//残差
@@ -68,17 +71,20 @@ namespace HBXFEMDef
 		//	HBXDef::_CSRInput<double>	m_CSRInput;	//存在问题，结构体内存连续可能导致赋值错误
 		std::string	m_SavePath;
 		//主机端buffer
-		HBXDef::UserCalPrec		*h_NoneZeroVal;
-		int						*h_iColIndex;
-		int						*h_iRowSort;
-		HBXDef::UserCalPrec		*h_x;
-		HBXDef::UserCalPrec		*h_rhs;
+		HBXDef::UserCalPrec		*h_NoneZeroVal = nullptr;
+		int						*h_iColIndex = nullptr;
+		int						*h_iRowSort = nullptr;
+		HBXDef::UserCalPrec		*h_x = nullptr;//待求特征值
+		HBXDef::UserCalPrec		*h_b = nullptr;//等式右边向量
+		HBXDef::UserCalPrec		*h_r = nullptr;//r=Ax-b
+
 		//显存内裸指针
-		HBXDef::UserCalPrec*		d_NoneZeroVal;
-		int*						d_iColIndex;
-		int*						d_iRowSort;
-		HBXDef::UserCalPrec*		d_x;	//待求特征值
-		HBXDef::UserCalPrec*		d_r;	//等式右边向量
+		HBXDef::UserCalPrec*		d_NoneZeroVal = nullptr;
+		int*						d_iColIndex = nullptr;
+		int*						d_iRowSort = nullptr;
+		HBXDef::UserCalPrec*		d_x = nullptr;	//待求特征值
+		HBXDef::UserCalPrec*		d_b = nullptr;	//等式右边向量
+		HBXDef::UserCalPrec*		d_r = nullptr;	//r=Ax-b
 
 #ifndef _THRUST_
 		std::vector<HBXDef::UserCalPrec>	h_vNoneZeroVal;
@@ -95,7 +101,7 @@ namespace HBXFEMDef
 		//生成随机的三对角对称阵
 		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
 		//生成随机的等式右端向量
-		void	genRhs(size_t _genRowNum, bool _bsave = false, const char* _savepath = "..\\data\\check");
+		virtual void	genRhs(size_t _genRowNum, bool _bsave = false, const char* _savepath = "..\\data\\check");
 	public:
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();
@@ -152,6 +158,11 @@ namespace HBXFEMDef
 		//@_tol:残差
 		//@_iter:迭代次数
 		virtual	double	ConjugateWithGPU(const double &_tol = ERRORTOLERATE, const int &_iter = MAX_GPUITER) = 0;
+
+		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
+		//主要是检验范数
+		virtual double CheckNormInf() = 0;
+
 		size_t		GetIters()const { return m_iters; };
 		double		GetsecUsed()const { return msecUsed; };
 		double		Getqaerr()const { return m_qaerr1; };
