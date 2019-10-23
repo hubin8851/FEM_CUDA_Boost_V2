@@ -65,6 +65,12 @@ namespace HBXFEMDef
 			baseA = 0;
 		}
 
+		this->m_MatMsg.h_iColSort = h_csrColIndA;
+		this->m_MatMsg.h_iNonZeroRowSort = h_csrRowPtrA;
+		this->m_MatMsg.h_NoneZeroVal = h_csrValA;
+		this->m_MatMsg._nA = rowsA+1;
+		this->m_MatMsg._nnzA = nnzA;
+
 		printf("sparse matrix A is %d x %d with %d nonzeros, base=%d\n", rowsA, colsA, nnzA, baseA);
 		return InputFileResult::IRRT_OK;
 	}
@@ -72,6 +78,7 @@ namespace HBXFEMDef
 
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* MMSpMatReader::GetStiffMat(bool _bSv)
 	{
+
 		return &this->m_MatMsg;
 	}
 

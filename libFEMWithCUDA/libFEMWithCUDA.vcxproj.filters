@@ -257,5 +257,13 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CSRSpMatrix.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CudaPreDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.inl">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

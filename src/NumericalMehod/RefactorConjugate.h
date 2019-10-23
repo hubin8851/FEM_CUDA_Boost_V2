@@ -148,5 +148,9 @@ namespace HBXFEMDef
 		//从P*B*Q^T = L*U中提取P,Q,L,U
 		//返回计时
 		double ExtractPQLU();
+
+		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
+		//主要是检验范数
+		virtual double CheckNormInf() { return 0.0f; };
 	};
 };

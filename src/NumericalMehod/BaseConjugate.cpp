@@ -254,10 +254,12 @@ namespace HBXFEMDef
 		{
 			std::string _tmppath(_dir);
 			_tmppath.append(_mat_filename);
+			char* _tmpchar = const_cast<char*>(_tmppath.c_str());
 			// 	char *TmpPath = new char[_tmppath.string().size()+1];
 			// 	memcpy( TmpPath, _tmppath.string().data(), _tmppath.string().size() );
 			// 	TmpPath[_tmppath.string().size()] = '\0';
-			if (loadMMSparseMat(_tmppath.c_str(), true, &m_RowNum, &m_ColNum, &m_nnzA, h_vNoneZeroVal, h_viNonZeroRowSort, h_viColSort))
+			if (loadMMSparseMatrix<HBXDef::UserCalPrec>(_tmpchar, 'd', true, &m_RowNum, &m_ColNum, &m_nnzA,
+								&h_NoneZeroVal, &h_iRowSort, &h_iColIndex, true) )
 			{
 				fprintf(stderr, "!!!! cusparseLoadMMSparseMatrix FAILED\n");
 				return HBXDef::DataAloc_t::INVALID;
@@ -316,8 +318,8 @@ namespace HBXFEMDef
 	}
 
 	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(HBXDef::UserCalPrec *  _srcVal,
-													size_t *  _srcCol,
-													size_t *  _srcRow, 
+													int *  _srcCol,
+													int *  _srcRow, 
 													size_t _nnA, size_t _nA, bool _bsave)
 	{
 		using namespace HBXDef;

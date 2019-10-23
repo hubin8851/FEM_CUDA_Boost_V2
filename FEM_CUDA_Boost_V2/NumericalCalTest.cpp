@@ -18,6 +18,8 @@ void NumericalCalTest(void * void_arg)
 	g_Iters = (_tmpCSR->_nA) * 3;
 	std::cout << "读取部分结束" << std::endl;
 
+
+
 	if (0)
 	{
 		BiCGStab g_BiCGStab(nullptr, nullptr);

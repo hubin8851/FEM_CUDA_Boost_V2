@@ -6,6 +6,8 @@
 #include <libCUFEM\BaseNumMethod.h>
 #include <HbxGloFunc.h>
 
+
+
 #ifndef _THRUST_
 
 #else
@@ -122,7 +124,7 @@ namespace HBXFEMDef
 		UserStatusError_t SetStiffMatFrom( HBXDef::_CSRInput<HBXDef::UserCalPrec>* _matIn );
 
 		//从外部获取三个数组指针及其长度得到刚度矩阵的CSR格式
-		HBXDef::DataAloc_t	SetStiffMat(HBXDef::UserCalPrec * _srcVal, size_t * _srcCol, size_t * _srcRow,
+		HBXDef::DataAloc_t	SetStiffMat(HBXDef::UserCalPrec * _srcVal, int * _srcCol, int * _srcRow,
 			size_t _nnA, size_t _nA, bool _bsave = false);
 		//从文件中读取CSR格式的刚度矩阵
 		HBXDef::DataAloc_t		SetStiffMat(const char* _NoneZeroVal = "NoneZeroVal.data",

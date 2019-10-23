@@ -1,14 +1,16 @@
 #include "RefactorConjugate.h"
-#include <helper_cuda.h>
-#include <helper_cusolver.h>
-#include "helper_hbx.h"
+#include <cusparse.h>
+#include <cusolverSp.h>
+#include "helper_cuda.h"
+#include <userCuda/HBX_Helper_cuSolver.h>
+
 
 namespace HBXFEMDef
 {
 	double RefactorConjugate::GetReorderMat()
 	{
 		//º∆À„B = P*A*P^T£¨µ√µΩ
-		fprintf(stdout,"step 3: B = Q*A*Q^T\n");
+		fprintf(stdout," B = Q*A*Q^T\n");
 		memcpy(h_csrRowPtrB, h_iRowSort, sizeof(int)*(m_RowNum + 1));
 		memcpy(h_csrColIndB, h_iColIndex, sizeof(int)*m_nnzA);
 
@@ -90,7 +92,7 @@ namespace HBXFEMDef
 
 		assert(nullptr != h_x);
 		assert(nullptr != h_b);
-		assert(nullptr != h_rhs);
+		assert(nullptr != h_r);
 
 		assert(nullptr != h_xhat);
 		assert(nullptr != h_bhat);
@@ -156,7 +158,7 @@ namespace HBXFEMDef
 	{
 		printf("step 1.2: set right hand side vector (b) to 1\n");
 		for (int row = 0; row < m_RowNum; row++) {
-			h_rhs[row] = 1.0;
+			h_b[row] = 1.0;
 		}
 
 		fprintf(stdout, "step 2: reorder the matrix to reduce zero fill-in\n");
@@ -251,7 +253,7 @@ namespace HBXFEMDef
 
 		// b_hat = Q*b
 		for (int j = 0; j < m_RowNum; j++) {
-			h_bhat[j] = h_rhs[h_Qreorder[j]];
+			h_bhat[j] = h_b[h_Qreorder[j]];
 		}
 		// B*x_hat = b_hat
 		checkCudaErrors(cusolverSpDcsrluSolveHost(
@@ -263,7 +265,7 @@ namespace HBXFEMDef
 		}
 
 		stopT = GetTimeStamp();
-		time_sp_solveT = stopT - startT;
+		time_sp_CPUSolve = stopT - startT;
 
 		printf("step 4.7: evaluate residual r = b - A*x (result on CPU)\n");
 		// use GPU gemv to compute r = b - A*x
@@ -288,11 +290,11 @@ namespace HBXFEMDef
 			&one,
 			d_r));
 
-		checkCudaErrors(cudaMemcpy(h_rhs, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(h_r, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
 
-		x_inf = vec_norminf(m_ColNum, h_x);
-		r_inf = vec_norminf(m_RowNum, h_rhs);
-		A_inf = csr_mat_norminf(m_RowNum, m_ColNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex);
+		x_inf = HBXDef::vec_norminf(m_ColNum, h_x);
+		r_inf = HBXDef::vec_norminf(m_RowNum, h_r);
+		A_inf = HBXDef::csr_mat_norminf(m_RowNum, m_ColNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex);
 
 		printf("(CPU) |b - A*x| = %E \n", r_inf);
 		printf("(CPU) |A| = %E \n", A_inf);
@@ -307,7 +309,7 @@ namespace HBXFEMDef
 	{
 		printf("step 5: extract P, Q, L and U from P*B*Q^T = L*U \n");
 		printf("        L has implicit unit diagonal\n");
-		startT = second();
+		startT = GetTimeStamp();
 
 		checkCudaErrors(cusolverSpXcsrluNnzHost(
 			cusolverSpH,
@@ -351,7 +353,7 @@ namespace HBXFEMDef
 			info,
 			buffer_cpu));
 
-		stopT = second();
+		stopT = GetTimeStamp();
 		time_sp_extractT = stopT - startT;
 
 		printf("nnzL = %d, nnzU = %d\n", nnzL, nnzU);

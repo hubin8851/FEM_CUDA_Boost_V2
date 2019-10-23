@@ -107,8 +107,8 @@ namespace HBXFEMDef
 		m_MatMsg._nA = (int)(m_RowNum)+1;
 		m_MatMsg._nnzA = (int)mxGetNzmax(_Array) - 1;
 		m_MatMsg.h_NoneZeroVal = mxGetPr(_Array);
-		m_MatMsg.h_iColSort = mxGetIr(_Array); //rowsort = nna_z
-		m_MatMsg.h_iNonZeroRowSort = mxGetJc(_Array); //colsort = N+1
+		m_MatMsg.h_iColSort = mxGetIr_700(_Array); //rowsort = nna_z,用的老版的mxGetIr
+		m_MatMsg.h_iNonZeroRowSort = mxGetJc_700(_Array); //colsort = N+1,用的老版
 
 //		SetStiffMat(m_MatMsg.h_NoneZeroVal, m_MatMsg.h_iColSort, m_MatMsg.h_iNonZeroRowSort, m_nnzA, m_nA);
 		return ::ImpMatError_t::IMPSUCCESS;

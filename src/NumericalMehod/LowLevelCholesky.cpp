@@ -1,6 +1,10 @@
 #include "LowLevelCholesky.h"
+#include <cusparse.h>
+#include <cusolverSp.h>
 #include "helper_cuda.h"
-#include "helper_cusolver.h"
+#include <userCuda/HBX_Helper_cuSolver.h>
+
+
 
 
 namespace HBXFEMDef
@@ -204,8 +208,8 @@ namespace HBXFEMDef
 
 			//stop_matrix_copy = GetTimeStamp();
 		}
-		time_MemcpyHostToDev = stop_matrix_copy - start_matrix_copy;
-		std::cout << "双共轭梯度法内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
+		//time_MemcpyHostToDev = stop_matrix_copy - start_matrix_copy;
+		//std::cout << "双共轭梯度法内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
 		return BaseConjugate::MemCpy(_temp);
 	}
 
@@ -244,7 +248,7 @@ namespace HBXFEMDef
 	{
 		checkCudaErrors(cudaMemcpy(d_r, h_b, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
 
-		r_inf = vec_norminf(m_RowNum, h_r);
+		r_inf = HBXDef::vec_norminf(m_RowNum, h_r);
 		m_qaerr1 = r_inf / (A_inf * x_inf);
 		printf("(GPU) |b - A*x| = %E \n", r_inf);
 		printf("(GPU) |b - A*x|/(|A|*|x|) = %E \n", m_qaerr1);

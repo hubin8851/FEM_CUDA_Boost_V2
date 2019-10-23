@@ -1,5 +1,5 @@
 #include "PcgConjugate.h"
-#include <userCuda\helper_cuda.h>
+#include <helper_cuda.h>
 
 namespace HBXFEMDef
 {

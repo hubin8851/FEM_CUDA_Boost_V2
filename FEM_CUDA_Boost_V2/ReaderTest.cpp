@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <..\src\libReader\MMSpMatReader.h>
 #include <..\src\libReader\UFgetMatReader.h>
 #include <..\src\libReader\InpDataReader.h>
 #include "ReaderTest.h"
@@ -14,7 +15,14 @@
 
 void ReaderTest(void * void_arg)
 {
-	if (1)//UFGET∂¡»°∆˜≤‚ ‘
+	if (1)
+	{
+		using namespace HBXFEMDef;
+		MMSpMatReader g_MMSpMatReader();
+	}
+
+
+	if (0)//UFGET∂¡»°∆˜≤‚ ‘
 	{
 		using namespace HBXFEMDef;
 		UFgetMatReader  g_UFgetMatReader("bcsstk03.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat\\HB");

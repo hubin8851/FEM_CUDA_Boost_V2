@@ -1,5 +1,5 @@
 #include "CgConjugate.h"
-#include <userCuda\helper_cuda.h>
+#include <helper_cuda.h>
 
 namespace HBXFEMDef
 {
@@ -82,7 +82,7 @@ namespace HBXFEMDef
 		/*½á¹û¼ìÑé*/
 		m_qaerr1 = CheckResult(m_nnzA, m_nA,
 			h_NoneZeroVal, h_iColIndex, h_iRowSort,
-			h_x, h_rhs);
+			h_x, h_b);
 		printf("  Convergence Test: %s \n", (k <= MAX_GPUITER) ? "OK" : "FAIL");
 		m_iters = k;
 

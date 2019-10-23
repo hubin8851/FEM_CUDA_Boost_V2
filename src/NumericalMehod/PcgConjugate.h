@@ -44,5 +44,8 @@ namespace HBXFEMDef
 		//@_iter:迭代次数
 		double	ConjugateWithGPU(const double &_tol = 1e-9f, const int &_iter = 1000);
 
+		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
+		//主要是检验范数
+		virtual double CheckNormInf() { return 0.0f; };
 	};
 };

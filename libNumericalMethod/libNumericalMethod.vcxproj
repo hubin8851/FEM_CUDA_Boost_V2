@@ -23,7 +23,7 @@
     <ProjectGuid>{F1741414-DE90-4FE5-B2B8-BFC9F83124C4}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>libNumericalMethod</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -100,6 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;LIBNUMERICALMETHOD_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>F:\data_from_HBX_phd\vs2015\FEM_CUDA_Boost_V2\libNumericalMethod;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,6 +163,7 @@
     <ClInclude Include="..\src\NumericalMehod\LowLevelCholesky.h" />
     <ClInclude Include="..\src\NumericalMehod\PcgConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h" />
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.h" />
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h" />
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h" />
     <ClInclude Include="NumericalMethodTest.h" />
@@ -177,11 +179,20 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp" />
-    <ClCompile Include="..\src\NumericalMehod\LowLevelCholesky.cpp" />
-    <ClCompile Include="..\src\NumericalMehod\PcgConjugate.cpp" />
-    <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp" />
+    <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\LowLevelCholesky.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\PcgConjugate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c" />
     <ClCompile Include="libNumericalMethod.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
