@@ -44,7 +44,7 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
@@ -74,8 +74,8 @@
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
-    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_MDD.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

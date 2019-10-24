@@ -22,8 +22,8 @@ namespace HBXFEMDef
 
 	protected:
 	public:
-		MMSpMatReader(	const char* _matname = "lap2D_5pt_n100.mtx", 
-						const char* _searchpath = "C:\\ProgramData\\NVIDIA Corporation\\CUDA Samples\\v10.1\\7_CUDALibraries\\cuSolverSp_LinearSolver",
+		MMSpMatReader(	const char* _matname = "bcsstk01.mtx", 
+						const char* _searchpath = "E:\\Phd_Hu_Data\\matrix market",
 						bool _csrFormat = true);
 		virtual ~MMSpMatReader(void);
 

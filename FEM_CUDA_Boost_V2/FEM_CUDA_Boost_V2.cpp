@@ -31,7 +31,7 @@ using namespace std;
 
 int main()
 {	
-	if (1)//测试文件读取
+	if (0)//测试文件读取
 	{
 		ReaderTest();
 	}
@@ -41,7 +41,7 @@ int main()
 //		MultiInterpolateTest();
 	}
 
-	if (0)//迭代法测试
+	if (1)//迭代法测试
 	{
 		NumericalCalTest();
 	}

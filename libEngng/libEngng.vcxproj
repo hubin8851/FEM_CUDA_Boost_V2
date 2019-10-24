@@ -23,7 +23,7 @@
     <ProjectGuid>{B8575A4A-1FC5-4F25-B923-1D3D88740979}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>libEngng</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -75,8 +75,8 @@
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
-    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_rl_MDD.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_static.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

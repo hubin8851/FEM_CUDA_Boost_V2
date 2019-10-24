@@ -15,10 +15,11 @@
 
 void ReaderTest(void * void_arg)
 {
-	if (1)
+	if (1)//MTX¶ÁÈ¡Æ÷
 	{
 		using namespace HBXFEMDef;
-		MMSpMatReader g_MMSpMatReader();
+		MMSpMatReader g_MMSpMatReader("bcsstk01.mtx");
+		g_MMSpMatReader.SetInputData();
 	}
 
 

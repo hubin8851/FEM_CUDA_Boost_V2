@@ -125,6 +125,9 @@
     <ClCompile Include="NumericalCalTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FEM_CUDA_Boost_V2.rc">

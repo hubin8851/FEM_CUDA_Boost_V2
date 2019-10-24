@@ -102,8 +102,9 @@ namespace HBXFEMDef
 	protected:
 		//生成随机的三对角对称阵
 		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
-		//生成随机的等式右端向量
-		virtual void	genRhs(size_t _genRowNum, bool _bsave = false, const char* _savepath = "..\\data\\check");
+
+		//生成随机的等式右端向量，根据测试算例的不同，各派生类的该生成算法不一，但接口统一
+		virtual void	genRhs(size_t _genRowNum = -1, const char* _savepath = "..\\data\\check", bool _bsave = false);
 	public:
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();

@@ -46,7 +46,7 @@ namespace HBXFEMDef
 		virtual void	ResetMem(int _nnzA, int _nA);//重载HostMalloc，因为可能需要拷贝更多的参数
 		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);//重载devicemalloc，因为多了临时数组
 
-							   //设备和主机端的内存拷贝,在此处重载，因为需要拷贝更多的参数
+		//设备和主机端的内存拷贝,在此处重载，因为需要拷贝更多的参数
 		virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
 
 		//初始化描述器等对象

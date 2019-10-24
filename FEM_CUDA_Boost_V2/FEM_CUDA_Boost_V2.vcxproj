@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
@@ -86,12 +86,12 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="E:\SDK\hbxdef\x64\VTK.props" />
-    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\x64\MyMetis.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_rl_MDD.props" />
     <Import Project="E:\SDK\hbxdef\MatlabInterface.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_static.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -164,7 +164,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -177,7 +177,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>libNumericalMethod.lib;libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;libInterpolate.lib;libboost_atomic-vc140-mt-gd-1_65_1.lib;libboost_chrono-vc140-mt-gd-1_65_1.lib;libboost_container-vc140-mt-gd-1_65_1.lib;libboost_coroutine-vc140-mt-gd-1_65_1.lib;libboost_date_time-vc140-mt-gd-1_65_1.lib;libboost_exception-vc140-mt-gd-1_65_1.lib;libboost_filesystem-vc140-mt-gd-1_65_1.lib;libboost_graph-vc140-mt-gd-1_65_1.lib;libboost_iostreams-vc140-mt-1_65_1.lib;libboost_locale-vc140-mt-gd-1_65_1.lib;libboost_log-vc140-mt-gd-1_65_1.lib;libboost_log_setup-vc140-mt-gd-1_65_1.lib;libboost_math_c99-vc140-mt-gd-1_65_1.lib;libboost_math_c99f-vc140-mt-gd-1_65_1.lib;libboost_math_c99l-vc140-mt-gd-1_65_1.lib;libboost_math_tr1-vc140-mt-gd-1_65_1.lib;libboost_math_tr1f-vc140-mt-gd-1_65_1.lib;libboost_math_tr1l-vc140-mt-gd-1_65_1.lib;libboost_prg_exec_monitor-vc140-mt-gd-1_65_1.lib;libboost_program_options-vc140-mt-gd-1_65_1.lib;libboost_random-vc140-mt-gd-1_65_1.lib;libboost_regex-vc140-mt-gd-1_65_1.lib;libboost_signals-vc140-mt-gd-1_65_1.lib;libboost_system-vc140-mt-gd-1_65_1.lib;libboost_test_exec_monitor-vc140-mt-gd-1_65_1.lib;libboost_thread-vc140-mt-gd-1_65_1.lib;libboost_timer-vc140-mt-gd-1_65_1.lib;libboost_unit_test_framework-vc140-mt-gd-1_65_1.lib;libboost_wave-vc140-mt-gd-1_65_1.lib;libboost_wserialization-vc140-mt-gd-1_65_1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libNumericalMethod.lib;libVtk.lib;libFEMWithCUDA.lib;libReader.lib;libEngng.lib;libElement.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -223,6 +223,9 @@
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxXmlDef\AeroTable.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ElementMatricTest.cpp" />
     <ClCompile Include="EngngTest.cpp">

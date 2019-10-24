@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -75,11 +75,11 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\CUFEM.props" />
-    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.65_vs2015_x64_rl_MDD.props" />
     <Import Project="E:\SDK\hbxdef\MatlabInterface.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_static.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -211,9 +211,7 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-    </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.cpp" />
     <ClCompile Include="libReader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

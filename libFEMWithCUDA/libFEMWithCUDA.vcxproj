@@ -46,6 +46,7 @@
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\helper_hbx.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\MyTimer.cpp" />
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\SearchFile.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c" />
     <ClCompile Include="libFEMWithCUDA.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
@@ -99,6 +100,8 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SolverType.h" />
     <ClInclude Include="e:\SDK\hbxdef\HBXDEF\SpMatrix.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\SpMatrixType.h" />
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h" />
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

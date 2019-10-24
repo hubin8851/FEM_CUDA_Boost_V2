@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\userCuda">
+      <UniqueIdentifier>{6485d8e7-76ef-4a7a-845f-5e8d8b5f10f7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -39,17 +42,17 @@
     <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\NumericalMehod\LowLevelCholesky.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h">
+      <Filter>头文件\userCuda</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h">
+      <Filter>头文件\userCuda</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -86,7 +89,7 @@
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c">
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -9,6 +9,8 @@
 #include "mmio.h"
 #include "mmio_wrapper.h"
 
+
+
 namespace HBXFEMDef
 {
 	using namespace HBXDef;
@@ -31,7 +33,7 @@ namespace HBXFEMDef
 #pragma endregion
 	}
 
-	void BaseConjugate::genRhs(size_t _genRowNum, bool _bsave, const char* _savepath)
+	void BaseConjugate::genRhs(size_t _genRowNum, const char* _savepath, bool _bsave)
 	{
 		using std::default_random_engine;
 		using std::uniform_real_distribution;
@@ -95,6 +97,7 @@ namespace HBXFEMDef
 		time_sp_CPUSolve = 0;//解算时间
 		time_sp_GPUSolve = 0;
 
+
 		//所用流初始化
 		m_stream = 0;
 		//blas,sparse和matdescr的初始化
@@ -107,6 +110,7 @@ namespace HBXFEMDef
 		m_CSRIndexBase = cusparseIndexBase_t::CUSPARSE_INDEX_BASE_ZERO;
 
 		msecUsed = 0.0f;
+		m_qaerr1 = 1e-14;
 		m_iters = 0;
 
 		h_NoneZeroVal = nullptr;
@@ -416,7 +420,7 @@ namespace HBXFEMDef
 				switch (ch)
 				{
 				case 'y':case 'Y':
-					genRhs(m_RowNum, false);
+					genRhs(m_RowNum);
 					return HBXDef::DataAloc_t::DATAINMEM;
 				case  'n':case 'N':
 					goto end;

@@ -105,6 +105,9 @@
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSRSpMatrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h">
@@ -258,6 +261,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CudaPreDef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

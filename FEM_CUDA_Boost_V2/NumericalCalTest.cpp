@@ -1,23 +1,52 @@
 #include "stdafx.h"
 #include "NumericalCalTest.h"
+#include <..\src\libReader\MMSpMatReader.h>
 #include <..\src\libReader\UFgetMatReader.h>
 #include <..\src\NumericalMehod\BaseConjugate.h>
 #include <..\src\NumericalMehod\BiCGStab.h>
 #include <..\src\NumericalMehod\PcgConjugate.h>
 #include <..\src\NumericalMehod\CgConjugate.h>
+#include <..\src\NumericalMehod\LowLevelCholesky.h>
 
 void NumericalCalTest(void * void_arg)
 {
 	int		g_Iters;
 	float	g_Precision = 1.0e-6f;
 
+//	using namespace HBXFEMDef;
+//	UFgetMatReader  g_UFgetMatReader("RM07R.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat\\Fluorem");
+//	InputFileResult _res = g_UFgetMatReader.SetInputData();
+//	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_UFgetMatReader.GetStiffMat();
+//	g_Iters = (_tmpCSR->_nA) * 3;
+//	std::cout << "读取部分结束" << std::endl;
+
 	using namespace HBXFEMDef;
-	UFgetMatReader  g_UFgetMatReader("RM07R.mat", "G:\\SuiteSparse-2.1.1\\UFget\\mat\\Fluorem");
-	InputFileResult _res = g_UFgetMatReader.SetInputData();
-	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_UFgetMatReader.GetStiffMat();
-	g_Iters = (_tmpCSR->_nA) * 3;
+	MMSpMatReader g_MMSpMatReader("bcsstk01.mtx");
+	InputFileResult _res = g_MMSpMatReader.SetInputData();
+	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_MMSpMatReader.GetStiffMat();
 	std::cout << "读取部分结束" << std::endl;
 
+	if (1)
+	{
+		LowLevelCholesky g_LowLevelCholesky(nullptr, nullptr);
+		g_LowLevelCholesky.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
+		g_LowLevelCholesky.SetStiffMat(_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
+			_tmpCSR->_nnzA, _tmpCSR->_nA);
+		g_LowLevelCholesky.genRhs();
+		g_LowLevelCholesky.InitialDescr();
+
+		g_LowLevelCholesky.AnalyzeCholAWithCPU();
+		g_LowLevelCholesky.ConjugateWithCPU();
+		
+		//GPU计算
+
+		g_LowLevelCholesky.ResetGraphMem();
+		g_LowLevelCholesky.MemCpy();
+		g_LowLevelCholesky.AnalyzeCholAWithGPU();
+		g_LowLevelCholesky.ConjugateWithGPU();
+
+		g_LowLevelCholesky.CheckNormInf();
+	}
 
 
 	if (0)

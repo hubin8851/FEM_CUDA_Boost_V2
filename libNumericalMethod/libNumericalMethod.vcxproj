@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -74,10 +74,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="E:\SDK\hbxdef\x64\CUDA_9.0.props" />
     <Import Project="E:\SDK\hbxdef\HBXDEF\dllexport.props" />
     <Import Project="E:\SDK\hbxdef\x64\HbxPreDef_relese_x64.props" />
     <Import Project="..\CUFEM.props" />
+    <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_static.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -193,7 +194,7 @@
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.cpp" />
-    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c" />
+    <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.cpp" />
     <ClCompile Include="libNumericalMethod.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

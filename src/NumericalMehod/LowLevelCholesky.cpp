@@ -4,6 +4,7 @@
 #include "helper_cuda.h"
 #include <userCuda/HBX_Helper_cuSolver.h>
 
+#include <helper_cusolver.h>
 
 
 
@@ -44,11 +45,18 @@ namespace HBXFEMDef
 	}
 
 
-	void LowLevelCholesky::genRhs(size_t _genRowNum, bool _bsave, const char * _savepath)
+	void LowLevelCholesky::genRhs(size_t _genRowNum, const char * _savepath, bool _bsave)
 	{
-		for (int row = 0; row < m_RowNum; row++)
+		if (-1 == _genRowNum)
 		{
-			h_b[row] = 1.0;
+			for (int row = 0; row < m_RowNum; row++)
+			{
+				h_b[row] = 1.0;
+			}
+		}
+		else//采用基类随机生成算法
+		{
+			BaseConjugate::genRhs();
 		}
 	}
 
@@ -119,7 +127,7 @@ namespace HBXFEMDef
 		checkCudaErrors(cusolverSpDcsrcholZeroPivotHost(
 			cusolverSpH, h_info, m_qaerr1, &singularity));
 
-		stop_spFactorT = GetTimeStamp();
+		stop_spFactorT = second();
 
 		time_sp_factorT = stop_spFactorT - start_spFactorT;
 		std::cout << "factor the matrix A use time: " << time_sp_factorT << "s" << std::endl;
@@ -203,12 +211,12 @@ namespace HBXFEMDef
 		if (HBXDef::HostToDevice == _temp)
 		{
 			//似乎没有什么额外要传输的数据...
-			//start_matrix_copy = GetTimeStamp();
+			start_matrix_copy = GetTimeStamp();
 			
-
-			//stop_matrix_copy = GetTimeStamp();
+			checkCudaErrors(cudaMemcpy(d_r, h_b, sizeof(HBXDef::UserCalPrec)*m_RowNum, cudaMemcpyHostToDevice));
+			stop_matrix_copy = GetTimeStamp();
 		}
-		//time_MemcpyHostToDev = stop_matrix_copy - start_matrix_copy;
+		time_MemcpyHostToDev = stop_matrix_copy - start_matrix_copy;
 		//std::cout << "双共轭梯度法内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
 		return BaseConjugate::MemCpy(_temp);
 	}
@@ -218,10 +226,10 @@ namespace HBXFEMDef
 	{
 		printf("solve A*x = b \n");
 		double start_SolveT, stop_SolveT;
-		start_SolveT = GetTimeStamp();
+		start_SolveT = second();
 		checkCudaErrors(cusolverSpDcsrcholSolveHost(
 			cusolverSpH, m_RowNum, h_b, h_x, h_info, buffer_cpu));
-		stop_SolveT = GetTimeStamp();
+		stop_SolveT = second();
 		time_sp_CPUSolve = stop_SolveT - start_SolveT;
 		std::cout << "(CPU) solve Ax=b use :" << time_sp_CPUSolve <<"s"<< std::endl;
 		//printf("step 8: evaluate residual r = b - A*x (result on CPU)\n");
@@ -233,20 +241,20 @@ namespace HBXFEMDef
 	{
 		double start_SolveT, stop_SolveT;
 		printf(" solve A*x = b \n");
-		start_SolveT = GetTimeStamp();
+		start_SolveT = second();
 		checkCudaErrors(cusolverSpDcsrcholSolve(
 			cusolverSpH, m_RowNum, d_b, d_x, d_info, buffer_gpu));
 
-		stop_SolveT = GetTimeStamp();
+		stop_SolveT = second();
 		time_sp_GPUSolve = stop_SolveT - start_SolveT;
-		std::cout << "(CPU) solve Ax=b use :" << time_sp_CPUSolve << "s" << std::endl;
+		std::cout << "(GPU) solve Ax=b use :" << time_sp_GPUSolve << "s" << std::endl;
 
 		return time_sp_GPUSolve;
 	}
 
 	double LowLevelCholesky::CheckNormInf()
 	{
-		checkCudaErrors(cudaMemcpy(d_r, h_b, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(h_r, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
 
 		r_inf = HBXDef::vec_norminf(m_RowNum, h_r);
 		m_qaerr1 = r_inf / (A_inf * x_inf);

@@ -13,8 +13,9 @@ namespace HBXFEMDef
 	//本不应该属于迭代法，但是应继承自某一基类，便于注册
 	//参见sample cusolversp_lowlevelcholesky的demo
 	//本类有CPU和GPU两个版本
-	//CPU版本的顺序是read->resetMem->AnalyzeCholAWithCPU->ConjugateWithCPU
-	//GPU版本的顺序是read->InitialDescr->resetMem->resetGraphMem->AnalyzeCholAWithGPU->memcpy->ConjugateWithGPU
+	//公共部分resetMem->SetStiffMat->InitialDescr
+	//CPU版本的顺序是AnalyzeCholAWithCPU->ConjugateWithCPU
+	//GPU版本的顺序是resetGraphMem->memcpy->AnalyzeCholAWithGPU->->ConjugateWithGPU
 	class CUFEM_API LowLevelCholesky
 		:public BaseConjugate
 	{
@@ -68,7 +69,7 @@ namespace HBXFEMDef
 		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);//重载devicemalloc，因为多了临时数组
 
 		//生成随机的等式右端向量
-		virtual void	genRhs(size_t _genRowNum, bool _bsave = false, const char* _savepath = "..\\data\\check");
+		virtual void	genRhs(size_t _genRowNum = -1, const char* _savepath = "..\\data\\check", bool _bsave = false);
 
 		//初始化描述器等对象
 		//完成对A矩阵的Chol分析，并创建相应内存空间
@@ -85,12 +86,12 @@ namespace HBXFEMDef
 		virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);		
 
 		//用CPU解算Ax=b，本类迭代算法已封装，传入的迭代次数无用
-		double	ConjugateWithCPU(const double &_tol = 1e-9f, const int &_iter = 1000);
+		double	ConjugateWithCPU(const double &_tol = ERRORTOLERATE, const int &_iter = 1000);
 
 		//各种特征值算法求解,返回计算时间，ms为单位.本类迭代算法已封装，传入的迭代次数无用
 		//@_tol:残差
 		//@_iter:迭代次数
-		double	ConjugateWithGPU(const double &_tol = 1e-9f, const int &_iter = 1000);
+		double	ConjugateWithGPU(const double &_tol = ERRORTOLERATE, const int &_iter = 1000);
 
 
 		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
