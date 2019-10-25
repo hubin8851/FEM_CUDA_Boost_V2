@@ -18,12 +18,13 @@ namespace HBXFEMDef
 
 	LowLevelCholesky::~LowLevelCholesky()
 	{
+		this->FreeCPUResource();
 		this->FreeGPUResource();
 	}
 
-	void LowLevelCholesky::ResetMem(int _nnzA, int _nA)
+	void LowLevelCholesky::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
-		BaseConjugate::ResetMem(_nnzA, _nA);
+		BaseConjugate::ResetMem(_nnzA, _nA, _hostAlloc);
 
 		if (nullptr != h_r)
 		{
@@ -36,7 +37,7 @@ namespace HBXFEMDef
 	void LowLevelCholesky::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		BaseConjugate::ResetGraphMem(_cuMac);
-		if (HbxCuDef::NORMAL == _cuMac)
+		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
 			HBXDef::CheckUserDefErrors(cudaMalloc((void **)&d_r, m_RowNum * sizeof(HBXDef::UserCalPrec)));
 		}
@@ -79,7 +80,6 @@ namespace HBXFEMDef
 	bool LowLevelCholesky::AnalyzeCholAWithCPU()
 	{
 		double start_spFactorT, stop_spFactorT;
-		start_spFactorT = GetTimeStamp();
 
 #ifdef _DEBUG
 		printf("create opaque info structure\n");
@@ -90,6 +90,8 @@ namespace HBXFEMDef
 #ifdef _DEBUG
 		printf("analyze chol(A) to know structure of L\n");
 #endif 
+		start_spFactorT = GetTimeStamp();
+
 		checkCudaErrors(cusolverSpXcsrcholAnalysisHost(
 			cusolverSpH, m_RowNum, m_nnzA,
 			Matdescr, h_iRowSort, h_iColIndex,
@@ -252,26 +254,62 @@ namespace HBXFEMDef
 		return time_sp_GPUSolve;
 	}
 
-	double LowLevelCholesky::CheckNormInf()
+	double LowLevelCholesky::CheckNormInf(bool _useGPU)
 	{
-		checkCudaErrors(cudaMemcpy(h_r, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
+		if (false == _useGPU)
+		{
+			checkCudaErrors(cudaMemcpy(d_r, h_b, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
+			checkCudaErrors(cudaMemcpy(d_x, h_x, sizeof(double)*m_RowNum, cudaMemcpyHostToDevice));
 
-		r_inf = HBXDef::vec_norminf(m_RowNum, h_r);
-		m_qaerr1 = r_inf / (A_inf * x_inf);
-		printf("(GPU) |b - A*x| = %E \n", r_inf);
-		printf("(GPU) |b - A*x|/(|A|*|x|) = %E \n", m_qaerr1);
+			checkCudaErrors(cusparseDcsrmv(cusparseHandle,
+				CUSPARSE_OPERATION_NON_TRANSPOSE,
+				m_RowNum,
+				m_RowNum,
+				m_nnzA,
+				&minus_one,
+				Matdescr,
+				d_NoneZeroVal,
+				d_iRowSort,
+				d_iColIndex,
+				d_x,
+				&one,
+				d_r));
+			checkCudaErrors(cudaMemcpy(h_r, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
+
+			x_inf = ::vec_norminf(m_RowNum, h_x);//添加::的作用是有多个该函数名相同的函数
+			r_inf = ::vec_norminf(m_RowNum, h_r);
+			A_inf = ::csr_mat_norminf(m_RowNum, m_RowNum, m_nnzA, Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex);
+			m_qaerr1 = r_inf / (A_inf * x_inf);
+			printf("(CPU) |b - A*x| = %E \n", r_inf);//残留向量方差
+			printf("(CPU) |A| = %E \n", A_inf);
+			printf("(CPU) |x| = %E \n", x_inf);
+			printf("(CPU) |b - A*x|/(|A|*|x|) = %E \n", m_qaerr1);
+		}
+		else
+		{
+			checkCudaErrors(cudaMemcpy(h_r, d_r, sizeof(double)*m_RowNum, cudaMemcpyDeviceToHost));
+
+			r_inf = HBXDef::vec_norminf(m_RowNum, h_r);
+			m_qaerr1 = r_inf / (A_inf * x_inf);
+			printf("(GPU) |b - A*x| = %E \n", r_inf);
+			printf("(GPU) |b - A*x|/(|A|*|x|) = %E \n", m_qaerr1);
+		}	
 
 		return m_qaerr1;
+	}
+
+	void LowLevelCholesky::FreeCPUResource()
+	{
+		BaseConjugate::FreeCPUResource();
+		//CPU部分
+		if (buffer_cpu) { free(buffer_cpu); }
+
+		if (h_info) { checkCudaErrors(cusolverSpDestroyCsrcholInfoHost(h_info)); }
 	}
 
 	void LowLevelCholesky::FreeGPUResource()
 	{
 		BaseConjugate::FreeGPUResource();
-
-		//CPU部分
-		if (buffer_cpu) { free(buffer_cpu); }
-
-		if (h_info) { checkCudaErrors(cusolverSpDestroyCsrcholInfoHost(h_info)); }
 
 		//GPU部分
 		if (buffer_gpu) { checkCudaErrors(cudaFree(buffer_gpu)); }

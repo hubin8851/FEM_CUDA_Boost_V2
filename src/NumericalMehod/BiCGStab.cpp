@@ -29,9 +29,9 @@ namespace HBXFEMDef
 	{
 	}
 
-	void	BiCGStab::ResetMem(int _nnzA, int _nA)
+	void	BiCGStab::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
-		BaseConjugate::ResetMem(_nnzA, _nA);
+		BaseConjugate::ResetMem(_nnzA, _nA, _hostAlloc);
 		if (nullptr != h_ptrF)
 		{
 			delete[] h_ptrF;
@@ -92,7 +92,7 @@ namespace HBXFEMDef
 	//重载devicemalloc，因为多了临时数组
 	void	BiCGStab::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
-		if (HbxCuDef::NORMAL == _cuMac)
+		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
 			/* allocate device memory for csr matrix and vectors */
 			HBXDef::CheckUserDefErrors(cudaMalloc((void**)&d_ptrF, sizeof(d_ptrF[0]) * m_RowNum));

@@ -1,4 +1,5 @@
 #include <libCUFEM\ClassFactory.h>
+#include <ExportDef.h>
 #include <HbxDefMacro.h>
 #include <boost\algorithm\string.hpp>
 #include <boost\bind.hpp>
@@ -12,7 +13,7 @@ namespace HBXFEMDef
 {
 	using namespace std;
 
-	BOOST_SYMBOL_EXPORT ClassFactory& GetClassFactory()
+	CUFEM_API ClassFactory& GetClassFactory()
 	{
 		// TODO: 在此处插入 return 语句
 		static ClassFactory res;

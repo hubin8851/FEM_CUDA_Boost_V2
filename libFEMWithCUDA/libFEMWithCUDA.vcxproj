@@ -40,6 +40,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\CSRSpMatrix.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.cpp" />
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxDefMalloc.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.cpp" />
     <ClCompile Include="e:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\CuDefStruct.h.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\HbxCuDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\multithreading.h" />
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxDefMalloc.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HBXFEMDefStruct.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxFemDef\CGraphColor.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxGloFunc.h" />
@@ -165,8 +167,8 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_static.props" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_MD.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -236,6 +238,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;LIBFEMWITHCUDA_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

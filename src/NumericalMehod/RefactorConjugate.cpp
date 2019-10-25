@@ -64,9 +64,9 @@ namespace HBXFEMDef
 
 	}
 
-	void RefactorConjugate::ResetMem(int _nnzA, int _nA)
+	void RefactorConjugate::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
-		BaseConjugate::ResetMem(_nnzA, _nA);
+		BaseConjugate::ResetMem(_nnzA, _nA, _hostAlloc);
 
 		h_Qreorder = (int*)malloc(sizeof(int)*m_ColNum);
 
@@ -97,7 +97,7 @@ namespace HBXFEMDef
 		assert(nullptr != h_xhat);
 		assert(nullptr != h_bhat);
 
-		if (HbxCuDef::NORMAL == _cuMac)
+		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
 			checkCudaErrors(cudaMalloc((void **)&d_b, sizeof(double)*m_RowNum));
 			checkCudaErrors(cudaMalloc((void **)&d_P, sizeof(int)*m_RowNum));

@@ -16,7 +16,7 @@ namespace HBXFEMDef
 
 	void CgConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
-		if (HbxCuDef::NORMAL == _cuMac)
+		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
 			/* allocate device memory for csr matrix and vectors */
 			HBXDef::CheckUserDefErrors(cudaMalloc((void **)&d_omega, m_RowNum * sizeof(UserCalPrec)));

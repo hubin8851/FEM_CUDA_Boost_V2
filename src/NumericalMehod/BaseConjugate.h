@@ -5,7 +5,7 @@
 #include <CudaPreDef.h>
 #include <libCUFEM\BaseNumMethod.h>
 #include <HbxGloFunc.h>
-
+#include <HbxDefMalloc.h>
 
 
 #ifndef _THRUST_
@@ -73,6 +73,8 @@ namespace HBXFEMDef
 		//	HBXDef::_CSRInput<double>	m_CSRInput;	//存在问题，结构体内存连续可能导致赋值错误
 		std::string	m_SavePath;
 		//主机端buffer
+		HbxCuDef::HostMalloc_t	m_HostMalloc = HbxCuDef::HostMalloc_t::NORMAL;
+		MALLOCFUNPTR			_HostAllocFuncptr = nullptr;//函数指针，CPUmalloc调用的方法
 		HBXDef::UserCalPrec		*h_NoneZeroVal = nullptr;
 		int						*h_iColIndex = nullptr;
 		int						*h_iRowSort = nullptr;
@@ -81,6 +83,8 @@ namespace HBXFEMDef
 		HBXDef::UserCalPrec		*h_r = nullptr;//r=Ax-b
 
 		//显存内裸指针
+		HbxCuDef::CudaMalloc_t		m_CudaMalloc = HbxCuDef::CudaMalloc_t::CUMALLOC;
+		MALLOCFUNPTR				_GpuAllocFuncptr = nullptr;//函数指针,GPU的malloc调用的方法
 		HBXDef::UserCalPrec*		d_NoneZeroVal = nullptr;
 		int*						d_iColIndex = nullptr;
 		int*						d_iRowSort = nullptr;
@@ -109,8 +113,8 @@ namespace HBXFEMDef
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();
 
-		virtual void	ResetMem(int _nnzA, int _nA);									//重置内存
-		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);		//在GPU上重置显存
+		virtual void	ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);									//重置内存
+		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::CUMALLOC);		//在GPU上重置显存
 
 		//设备和主机端的内存拷贝
 		virtual	HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
@@ -126,12 +130,13 @@ namespace HBXFEMDef
 
 		//从外部获取三个数组指针及其长度得到刚度矩阵的CSR格式
 		HBXDef::DataAloc_t	SetStiffMat(HBXDef::UserCalPrec * _srcVal, int * _srcCol, int * _srcRow,
-			size_t _nnA, size_t _nA, bool _bsave = false);
+			size_t _nnA, size_t _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);
 		//从文件中读取CSR格式的刚度矩阵
 		HBXDef::DataAloc_t		SetStiffMat(const char* _NoneZeroVal = "NoneZeroVal.data",
 			const char*	_ColSort = "ColSort.data",
 			const char*	_ValRowSort = "NoneZeroRowSort.data",
-			const const char* _dir = "..\\data\\source");
+			const const char* _dir = "..\\data\\source",
+			HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);
 
 		//从文件中读取载荷向量
 		virtual HBXDef::DataAloc_t SetLoadVec(const char* _FileName = "LoadVec.data", const const char* _dir = "..\\data\\source");
@@ -164,12 +169,13 @@ namespace HBXFEMDef
 
 		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
 		//主要是检验范数
-		virtual double CheckNormInf() = 0;
+		virtual double CheckNormInf(bool _useGPU = false) = 0;
 
 		size_t		GetIters()const { return m_iters; };
 		double		GetsecUsed()const { return msecUsed; };
 		double		Getqaerr()const { return m_qaerr1; };
 
+		virtual	void		FreeCPUResource();
 		//释放设备端资源,不仅限于cublas，cusparse等描述器
 		virtual	void		FreeGPUResource();		//各类释放的资源不一样，故用虚函数
 	};

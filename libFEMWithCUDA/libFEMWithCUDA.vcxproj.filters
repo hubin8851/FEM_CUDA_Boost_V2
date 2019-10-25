@@ -108,6 +108,9 @@
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio.c">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="E:\SDK\hbxdef\HBXDEF\HbxDefMalloc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\libCUFEM\BaseNumMethod.h">
@@ -268,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\x64\userinc\userCuda\mmio_wrapper.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxDefMalloc.h">
+      <Filter>头文件\HBXDef</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

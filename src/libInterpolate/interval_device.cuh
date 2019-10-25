@@ -131,13 +131,13 @@ __host__ __device__ HBXDef::UserCalPrec	ReadTableData(	HBXDef::cuTable<T>* _tabl
 };
 
 
-//template __declspec(dllexport) __host__ __device__ HBXDef::UserCalPrec	ReadTableData(HBXDef::cuTable<2>* _tableIn,
-//	HBXDef::cuInterval<2>* _ArrayIn,
-//	HBXDef::UserCalPrec* _Output);
-//
-//template __declspec(dllexport) __host__ __device__ HBXDef::UserCalPrec	ReadTableData(HBXDef::cuTable<3>* _tableIn,
-//	HBXDef::cuInterval<3>* _ArrayIn,
-//	HBXDef::UserCalPrec* _Output);
+template __declspec(dllexport) __host__ __device__ HBXDef::UserCalPrec	ReadTableData(HBXDef::cuTable<2>* _tableIn,
+	HBXDef::cuLocation<2>* _ArrayIn,
+	HBXDef::UserCalPrec* _Output);
+
+template __declspec(dllexport) __host__ __device__ HBXDef::UserCalPrec	ReadTableData(HBXDef::cuTable<3>* _tableIn,
+	HBXDef::cuLocation<3>* _ArrayIn,
+	HBXDef::UserCalPrec* _Output);
 
 
 

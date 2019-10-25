@@ -18,9 +18,9 @@ namespace HBXFEMDef
 	{
 	}
 
-	void PcgConjugate::ResetMem(int _nnzA, int _nA)
+	void PcgConjugate::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
-		BaseConjugate::ResetMem(_nnzA,_nA);
+		BaseConjugate::ResetMem(_nnzA,_nA, _hostAlloc);
 
 		if (nullptr != h_ILUvals)
 		{
@@ -33,7 +33,7 @@ namespace HBXFEMDef
 	void PcgConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		BaseConjugate::ResetGraphMem(_cuMac);
-		if (HbxCuDef::NORMAL == _cuMac)
+		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
 			HBXDef::CheckUserDefErrors( cudaMalloc((void **)&d_y, m_RowNum * sizeof(HBXDef::UserCalPrec)) );
 			//方程等式右边向量显存分配

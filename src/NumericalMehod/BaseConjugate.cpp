@@ -129,54 +129,106 @@ namespace HBXFEMDef
 		else FreeGPUResource();
 	}
 
-	void BaseConjugate::ResetMem(int _nnzA, int _nA)
+	void BaseConjugate::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
 		using namespace HBXDef;
+		if ( (_nnzA == m_nnzA) && (_nA == m_nA) )//若CSR格式项目数并未发生变化则直接返回
+		{
+			return;
+		}
+		m_HostMalloc = _hostAlloc;
 		m_nnzA = _nnzA;
 		m_nA = _nA;
 		m_RowNum = m_ColNum = _nA - 1;
-		if (m_bGenTridiag) return;
+		//if (m_bGenTridiag) return;
 
-		if (nullptr != h_NoneZeroVal)
+		FreeCPUResource();
+
+//		void*(*ptrFunc) ( unsigned int, unsigned int);
+//		ptrFunc = nullptr;
+
+		switch (_hostAlloc)
 		{
-			delete[] h_NoneZeroVal;
-		}
-		_cuError_id = cudaHostAlloc((void**)&h_NoneZeroVal, sizeof(UserCalPrec)*m_nnzA, 0);
-		if (nullptr != h_iColIndex)
-		{
-			delete[]h_iColIndex;
-			h_iColIndex = nullptr;
-		}
-		_cuError_id = cudaHostAlloc((void**)&h_iColIndex, sizeof(int)*m_nnzA, 0);
-		if (nullptr != h_iRowSort)
-		{
-			delete[]h_iRowSort;
-			h_iRowSort = nullptr;
-		}
-		_cuError_id = cudaHostAlloc((void**)&h_iRowSort, sizeof(int)*m_nA, 0);
-		if (nullptr != h_x)
-		{
-			delete[]h_x;
-			h_x = nullptr;
-		}
-		_cuError_id = cudaHostAlloc((void**)&h_x, sizeof(UserCalPrec)*m_RowNum, 0);
-//		h_x = (UserCalPrec *)malloc(sizeof(UserCalPrec) * m_RowNum);
-		/* reset the initial guess of the solution to zero */
+		case HbxCuDef::HostMalloc_t::NORMAL:
+			_HostAllocFuncptr = NormalMalloc;
+			break;
+		case HbxCuDef::HostMalloc_t::PAGELOCK:
+			_HostAllocFuncptr = GpuPinnedMalloc;
+			break;
+		default:
+			break;
+		} 
+
+		h_NoneZeroVal = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+		h_iColIndex = (int*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+		h_iRowSort = (int*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+
+		h_x = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
 		memset(h_x, 0, m_RowNum);
-		if (nullptr != h_b)
-		{
-			delete[]h_b;
-			h_b = nullptr;
-		}
-		_cuError_id = cudaHostAlloc((void**)&h_b, sizeof(UserCalPrec)*m_RowNum, 0);
-		//	h_b = (double *) malloc(sizeof(double) * m_RowNum);	//此为不用锁页内存的地址分配
+		h_b = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
 		memset(h_b, 0, m_RowNum);
+		
+
+if (0)
+{
+	if (nullptr != h_NoneZeroVal)
+	{
+		delete[] h_NoneZeroVal;
+	}
+	_cuError_id = cudaHostAlloc((void**)&h_NoneZeroVal, sizeof(UserCalPrec)*m_nnzA, 0);
+	if (nullptr != h_iColIndex)
+	{
+		delete[]h_iColIndex;
+		h_iColIndex = nullptr;
+	}
+	_cuError_id = cudaHostAlloc((void**)&h_iColIndex, sizeof(int)*m_nnzA, 0);
+	if (nullptr != h_iRowSort)
+	{
+		delete[]h_iRowSort;
+		h_iRowSort = nullptr;
+	}
+	_cuError_id = cudaHostAlloc((void**)&h_iRowSort, sizeof(int)*m_nA, 0);
+	if (nullptr != h_x)
+	{
+		delete[]h_x;
+		h_x = nullptr;
+	}
+	_cuError_id = cudaHostAlloc((void**)&h_x, sizeof(UserCalPrec)*m_RowNum, 0);
+	//		h_x = (UserCalPrec *)malloc(sizeof(UserCalPrec) * m_RowNum);
+			/* reset the initial guess of the solution to zero */
+	memset(h_x, 0, m_RowNum);
+	if (nullptr != h_b)
+	{
+		delete[]h_b;
+		h_b = nullptr;
+	}
+	_cuError_id = cudaHostAlloc((void**)&h_b, sizeof(UserCalPrec)*m_RowNum, 0);
+	//	h_b = (double *) malloc(sizeof(double) * m_RowNum);	//此为不用锁页内存的地址分配
+	memset(h_b, 0, m_RowNum);
+}
+		
 	}
 
 	void BaseConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		using namespace HBXDef;
-		if (HbxCuDef::NORMAL == _cuMac)
+		m_CudaMalloc = _cuMac;
+
+		switch (_cuMac)
+		{
+		case HbxCuDef::CudaMalloc_t::CUMALLOC:
+			_GpuAllocFuncptr = GpuMalloc;
+			break;
+			case HbxCuDef::CudaMalloc_t::PITCH:
+			//_GpuAllocFuncptr = ;
+			break;
+		default:
+			break;
+		}
+
+		FreeGPUResource();
+
+		if (HbxCuDef::CUMALLOC == m_CudaMalloc)
 		{
 #pragma region  裸指针时CSR格式矩阵的显存分配
 			//CSR非零值显存分配
@@ -321,10 +373,11 @@ namespace HBXFEMDef
 		return UserStatusError_t::USER_STATUS_SUCCESS;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(HBXDef::UserCalPrec *  _srcVal,
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(	HBXDef::UserCalPrec *  _srcVal,
 													int *  _srcCol,
 													int *  _srcRow, 
-													size_t _nnA, size_t _nA, bool _bsave)
+													size_t _nnA, size_t _nA, 
+													HbxCuDef::HostMalloc_t _hostAlloc )
 	{
 		using namespace HBXDef;
 //		void *_tmpVal = const_cast<void*>(_srcVal);
@@ -355,7 +408,11 @@ namespace HBXFEMDef
 		return HBXDef::DataAloc_t::DATAINMEM;
 	}
 
-	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(const char * _NoneZeroVal, const char * _ColSort, const char * _ValRowSort, const char* _dir)
+	HBXDef::DataAloc_t BaseConjugate::SetStiffMat(	const char * _NoneZeroVal,
+													const char * _ColSort,
+													const char * _ValRowSort,
+													const char* _dir,
+													HbxCuDef::HostMalloc_t _hostAlloc )
 	{
 		if (0 == HBXDef::_ImportCSRdataFromFile<double, int>(h_vNoneZeroVal, h_viColSort, h_viNonZeroRowSort, _NoneZeroVal, _ColSort, _ValRowSort, _dir))
 		{
@@ -368,7 +425,7 @@ namespace HBXFEMDef
 		if (m_nnzA == h_vNoneZeroVal.size() && m_nnzA == h_viColSort.size() && m_nA == h_viNonZeroRowSort.size())//m_nA = N+1，在此无误
 		{
 			std::cout << "正确读取CSR数据,维度正确..." << std::endl;
-			ResetMem(m_nnzA, m_nA);
+			ResetMem(m_nnzA, m_nA, _hostAlloc);
 			if (0 == h_viColSort[0] && 0 == h_viNonZeroRowSort[0])
 			{
 				m_CSRIndexBase = CUSPARSE_INDEX_BASE_ZERO;
@@ -552,6 +609,19 @@ namespace HBXFEMDef
 		return true;
 	}
 
+	void BaseConjugate::FreeCPUResource()
+	{
+		//CPU部分，如果是锁页内存可能有所不同 
+		if (h_x) { free(h_x); }
+		if (h_b) { free(h_b); }
+		if (h_r) { free(h_r); }
+
+		if (h_NoneZeroVal) { free(h_NoneZeroVal); }
+		if (h_iRowSort) { free(h_iRowSort); }
+		if (h_iColIndex) { free(h_iColIndex); }
+
+	}
+
 	void BaseConjugate::FreeGPUResource()
 	{
 #pragma region 裸指针版
@@ -573,15 +643,7 @@ namespace HBXFEMDef
 #pragma endregion
 
 #pragma region 裸指针版
-		//CPU部分，如果是锁页内存可能有所不同 
-		if (h_x) { free(h_x); }
-		if (h_b) { free(h_b); }
-		if (h_r) { free(h_r); }
-
-		if (h_NoneZeroVal) { free(h_NoneZeroVal); }
-		if (h_iRowSort) { free(h_iRowSort); }
-		if (h_iColIndex) { free(h_iColIndex); }
-
+		
 		//GPU部分
 		if (d_NoneZeroVal) { checkCudaErrors(cudaFree(d_NoneZeroVal)); }
 		if (d_iRowSort) { checkCudaErrors(cudaFree(d_iRowSort)); }

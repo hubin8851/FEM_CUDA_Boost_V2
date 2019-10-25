@@ -127,8 +127,8 @@ namespace HBXFEMDef
 		RefactorConjugate(Domain* _dm, Engng* _eng);
 		virtual ~RefactorConjugate();
 
-		virtual void	ResetMem(int _nnzA, int _nA);//重载HostMalloc，因为可能需要拷贝更多的参数
-		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);//重载devicemalloc，因为多了临时数组
+		virtual void	ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);//重载HostMalloc，因为可能需要拷贝更多的参数
+		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::CUMALLOC);//重载devicemalloc，因为多了临时数组
 
 		//设备和主机端的内存拷贝,在此处重载，因为需要拷贝更多的参数
 		virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
@@ -151,6 +151,6 @@ namespace HBXFEMDef
 
 		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
 		//主要是检验范数
-		virtual double CheckNormInf() { return 0.0f; };
+		virtual double CheckNormInf(bool _useGPU = false) { return 0.0f; };
 	};
 };

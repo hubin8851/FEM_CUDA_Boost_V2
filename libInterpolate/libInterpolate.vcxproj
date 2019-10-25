@@ -75,7 +75,7 @@
     <Import Project="..\CUFEM.props" />
     <Import Project="E:\SDK\hbxdef\dllexport.props" />
     <Import Project="E:\SDK\hbxdef\x64\CUDA_10.1.props" />
-    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_MDD.props" />
+    <Import Project="E:\SDK\hbxdef\x64\Boost1.70_vs2017_x64_rl_MD.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -125,7 +125,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
       </AdditionalCompilerOptions>
       <Defines>
       </Defines>
-      <Runtime>MDd</Runtime>
+      <Runtime>InheritFromHost</Runtime>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -169,6 +169,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CodeGeneration>compute_52,sm_52;%(CodeGeneration)</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -181,7 +182,9 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <ClInclude Include="..\src\libInterpolate\QuadParam.h" />
     <ClInclude Include="..\src\libInterpolate\Quadtree2D.h" />
     <ClInclude Include="..\src\libInterpolate\Quadtree_kernel.h" />
-    <ClInclude Include="..\src\libInterpolate\spBaseLag.h" />
+    <ClInclude Include="..\src\libInterpolate\spBaseLag.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\CuComponent.cuh" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\Points.h" />
     <ClInclude Include="E:\SDK\hbxdef\HBXDEF\HbxCudaDef\SharedMem.cuh" />
@@ -192,6 +195,7 @@ copy "$(CudaToolkitBinDir)\cudart*.dll" "$(OutDir)"</Command>
     <CudaCompile Include="ModuleCheck.cu">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CudaCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

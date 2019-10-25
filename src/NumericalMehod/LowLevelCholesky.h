@@ -65,14 +65,14 @@ namespace HBXFEMDef
 
 		//		void	genLaplace(size_t _genRowNum, bool _bsave, boost::filesystem::path _savepath = "");
 
-		virtual void	ResetMem(int _nnzA, int _nA);//重载HostMalloc，因为可能需要拷贝更多的参数
-		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::NORMAL);//重载devicemalloc，因为多了临时数组
+		virtual void	ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);//重载HostMalloc，因为可能需要拷贝更多的参数
+		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::CUMALLOC);//重载devicemalloc，因为多了临时数组
 
 		//生成随机的等式右端向量
 		virtual void	genRhs(size_t _genRowNum = -1, const char* _savepath = "..\\data\\check", bool _bsave = false);
 
 		//初始化描述器等对象
-		//完成对A矩阵的Chol分析，并创建相应内存空间
+		//完成对A矩阵的Chol分析，并创建相应内存空间,必须在reset后执行
 		bool		InitialDescr(cudaStream_t _stream = 0, cusparseMatrixType_t _MatrixType = CUSPARSE_MATRIX_TYPE_GENERAL);
 
 		//Cholsky分解预处理，如果需要，放入initialDescr函数中
@@ -96,7 +96,10 @@ namespace HBXFEMDef
 
 		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
 		//主要是检验范数
-		virtual double CheckNormInf();
+		virtual double CheckNormInf(bool _useGPU= false);
+
+		//释放主机端资源
+		virtual	void		FreeCPUResource();
 
 		//释放设备端资源,不仅限于cublas，cusparse等描述器
 		//各类释放的资源不一样，故用虚函数

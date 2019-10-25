@@ -21,7 +21,7 @@ void NumericalCalTest(void * void_arg)
 //	std::cout << "读取部分结束" << std::endl;
 
 	using namespace HBXFEMDef;
-	MMSpMatReader g_MMSpMatReader("bcsstk01.mtx");
+	MMSpMatReader g_MMSpMatReader("bcsstk01.mtx", "E:\\Phd_Hu_Data\\matrix market");
 	InputFileResult _res = g_MMSpMatReader.SetInputData();
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_MMSpMatReader.GetStiffMat();
 	std::cout << "读取部分结束" << std::endl;
@@ -33,19 +33,19 @@ void NumericalCalTest(void * void_arg)
 		g_LowLevelCholesky.SetStiffMat(_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
 			_tmpCSR->_nnzA, _tmpCSR->_nA);
 		g_LowLevelCholesky.genRhs();
+		g_LowLevelCholesky.ResetGraphMem();
+		g_LowLevelCholesky.MemCpy();
 		g_LowLevelCholesky.InitialDescr();
 
 		g_LowLevelCholesky.AnalyzeCholAWithCPU();
 		g_LowLevelCholesky.ConjugateWithCPU();
-		
-		//GPU计算
+		g_LowLevelCholesky.CheckNormInf(false);
 
-		g_LowLevelCholesky.ResetGraphMem();
-		g_LowLevelCholesky.MemCpy();
+		//GPU计算
 		g_LowLevelCholesky.AnalyzeCholAWithGPU();
 		g_LowLevelCholesky.ConjugateWithGPU();
 
-		g_LowLevelCholesky.CheckNormInf();
+		g_LowLevelCholesky.CheckNormInf(true);
 	}
 
 
