@@ -9,7 +9,7 @@
 
 namespace HBXFEMDef
 {
-	//低阶cholesky分解，属于直接法
+	//低阶cholesky分解，属于直接法,参考
 	//本不应该属于迭代法，但是应继承自某一基类，便于注册
 	//参见sample cusolversp_lowlevelcholesky的demo
 	//本类有CPU和GPU两个版本

@@ -1,3 +1,4 @@
+#include <regex>
 #include "MMSpMatReader.h"
 #include <mmio.h>
 #include <mmio_wrapper.h>
@@ -77,6 +78,56 @@ namespace HBXFEMDef
 		return InputFileResult::IRRT_OK;
 	}
 
+
+	InputFileResult MMSpMatReader::SetRhsData(	const char* _matname,
+												const char* _searchpath)
+	{
+		std::string stringLine;		//读取的当前行
+		int i = 0;	//计数器，表示当前的列数
+
+		std::string _tmpstr(_searchpath);
+		_tmpstr.append("\\");
+		_tmpstr.append(_matname);
+		char* chr = const_cast<char*>(_tmpstr.c_str());
+
+		std::ifstream inFile;
+		inFile.open(chr);
+		if (inFile.bad() || !inFile.is_open())
+		{
+			std::cerr << "Error1： Can not open input data file" << std::endl;
+			return InputFileResult::IRRT_BAD_FORMAT;
+		}
+
+		while (!inFile.eof())
+		{
+			std::regex	annotRule("^%\\w+");
+			bool  getnum  = false;
+
+			getline(inFile, stringLine);
+			std::stringstream ss(stringLine);
+			HBXDef::UserCalPrec _tmpNum;
+
+			if (std::regex_match(stringLine, annotRule))	//判断，若为%开头直接跳过
+				continue;
+
+			if (!getnum)
+			{				
+				std::vector<int> props;
+				int x;
+				while (ss >> x)
+				{
+					props.push_back(x);
+				}
+				m_MatMsg.h_rhs = (HBXDef::UserCalPrec*)malloc( sizeof(HBXDef::UserCalPrec)* props[0] );
+				getnum = true;
+				continue;
+			}
+			ss >> _tmpNum;
+			m_MatMsg.h_rhs[i] = _tmpNum;	//这里没检测容易越界，然后报错像CXK
+			i++;
+		}
+		
+	}
 
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* MMSpMatReader::GetStiffMat(bool _bSv)
 	{

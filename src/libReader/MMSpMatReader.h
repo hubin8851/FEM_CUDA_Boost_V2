@@ -22,13 +22,17 @@ namespace HBXFEMDef
 
 	protected:
 	public:
-		MMSpMatReader(	const char* _matname = "bcsstk01.mtx", 
+		MMSpMatReader(	const char* _matname = "nasa1824.mtx", 
 						const char* _searchpath = "E:\\Phd_Hu_Data\\matrix market",
 						bool _csrFormat = true);
 		virtual ~MMSpMatReader(void);
 
 		//完成mtx文件的导入，对矩阵维度进行校验并放入稀疏矩阵结构体中
 		InputFileResult SetInputData();
+
+		//读取mtx文件的*_b，即右端向量
+		InputFileResult SetRhsData(	const char* _matname = "nasa1824.mtx",
+									const char* _searchpath = "E:\\Phd_Hu_Data\\matrix market" );
 
 		//强制断开所有数据连接
 		void terminate() {};

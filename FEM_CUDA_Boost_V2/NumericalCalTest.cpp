@@ -10,7 +10,7 @@
 
 void NumericalCalTest(void * void_arg)
 {
-	int		g_Iters;
+	int		g_Iters = 10000;
 	float	g_Precision = 1.0e-6f;
 
 //	using namespace HBXFEMDef;
@@ -26,7 +26,7 @@ void NumericalCalTest(void * void_arg)
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_MMSpMatReader.GetStiffMat();
 	std::cout << "读取部分结束" << std::endl;
 
-	if (1)
+	if (0)
 	{
 		LowLevelCholesky g_LowLevelCholesky(nullptr, nullptr);
 		g_LowLevelCholesky.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
@@ -67,7 +67,7 @@ void NumericalCalTest(void * void_arg)
 		double _calTime = g_BiCGStab.ConjugateWithGPU(g_Precision, g_Iters);
 	}
 	
-	if (1)
+	if (0)
 	{
 		PcgConjugate g_PcgConjugate(nullptr, nullptr);
 		g_PcgConjugate.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
@@ -85,16 +85,18 @@ void NumericalCalTest(void * void_arg)
 	if (1)
 	{
 		CgConjugate g_CgConjugate(nullptr, nullptr);
+		//g_CgConjugate.genTridiag(16384);
 		g_CgConjugate.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
 		g_CgConjugate.SetStiffMat(_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
 			_tmpCSR->_nnzA, _tmpCSR->_nA);
-		g_CgConjugate.SetLoadVec(_tmpCSR->h_rhs, _tmpCSR->_nA - 1);
+		g_CgConjugate.SetLoadVec();
+		//g_CgConjugate.SetLoadVec(_tmpCSR->h_rhs, _tmpCSR->_nA - 1);
 		g_CgConjugate.ResetGraphMem();
 		g_CgConjugate.MemCpy(HBXDef::HostToDevice);
 		if (true == g_CgConjugate.InitialDescr())
 		{
 			std::cout << "\n初始化CG法的描述器及句柄成功！\n" << std::endl;
 		}
-		double _calTime = g_CgConjugate.ConjugateWithGPU(g_Precision, g_Iters);
+		double _calTime = g_CgConjugate.ConjugateWithGPU();
 	}
 }

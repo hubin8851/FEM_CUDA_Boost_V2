@@ -3,7 +3,6 @@
 #include <cuda_runtime.h>
 #include <CudaPreDef.h>
 #include <HBXPreDef.h>
-#include <helper_cuda.h>
 
 #include <HbxGloFunc.h>
 #include "mmio.h"
@@ -122,11 +121,8 @@ namespace HBXFEMDef
 
 	BaseConjugate::~BaseConjugate()
 	{
-		if (nullptr == cusparseHandle)
-		{
-			return;
-		}
-		else FreeGPUResource();
+		FreeCPUResource();
+		FreeGPUResource();
 	}
 
 	void BaseConjugate::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
@@ -136,13 +132,16 @@ namespace HBXFEMDef
 		{
 			return;
 		}
-		m_HostMalloc = _hostAlloc;
-		m_nnzA = _nnzA;
-		m_nA = _nA;
-		m_RowNum = m_ColNum = _nA - 1;
+		if ( -1 != _nnzA || -1 != _nA)
+		{		
+			m_nnzA = _nnzA;
+			m_nA = _nA;
+			m_RowNum = m_ColNum = _nA - 1;
+			m_HostMalloc = _hostAlloc;
+		}
 		//if (m_bGenTridiag) return;
 
-		FreeCPUResource();
+//		FreeCPUResource();
 
 //		void*(*ptrFunc) ( unsigned int, unsigned int);
 //		ptrFunc = nullptr;
@@ -160,12 +159,12 @@ namespace HBXFEMDef
 		} 
 
 		h_NoneZeroVal = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
-		h_iColIndex = (int*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
-		h_iRowSort = (int*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+		h_iColIndex = (int*)(*_HostAllocFuncptr)( sizeof(int), m_nnzA);
+		h_iRowSort = (int*)(*_HostAllocFuncptr)( sizeof(int), m_nA);
 
-		h_x = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+		h_x = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_RowNum);
 		memset(h_x, 0, m_RowNum);
-		h_b = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_nnzA);
+		h_b = (UserCalPrec*)(*_HostAllocFuncptr)( sizeof(UserCalPrec), m_RowNum);
 		memset(h_b, 0, m_RowNum);
 		
 
@@ -226,7 +225,7 @@ if (0)
 			break;
 		}
 
-		FreeGPUResource();
+//		FreeGPUResource();
 
 		if (HbxCuDef::CUMALLOC == m_CudaMalloc)
 		{
@@ -298,7 +297,8 @@ if (0)
 			
 			double end_matrix_copy = HBXDef::GetTimeStamp();
 			time_MemcpyHostToDev += end_matrix_copy - start_matrix_copy;
-			std::cout << "基类下系数矩阵及右端向量HostToDevice内存拷贝耗时共计:" << time_MemcpyHostToDev << std::endl;
+			//std::cout << "基类下系数矩阵及右端向量HostToDevice内存拷贝耗时共计:" << time_MemcpyHostToDev << std::endl;
+			std::cout << "HostToDevice内存拷贝耗时共计: " << time_MemcpyHostToDev << std::endl;
 			return HBXDef::DataAloc_t::DATAINGPU;
 		}
 		else return HBXDef::DataAloc_t::INVALID;
@@ -612,13 +612,21 @@ if (0)
 	void BaseConjugate::FreeCPUResource()
 	{
 		//CPU部分，如果是锁页内存可能有所不同 
-		if (h_x) { free(h_x); }
-		if (h_b) { free(h_b); }
-		if (h_r) { free(h_r); }
+		HBXDEFFREE(h_x);
+		HBXDEFFREE(h_b);
+		HBXDEFFREE(h_r);
 
-		if (h_NoneZeroVal) { free(h_NoneZeroVal); }
-		if (h_iRowSort) { free(h_iRowSort); }
-		if (h_iColIndex) { free(h_iColIndex); }
+		HBXDEFFREE(h_NoneZeroVal);
+		HBXDEFFREE(h_iRowSort);
+		HBXDEFFREE(h_iColIndex);
+
+//		if (h_x) { free(h_x); }
+//		if (h_b) { free(h_b); }
+//		if (h_r) { free(h_r); }
+//
+//		if (h_NoneZeroVal) { free(h_NoneZeroVal); }
+//		if (h_iRowSort) { free(h_iRowSort); }
+//		if (h_iColIndex) { free(h_iColIndex); }
 
 	}
 

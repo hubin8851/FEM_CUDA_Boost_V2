@@ -1,4 +1,5 @@
 #include "RefactorConjugate.h"
+#include <helper_cuda.h>
 #include <cusparse.h>
 #include <cusolverSp.h>
 #include "helper_cuda.h"

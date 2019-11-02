@@ -106,6 +106,8 @@ namespace HBXFEMDef
 			h_info,
 			&size_internal,
 			&size_chol));
+		stop_spFactorT = second();
+		time_sp_factorT = stop_spFactorT - start_spFactorT;
 
 		if (buffer_cpu)
 		{
@@ -117,6 +119,7 @@ namespace HBXFEMDef
 #ifdef _DEBUG
 		printf("compute A = L*L^T \n");
 #endif
+		start_spFactorT = GetTimeStamp();
 		checkCudaErrors(cusolverSpDcsrcholFactorHost(
 			cusolverSpH, m_RowNum, m_nnzA,
 			Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex,
@@ -131,7 +134,7 @@ namespace HBXFEMDef
 
 		stop_spFactorT = second();
 
-		time_sp_factorT = stop_spFactorT - start_spFactorT;
+		time_sp_factorT += stop_spFactorT - start_spFactorT;
 		std::cout << "factor the matrix A use time: " << time_sp_factorT << "s" << std::endl;
 
 		if (0 <= singularity)
@@ -171,6 +174,9 @@ namespace HBXFEMDef
 			&size_internal,
 			&size_chol));
 
+		stop_spFactorT = GetTimeStamp();
+		time_sp_factorT = stop_spFactorT - start_spFactorT;
+
 		if (buffer_gpu) {
 			checkCudaErrors(cudaFree(buffer_gpu));
 		}
@@ -179,6 +185,8 @@ namespace HBXFEMDef
 #ifdef _DEBUG
 		printf("compute A = L*L^T \n");
 #endif
+		start_spFactorT = GetTimeStamp();
+
 		checkCudaErrors(cusolverSpDcsrcholFactor(
 			cusolverSpH, m_RowNum, m_nnzA,
 			Matdescr, d_NoneZeroVal, d_iRowSort, d_iColIndex,
@@ -193,7 +201,7 @@ namespace HBXFEMDef
 
 		stop_spFactorT = GetTimeStamp();
 
-		time_sp_factorT = stop_spFactorT - start_spFactorT;
+		time_sp_factorT += stop_spFactorT - start_spFactorT;
 		std::cout << "factor the matrix A use time: " << time_sp_factorT << "s" << std::endl;
 
 		if (0 <= singularity) {

@@ -37,6 +37,9 @@ libReader	数据读取派生类，包括xml，mysql，excle，数据文件读取
  
 
 ## log ##
+10/26/2019 9:29:48 PM 
+低阶cholsky全部修改完成。
+
 10/22/2019 11:18:31 PM 
 低阶cholsky迭代器大改
 

@@ -113,7 +113,8 @@ namespace HBXFEMDef
 		BaseConjugate(Domain* _dm, Engng* _eng);
 		virtual ~BaseConjugate();
 
-		virtual void	ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);									//重置内存
+		//使用默认参数时，说明是内部函数
+		virtual void	ResetMem(int _nnzA = -1, int _nA = -1, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);									//重置内存
 		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::CUMALLOC);		//在GPU上重置显存
 
 		//设备和主机端的内存拷贝
