@@ -1,5 +1,6 @@
 #pragma once
 #include <NumericalMehod/BaseConjugate.h>
+#include <HbxDefMacro.h>
 #include <ExportDef.h>
 #include <CudaPreDef.h>
 #include "cusolverSp.h"
@@ -10,21 +11,16 @@ namespace HBXFEMDef
 {
 	class Domain;
 	class Engng;
+	class BaseNumMethod;
 
-	typedef enum ReorderType
-	{
-		SYMRCM = 0,	//稀疏反向 Cuthill-McKee 排序
-		SYMAMD,		//对称近似最小阶数置换
-	}ReorderType_t;
-	
 
 	//基于RCM，缩减带宽的预处理共轭梯度法
 	//流程为resetmem->resetGraphmem->Preconditioning->getB
 	//此类仅适用于CSR格式矩阵输入
 	//本质是直接法，通过矩阵带宽缩减后采用直接LU分解方法进行解算
 	//Sample cuSolverRf
-	class CUFEM_API RefactorConjugate 
-		:public BaseConjugate
+	class CUFEM_API RefactorConjugate :
+		public BaseConjugate
 	{
 	private:
 		cusolverRfHandle_t cusolverRfH = nullptr; // refactorization
@@ -153,4 +149,4 @@ namespace HBXFEMDef
 		//主要是检验范数
 		virtual double CheckNormInf(bool _useGPU = false) { return 0.0f; };
 	};
-};
+}

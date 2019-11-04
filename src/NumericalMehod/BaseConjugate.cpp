@@ -1,5 +1,5 @@
-#include "BaseConjugate.h"
 #include <random>
+#include "BaseConjugate.h"
 #include <cuda_runtime.h>
 #include <CudaPreDef.h>
 #include <HBXPreDef.h>
@@ -17,25 +17,99 @@ namespace HBXFEMDef
 
 	void BaseConjugate::genTridiag(size_t _genRowNum, const char* _savepath, bool _bsave )
 	{
-		using namespace std;
-		srand((unsigned)time(NULL));//基于时间的伪随机数分配
-		cout << "生成三对角矩阵，原始数据在内存中抹去..." << endl;
-		//因为强制设为三对角矩阵，故m_nnA,m_nA,rownum均需要重新赋值
-		m_RowNum = (int)_genRowNum;
-		m_nnzA = (int)(m_RowNum - 2) * 3 + 4;
-		m_nA = (int)m_RowNum + 1;
+		m_nnzA = 5 * _genRowNum - 4 * (int)sqrt((double)_genRowNum);
+		m_nA = _genRowNum + 1;
+		m_RowNum = _genRowNum;
 
-#pragma region 重新分配内存，并生成随机数
-		ResetMem(m_nnzA, m_nA);
+		ResetMem();
 
+		for (int i = 0; i < _genRowNum; i++)
+		{
+			h_b[i] = 0.0;  // Initialize RHS
+			h_x[i] = 0.0;  // Initial approximation of solution
+		}
+		int n = (int)sqrt((double)_genRowNum);
+		printf("laplace dimension = %d\n", n);
+		int idx = 0;
+		// loop over degrees of freedom
+		for (int i = 0; i < _genRowNum; i++)
+		{
+			int ix = i % n;
+			int iy = i / n;
 
-#pragma endregion
+			h_iRowSort[i] = idx;
+
+			// up
+			if (iy > 0)
+			{
+				h_NoneZeroVal[idx] = 1.0;
+				h_iColIndex[idx] = i - n;
+				idx++;
+			}
+			else
+			{
+				h_b[i] -= 1.0;
+			}
+
+			// left
+			if (ix > 0)
+			{
+				h_NoneZeroVal[idx] = 1.0;
+				h_iColIndex[idx] = i - 1;
+				idx++;
+			}
+			else
+			{
+				h_b[i] -= 0.0;
+			}
+
+			// center
+			h_NoneZeroVal[idx] = -4.0;
+			h_iColIndex[idx] = i;
+			idx++;
+
+			//right
+			if (ix < n - 1)
+			{
+				h_NoneZeroVal[idx] = 1.0;
+				h_iColIndex[idx] = i + 1;
+				idx++;
+			}
+			else
+			{
+				h_b[i] -= 0.0;
+			}
+
+			//down
+			if (iy < n - 1)
+			{
+				h_NoneZeroVal[idx] = 1.0;
+				h_iColIndex[idx] = i + n;
+				idx++;
+			}
+			else
+			{
+				h_b[i] -= 0.0;
+			}
+
+		}
+
+		h_iRowSort[_genRowNum] = idx;
 	}
 
 	void BaseConjugate::genRhs(size_t _genRowNum, const char* _savepath, bool _bsave)
 	{
 		using std::default_random_engine;
 		using std::uniform_real_distribution;
+
+		if (-1 == _genRowNum)
+		{
+			for (int row = 0; row < m_RowNum; row++)
+			{
+				h_b[row] = 1.0;
+			}
+			return;
+		}
 
 		std::cout << "生成等式右端长度为" << _genRowNum << "随机向量" << std::endl;
 
@@ -146,7 +220,7 @@ namespace HBXFEMDef
 //		void*(*ptrFunc) ( unsigned int, unsigned int);
 //		ptrFunc = nullptr;
 
-		switch (_hostAlloc)
+		switch (m_HostMalloc)
 		{
 		case HbxCuDef::HostMalloc_t::NORMAL:
 			_HostAllocFuncptr = NormalMalloc;
@@ -607,6 +681,31 @@ if (0)
 			exit(EXIT_FAILURE);
 		}
 		return true;
+	}
+
+	void BaseConjugate::SaveResult(const char * _mat_filename, const char * _dir)
+	{
+		std::string _tmpstr(_dir);
+		_tmpstr.append("\\");
+		_tmpstr.append(_mat_filename);
+		std::ofstream ofile;
+		ofile.open(_tmpstr);
+		if (ofile.is_open())
+		{
+			//第一行，写入time_MemcpyHostToDev，
+			ofile << std::setw(10) << time_MemcpyHostToDev;
+			ofile << std::setw(10) << time_sp_analysisT;
+			ofile << std::setw(10) << time_sp_factorT;
+			ofile << std::setw(10) << time_sp_GPUSolve <<std::endl;
+
+			//第二行写入迭代次数和残差
+			ofile << std::setw(14) << k << std::setw(14) << m_qaerr1 << std::endl;
+
+			//输出每次迭代的残差
+			HBXDef::OutputVectorData<double>( this->_residual, ofile);
+
+			ofile.close();
+		}
 	}
 
 	void BaseConjugate::FreeCPUResource()

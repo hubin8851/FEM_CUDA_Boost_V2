@@ -182,7 +182,7 @@ namespace HBXFEMDef
 			cublasDaxpy(cublasHandle, m_RowNum, &nalpha, d_omega, 1, d_r, 1);
 			r0 = r1;
 			cublasDdot(cublasHandle, m_RowNum, d_r, 1, d_r, 1, &r1);
-			_residual[k] = r1;//获得当前迭代时的
+			_residual[k-1] = r1;//获得当前迭代时的
 		}
 
 		// 创建时间戳
@@ -196,7 +196,7 @@ namespace HBXFEMDef
 		{
 			printf("  iteration = %3d, residual = %e \n", i, sqrt(_residual[i]));
 		}
-		
+		_residual.resize(k);
 
 #else	//调用float相关函数
 		

@@ -1,4 +1,4 @@
-#include "RefactorConjugate.h"
+#include <NumericalMehod\RefactorConjugate.h>
 #include <helper_cuda.h>
 #include <cusparse.h>
 #include <cusolverSp.h>
@@ -8,15 +8,29 @@
 
 namespace HBXFEMDef
 {
+	
+
+
+	RefactorConjugate::RefactorConjugate(Domain * _dm, Engng * _eng)
+		:BaseConjugate(_dm, _eng)
+	{
+
+	};
+
+	RefactorConjugate::~RefactorConjugate()
+	{
+
+	};
+
 	double RefactorConjugate::GetReorderMat()
 	{
 		//计算B = P*A*P^T，得到
-		fprintf(stdout," B = Q*A*Q^T\n");
+		fprintf(stdout, " B = Q*A*Q^T\n");
 		memcpy(h_csrRowPtrB, h_iRowSort, sizeof(int)*(m_RowNum + 1));
 		memcpy(h_csrColIndB, h_iColIndex, sizeof(int)*m_nnzA);
 
 		startT = GetTimeStamp();
-		
+
 		checkCudaErrors(cusolverSpXcsrperm_bufferSizeHost(
 			cusolverSpH, m_RowNum, m_ColNum, m_nnzA,
 			Matdescr, h_csrRowPtrB, h_csrColIndB,
@@ -51,19 +65,7 @@ namespace HBXFEMDef
 		fprintf(stdout, " B = Q*A*Q^T : %f sec\n", time_permT);
 
 		return time_permT;
-	}
-
-
-	RefactorConjugate::RefactorConjugate(Domain * _dm, Engng * _eng)
-		:BaseConjugate(_dm, _eng)
-	{
-
-	}
-
-	RefactorConjugate::~RefactorConjugate()
-	{
-
-	}
+	};
 
 	void RefactorConjugate::ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc)
 	{
@@ -80,23 +82,12 @@ namespace HBXFEMDef
 		h_xhat = (double*)malloc(sizeof(double)*m_ColNum);
 		h_bhat = (double*)malloc(sizeof(double)*m_RowNum);
 
-	}
+	};
 
 	void RefactorConjugate::ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac)
 	{
 		BaseConjugate::ResetGraphMem(_cuMac);
-		assert(nullptr != h_Qreorder);
-		assert(nullptr != h_csrRowPtrB);
-		assert(nullptr != h_csrColIndB);
-		assert(nullptr != h_csrValB);
-		assert(nullptr != h_mapBfromA);
 
-		assert(nullptr != h_x);
-		assert(nullptr != h_b);
-		assert(nullptr != h_r);
-
-		assert(nullptr != h_xhat);
-		assert(nullptr != h_bhat);
 
 		if (HbxCuDef::CUMALLOC == _cuMac)
 		{
@@ -108,7 +99,7 @@ namespace HBXFEMDef
 		}
 		cudaDeviceSynchronize();
 		m_bCudaFree = false;
-	}
+	};
 
 	HBXDef::DataAloc_t RefactorConjugate::MemCpy(HBXDef::CopyType_t _temp)
 	{
@@ -125,7 +116,7 @@ namespace HBXFEMDef
 
 		std::cout << "双共轭梯度法内存拷贝耗时共计:" << stop_matrix_copy - start_matrix_copy << std::endl;
 		return BaseConjugate::MemCpy(_temp);
-	}
+	};
 
 	bool RefactorConjugate::InitialDescr(cudaStream_t _stream, cusparseMatrixType_t _MatrixType)
 	{
@@ -153,7 +144,7 @@ namespace HBXFEMDef
 
 
 		return true;
-	}
+	};
 
 	double RefactorConjugate::Preconditioning(ReorderType_t _type)
 	{
@@ -191,7 +182,7 @@ namespace HBXFEMDef
 		time_reorderT = stopT - startT;
 
 		return time_reorderT;
-	}
+	};
 
 	double RefactorConjugate::ConjugateWithGPU(const double & _tol, const int & _iter)
 	{
@@ -303,7 +294,7 @@ namespace HBXFEMDef
 		printf("(CPU) |b - A*x|/(|A|*|x|) = %E \n", r_inf / (A_inf * x_inf));
 
 		return 0.0;
-	}
+	};
 
 
 	double RefactorConjugate::ExtractPQLU()
@@ -359,7 +350,7 @@ namespace HBXFEMDef
 
 		printf("nnzL = %d, nnzU = %d\n", nnzL, nnzU);
 		return time_sp_extractT;
-	}
+	};
 
-}
+};
 

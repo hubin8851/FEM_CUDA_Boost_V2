@@ -8,8 +8,11 @@
 #include <..\src\NumericalMehod\CgConjugate.h>
 #include <..\src\NumericalMehod\LowLevelCholesky.h>
 
-void NumericalCalTest(void * void_arg)
+void NumericalCalTest(int argc, char *argv[])
 {
+	struct HBXDef::testOpts opts;
+	parseCommandLineArguments(argc, argv, opts);
+
 	int		g_Iters = 10000;
 	float	g_Precision = 1.0e-6f;
 
@@ -21,7 +24,7 @@ void NumericalCalTest(void * void_arg)
 //	std::cout << "读取部分结束" << std::endl;
 
 	using namespace HBXFEMDef;
-	MMSpMatReader g_MMSpMatReader("bcsstk01.mtx", "E:\\Phd_Hu_Data\\matrix market");
+	MMSpMatReader g_MMSpMatReader(opts.sparse_mat_filename, opts.path);
 	InputFileResult _res = g_MMSpMatReader.SetInputData();
 	HBXDef::_CSRInput<HBXDef::UserCalPrec>* _tmpCSR = g_MMSpMatReader.GetStiffMat();
 	std::cout << "读取部分结束" << std::endl;
@@ -67,29 +70,15 @@ void NumericalCalTest(void * void_arg)
 		double _calTime = g_BiCGStab.ConjugateWithGPU(g_Precision, g_Iters);
 	}
 	
-	if (0)
-	{
-		PcgConjugate g_PcgConjugate(nullptr, nullptr);
-		g_PcgConjugate.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
-		g_PcgConjugate.SetStiffMat(	_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
-									_tmpCSR->_nnzA, _tmpCSR->_nA);
-		g_PcgConjugate.SetLoadVec(_tmpCSR->h_rhs, _tmpCSR->_nA - 1);
-		g_PcgConjugate.ResetGraphMem();
-		g_PcgConjugate.MemCpy(HBXDef::HostToDevice);
-		if (true == g_PcgConjugate.InitialDescr())
-		{
-			std::cout << "\n初始化PCG法的描述器及句柄成功！\n" << std::endl;
-		}
-		double _calTime = g_PcgConjugate.ConjugateWithGPU(g_Precision, g_Iters);
-	}
 	if (1)
 	{
 		CgConjugate g_CgConjugate(nullptr, nullptr);
 		//g_CgConjugate.genTridiag(16384);
+
 		g_CgConjugate.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
 		g_CgConjugate.SetStiffMat(_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
 			_tmpCSR->_nnzA, _tmpCSR->_nA);
-		g_CgConjugate.SetLoadVec();
+		g_CgConjugate.genRhs();
 		//g_CgConjugate.SetLoadVec(_tmpCSR->h_rhs, _tmpCSR->_nA - 1);
 		g_CgConjugate.ResetGraphMem();
 		g_CgConjugate.MemCpy(HBXDef::HostToDevice);
@@ -98,5 +87,37 @@ void NumericalCalTest(void * void_arg)
 			std::cout << "\n初始化CG法的描述器及句柄成功！\n" << std::endl;
 		}
 		double _calTime = g_CgConjugate.ConjugateWithGPU();
+		g_CgConjugate.CheckNormInf();
+
+		std::string _tmpstr = opts.sparse_mat_filename;
+		_tmpstr.append("_CG");
+		g_CgConjugate.SaveResult(_tmpstr.c_str(), "E:\\Phd_Hu_Data\\IterRes");
 	}
+
+	if (1)
+	{
+		PcgConjugate g_PcgConjugate(nullptr, nullptr);
+
+//		g_PcgConjugate.genTridiag(16384);
+//		g_PcgConjugate.ResetMem();
+
+		g_PcgConjugate.ResetMem(_tmpCSR->_nnzA, _tmpCSR->_nA);
+		g_PcgConjugate.SetStiffMat(	_tmpCSR->h_NoneZeroVal, _tmpCSR->h_iColSort, _tmpCSR->h_iNonZeroRowSort,
+									_tmpCSR->_nnzA, _tmpCSR->_nA);
+//		g_PcgConjugate.SetLoadVec(_tmpCSR->h_rhs, _tmpCSR->_nA - 1);
+		g_PcgConjugate.genRhs();
+		g_PcgConjugate.ResetGraphMem();
+		g_PcgConjugate.MemCpy(HBXDef::HostToDevice);
+		if (true == g_PcgConjugate.InitialDescr())
+		{
+			std::cout << "\n初始化PCG法的描述器及句柄成功！\n" << std::endl;
+		}
+		double _calTime = g_PcgConjugate.ConjugateWithGPU();
+		g_PcgConjugate.CheckNormInf();
+
+		std::string _tmpstr = opts.sparse_mat_filename;
+		_tmpstr.append("_PCG");
+		g_PcgConjugate.SaveResult(_tmpstr.c_str(), "E:\\Phd_Hu_Data\\IterRes");
+	}
+	
 }

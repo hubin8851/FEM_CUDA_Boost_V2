@@ -7,7 +7,6 @@
 #include <helper_cusolver.h>
 
 
-
 namespace HBXFEMDef
 {
 	LowLevelCholesky::LowLevelCholesky(Domain * _dm, Engng * _eng)
@@ -79,6 +78,7 @@ namespace HBXFEMDef
 
 	bool LowLevelCholesky::AnalyzeCholAWithCPU()
 	{
+		using namespace HBXDef;
 		double start_spFactorT, stop_spFactorT;
 
 #ifdef _DEBUG
@@ -119,7 +119,7 @@ namespace HBXFEMDef
 #ifdef _DEBUG
 		printf("compute A = L*L^T \n");
 #endif
-		start_spFactorT = GetTimeStamp();
+		start_spFactorT = HBXDef::GetTimeStamp();
 		checkCudaErrors(cusolverSpDcsrcholFactorHost(
 			cusolverSpH, m_RowNum, m_nnzA,
 			Matdescr, h_NoneZeroVal, h_iRowSort, h_iColIndex,

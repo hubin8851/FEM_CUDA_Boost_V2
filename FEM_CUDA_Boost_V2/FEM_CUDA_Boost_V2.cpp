@@ -23,13 +23,13 @@ extern "C" float MultiInterpolateTest(void* void_arg);
 extern "C" void EngngTest(void* void_arg);
 extern "C" void ReaderTest(void* void_arg);
 extern "C" void ElementMatricCalTest(void* void_arg);
-extern "C" void NumericalCalTest(void* void_arg);
+extern "C" void NumericalCalTest(int argc, char **argv);
 // 唯一的应用程序对象
 
 
 using namespace std;
 
-int main()
+int main(int argc, char **argv)
 {	
 	if (0)//测试文件读取
 	{
@@ -43,7 +43,7 @@ int main()
 
 	if (1)//迭代法测试
 	{
-		NumericalCalTest();
+		NumericalCalTest(argc, argv);
 	}
 
 	if(0)//VTK测试

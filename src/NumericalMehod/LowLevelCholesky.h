@@ -9,6 +9,10 @@
 
 namespace HBXFEMDef
 {
+	class Domain;
+	class Engng;
+	class BaseNumMethod;
+
 	//低阶cholesky分解，属于直接法,参考
 	//本不应该属于迭代法，但是应继承自某一基类，便于注册
 	//参见sample cusolversp_lowlevelcholesky的demo
@@ -16,8 +20,8 @@ namespace HBXFEMDef
 	//公共部分resetMem->SetStiffMat->InitialDescr
 	//CPU版本的顺序是AnalyzeCholAWithCPU->ConjugateWithCPU
 	//GPU版本的顺序是resetGraphMem->memcpy->AnalyzeCholAWithGPU->->ConjugateWithGPU
-	class CUFEM_API LowLevelCholesky
-		:public BaseConjugate
+	class CUFEM_API LowLevelCholesky:
+		public BaseConjugate
 	{
 	private:
 		double time_sp_factorT;

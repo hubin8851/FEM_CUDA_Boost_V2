@@ -13,9 +13,6 @@ namespace HBXFEMDef
 		public BaseConjugate
 	{
 	private:
-		//迭代次数及对应残差统计
-		std::vector<UserCalPrec> _residual;
-		int k = 0;//迭代次数
 
 		//预处理共轭梯度法的相关变量
 
@@ -25,7 +22,7 @@ namespace HBXFEMDef
 		CgConjugate(Domain* _dm, Engng* _eng);
 		virtual ~CgConjugate();
 
-		//生成三对角矩阵
+		//生成三对角矩阵,连带等式右边B
 		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
 
 //		virtual void	ResetMem(int _nnzA, int _nA);//重载HostMalloc，因为可能需要拷贝更多的参数

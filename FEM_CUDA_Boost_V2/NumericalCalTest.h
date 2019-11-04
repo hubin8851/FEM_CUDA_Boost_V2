@@ -1,5 +1,5 @@
 #pragma once
 
 
-extern "C" void NumericalCalTest(void* void_arg = nullptr);
+extern "C" void NumericalCalTest(int argc = 0, char *argv[] = nullptr);
 

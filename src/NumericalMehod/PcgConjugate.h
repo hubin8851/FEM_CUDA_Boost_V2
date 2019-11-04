@@ -10,10 +10,12 @@ namespace HBXFEMDef
 	class Domain;
 	class Engng;
 
+	//ILU分解的预处理共轭梯度法，可以简单理解为ICC的预处理共轭梯度法
 	class CUFEM_API PcgConjugate :
 		public BaseConjugate
 	{
 	private:
+
 		//预处理共轭梯度法的相关变量
 		cusparseSolveAnalysisInfo_t	infoA;
 		cusparseSolveAnalysisInfo_t	info_u;
@@ -28,13 +30,15 @@ namespace HBXFEMDef
 		PcgConjugate(Domain* _dm, Engng* _eng);
 		virtual ~PcgConjugate();
 
-//		void	genLaplace(size_t _genRowNum, bool _bsave, boost::filesystem::path _savepath = "");
+		//生成三对角矩阵,连带等式右边B,不用再调用resetmem
+		void	genTridiag(size_t _genRowNum, const char* _savepath = "", bool _bsave = false);
 
-		virtual void	ResetMem(int _nnzA, int _nA, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);//重载HostMalloc，因为可能需要拷贝更多的参数
+
+		virtual void	ResetMem(int _nnzA = -1, int _nA= -1, HbxCuDef::HostMalloc_t _hostAlloc = HbxCuDef::HostMalloc_t::NORMAL);//重载HostMalloc，因为可能需要拷贝更多的参数
 		virtual void	ResetGraphMem(HbxCuDef::CudaMalloc_t _cuMac = HbxCuDef::CudaMalloc_t::CUMALLOC);//重载devicemalloc，因为多了临时数组
 
 		//设备和主机端的内存拷贝,在此处重载，因为需要拷贝更多的参数
-		//virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
+		virtual HBXDef::DataAloc_t		MemCpy(HBXDef::CopyType_t _temp = HBXDef::CopyType_t::HostToDevice);
 
 		//初始化描述器等对象
 		bool		InitialDescr(cudaStream_t _stream = 0, cusparseMatrixType_t _MatrixType = CUSPARSE_MATRIX_TYPE_GENERAL);
@@ -46,6 +50,10 @@ namespace HBXFEMDef
 
 		//校验残差,有一部分派生类放入了主函数ConjugateWithGPU中，考虑计算效率该校验步骤不一定需要，故额外列出
 		//主要是检验范数
-		virtual double CheckNormInf(bool _useGPU = false) { return 0.0f; };
+		virtual double CheckNormInf(bool _useGPU = false);
+
+		virtual	void		FreeCPUResource();
+		//释放设备端资源,不仅限于cublas，cusparse等描述器
+		virtual	void		FreeGPUResource();		//各类释放的资源不一样，故用虚函数
 	};
 };

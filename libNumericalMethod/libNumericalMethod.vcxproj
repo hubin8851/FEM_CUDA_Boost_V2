@@ -162,6 +162,7 @@
     <ClInclude Include="..\src\NumericalMehod\BaseConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\BiCGStab.h" />
     <ClInclude Include="..\src\NumericalMehod\CgConjugate.h" />
+    <ClInclude Include="..\src\NumericalMehod\ICConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\LowLevelCholesky.h" />
     <ClInclude Include="..\src\NumericalMehod\PcgConjugate.h" />
     <ClInclude Include="..\src\NumericalMehod\RefactorConjugate.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="..\src\NumericalMehod\CgConjugate.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\src\NumericalMehod\ICConjugate.cpp" />
     <ClCompile Include="..\src\NumericalMehod\LowLevelCholesky.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -192,6 +194,7 @@
     </ClCompile>
     <ClCompile Include="..\src\NumericalMehod\RefactorConjugate.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="E:\SDK\hbxdef\x64\userinc\userCuda\HBX_Helper_cuSolver.cpp" />
